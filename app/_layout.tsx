@@ -1,24 +1,59 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import Account from './account';
+import { ThemeProvider } from '../theme';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function TabLayout() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return unsubscribe;
+  }, []);
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  // Show loading while checking auth state
+  if (isLoggedIn === null) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // Show account screen if not logged in
+  if (!isLoggedIn) {
+    return (
+      <ThemeProvider>
+        <Account />
+      </ThemeProvider>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
+    <ThemeProvider>
+      <NativeTabs>
+        <NativeTabs.Trigger name="index">
+          <Label>Home</Label>
+          <Icon sf="house.fill" drawable="custom_android_drawable" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="account">
+          <Label>Account</Label>
+          <Icon sf="person.fill" drawable="custom_settings_drawable" />
+        </NativeTabs.Trigger>
+      </NativeTabs>
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
