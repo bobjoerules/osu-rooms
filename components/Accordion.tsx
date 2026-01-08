@@ -55,7 +55,7 @@ interface AccordionProps {
 }
 
 export default function Accordion({ items }: AccordionProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(items.length > 0 ? items[0].id : null);
 
   const toggleItem = (id: string) => {
     setExpandedId(expandedId === id ? null : id);

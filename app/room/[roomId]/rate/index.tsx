@@ -22,7 +22,7 @@ export default function RateRoomModal() {
             <TouchableWithoutFeedback>
                 <View style={styles.popup}>
                     <View style={styles.header}>
-                        <Text style={[styles.title, { color: theme.text }]}>Rate Room Details</Text>
+                        <Text style={[styles.title, { color: theme.text }]}>Rate Room</Text>
                         <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
                             <Ionicons name="close" size={24} color={theme.text} />
                         </TouchableOpacity>
@@ -30,17 +30,22 @@ export default function RateRoomModal() {
 
                     <ScrollView contentContainerStyle={styles.content}>
                         <View style={styles.ratingGroup}>
-                            <Text style={[styles.label, { color: theme.text }]}>How are the Chairs?</Text>
+                            <Text style={[styles.label, { color: theme.text }]}>Overall Rating</Text>
+                            <StarRating itemId={finalRoomId as string} size={40} />
+                        </View>
+
+                        <View style={styles.ratingGroup}>
+                            <Text style={[styles.label, { color: theme.text }]}>Chairs</Text>
                             <StarRating itemId={`${finalRoomId}_chairs`} size={40} />
                         </View>
 
                         <View style={styles.ratingGroup}>
-                            <Text style={[styles.label, { color: theme.text }]}>How is the Lighting?</Text>
+                            <Text style={[styles.label, { color: theme.text }]}>Lighting</Text>
                             <StarRating itemId={`${finalRoomId}_lighting`} size={40} />
                         </View>
 
                         <View style={styles.ratingGroup}>
-                            <Text style={[styles.label, { color: theme.text }]}>Is the Projector/Screen Visible?</Text>
+                            <Text style={[styles.label, { color: theme.text }]}>Projector/Screen Visibility</Text>
                             <StarRating itemId={`${finalRoomId}_projector`} size={40} />
                         </View>
                     </ScrollView>
@@ -61,7 +66,7 @@ function createStyles(theme: Theme) {
         popup: {
             width: '90%',
             maxHeight: '80%',
-            backgroundColor: theme.background,
+            backgroundColor: theme.card,
             borderRadius: 16,
             overflow: 'hidden',
         },
@@ -73,17 +78,19 @@ function createStyles(theme: Theme) {
             paddingVertical: 16,
             borderBottomWidth: 1,
             borderBottomColor: theme.border,
+            backgroundColor: theme.card,
         },
         title: {
-            fontSize: 20,
-            fontWeight: '700',
+            fontSize: 18,
+            fontWeight: '600',
+            color: theme.text,
         },
         closeButton: {
             padding: 4,
         },
         content: {
             padding: 24,
-            gap: 32,
+            gap: 24,
         },
         subtitle: {
             fontSize: 16,
@@ -95,8 +102,9 @@ function createStyles(theme: Theme) {
             alignItems: 'center',
         },
         label: {
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: '600',
+            color: theme.text,
         },
         doneButton: {
             marginTop: 24,

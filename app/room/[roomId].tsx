@@ -5,7 +5,6 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
-import StarRating from '../../components/StarRating';
 import { getRoomById } from '../../data/rooms';
 import { Theme, useTheme } from '../../theme';
 
@@ -52,12 +51,13 @@ export default function RoomDetail() {
               <RatingDisplay itemId={finalRoomId as string} size={28} />
             </View>
 
-            <View style={styles.separator} />
-
-            <View style={styles.userRating}>
-              <Text style={[styles.ratingLabel, { color: theme.subtext }]}>Your Rating</Text>
-              <StarRating itemId={finalRoomId as string} size={32} />
-            </View>
+            <TouchableOpacity
+              style={[styles.rateButton, { backgroundColor: theme.primary, marginTop: 8, flexDirection: 'row', gap: 8 }]}
+              onPress={() => router.push(`/room/${finalRoomId}/rate`)}
+            >
+              <Ionicons name="pencil" size={18} color="#fff" />
+              <Text style={styles.rateButtonText}>Rate Room</Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.mainRatingSection}>
@@ -89,13 +89,6 @@ export default function RoomDetail() {
             <View style={styles.infoSeparator} />
             <Text style={[styles.floor, { color: theme.text }]}>Floor: {roomData.floor}</Text>
           </View>
-
-          <TouchableOpacity
-            style={[styles.rateButton, { backgroundColor: theme.primary, width: '100%', marginTop: 24, marginBottom: 40 }]}
-            onPress={() => router.push(`/room/${finalRoomId}/rate`)}
-          >
-            <Text style={styles.rateButtonText}>Rate Room Details</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
