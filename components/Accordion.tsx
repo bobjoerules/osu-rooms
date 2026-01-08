@@ -52,10 +52,11 @@ interface AccordionProps {
     title: string;
     content: React.ReactNode;
   }>;
+  forceExpandAll?: boolean;
 }
 
-export default function Accordion({ items }: AccordionProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(items.length > 0 ? items[0].id : null);
+export default function Accordion({ items, forceExpandAll = false }: AccordionProps) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleItem = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -63,16 +64,20 @@ export default function Accordion({ items }: AccordionProps) {
 
   return (
     <View>
-      {items.map((item) => (
-        <AccordionItem
-          key={item.id}
-          title={item.title}
-          isExpanded={expandedId === item.id}
-          onPress={() => toggleItem(item.id)}
-        >
-          {item.content}
-        </AccordionItem>
-      ))}
+      {items.map((item) => {
+        const isExpanded = forceExpandAll || expandedId === item.id;
+
+        return (
+          <AccordionItem
+            key={item.id}
+            title={item.title}
+            isExpanded={isExpanded}
+            onPress={() => toggleItem(item.id)}
+          >
+            {item.content}
+          </AccordionItem>
+        );
+      })}
     </View>
   );
 }

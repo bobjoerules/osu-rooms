@@ -1,11 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, writeBatch } from 'firebase/firestore';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import { getRoomById } from '../../data/rooms';
+import { auth, db } from '../../firebaseConfig';
 import { Theme, useTheme } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -16,9 +20,72 @@ export default function RoomDetail() {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   // Fallback if roomId is an array (sometimes happens with dynamic routes)
   const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        } catch (err) {
+          console.error("Error checking admin status:", err);
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return unsub;
+  }, []);
+
+  const handleResetRoom = () => {
+    Alert.alert(
+      "Reset Room Data",
+      `Are you sure you want to reset all ratings for ${roomData.name}? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            setResetLoading(true);
+            try {
+              const batch = writeBatch(db);
+
+              // 1. Reset main aggregate
+              batch.delete(doc(db, "ratings", finalRoomId as string));
+
+              // 2. Reset detail aggregates
+              batch.delete(doc(db, "ratings", `${finalRoomId}_chairs`));
+              batch.delete(doc(db, "ratings", `${finalRoomId}_lighting`));
+              batch.delete(doc(db, "ratings", `${finalRoomId}_projector`));
+
+              // 3. Optional: Delete individual user ratings if you want a FULL reset
+              // Note: For a true full reset, you'd need to fetch and delete all docs in userRatings subcollections.
+              // This basic reset will clear the averages.
+
+              await batch.commit();
+              Alert.alert("Success", "Room ratings have been reset.");
+            } catch (err) {
+              console.error("Reset failed:", err);
+              Alert.alert("Error", "Failed to reset room data.");
+            } finally {
+              setResetLoading(false);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const roomData = getRoomById(finalRoomId as string) || {
     id: 'unknown',
@@ -43,20 +110,14 @@ export default function RoomDetail() {
     }
   };
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Ionicons name="chevron-back" size={28} color={theme.text} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.text }]}>{roomData.name} - {roomData.building}</Text>
-          <View style={{ width: 40 }} />
-        </View>
+  const insets = useSafeAreaInsets();
 
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingTop: insets.top + 50 }}
+      >
         <View style={styles.imageContainer}>
           {roomData.images.length > 1 ? (
             <>
@@ -151,13 +212,53 @@ export default function RoomDetail() {
             <View style={styles.infoSeparator} />
             <Text style={[styles.buildingName, { color: theme.text }]}>Room Type: {roomData.roomType || 'Unknown'}</Text>
             <View style={styles.infoSeparator} />
-            <Text style={[styles.buildingName, { color: theme.text }]}>Seating Size: {roomData.capacity}</Text>
+            <Text style={[styles.buildingName, { color: theme.text }]}>Capacity: {roomData.capacity}</Text>
             <View style={styles.infoSeparator} />
             <Text style={[styles.floor, { color: theme.text }]}>Floor: {roomData.floor}</Text>
           </View>
+
+          {isAdmin && (
+            <TouchableOpacity
+              style={[styles.resetButton, { backgroundColor: theme.destructive + '15', borderColor: theme.destructive + '30' }]}
+              onPress={handleResetRoom}
+              disabled={resetLoading}
+            >
+              {resetLoading ? (
+                <ActivityIndicator color={theme.destructive} />
+              ) : (
+                <>
+                  <Ionicons name="trash-outline" size={20} color={theme.destructive} />
+                  <Text style={[styles.resetButtonText, { color: theme.destructive }]}>Reset Room Ratings</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Floating Header with Fade Effect */}
+      <View style={[styles.headerFloatingContainer, { top: 0, left: 0, right: 0, height: insets.top + 75 }]}>
+        <LinearGradient
+          colors={[theme.background, theme.background, theme.background + 'CC', theme.background + '00']}
+          locations={[0, 0.55, 0.8, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+            >
+              <Ionicons name="chevron-back" size={28} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+              {roomData.name} - {roomData.building}
+            </Text>
+            <View style={{ width: 40 }} />
+          </View>
+        </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
@@ -165,15 +266,17 @@ function createStyles(theme: Theme) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.background,
+    },
+    headerFloatingContainer: {
+      position: 'absolute',
+      zIndex: 10,
     },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
-      paddingTop: 12,
-      paddingBottom: 8,
+      paddingVertical: 8,
     },
     backButton: {
       width: 40,
@@ -293,6 +396,21 @@ function createStyles(theme: Theme) {
     },
     rateButtonText: {
       color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    resetButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      paddingVertical: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      marginTop: 10,
+      marginBottom: 30,
+    },
+    resetButtonText: {
       fontSize: 16,
       fontWeight: '600',
     },

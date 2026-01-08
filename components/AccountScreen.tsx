@@ -1,13 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import Constants from "expo-constants";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -15,8 +6,25 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { useTheme, Theme } from "../theme";
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  writeBatch
+} from "firebase/firestore";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { auth, db } from "../firebaseConfig";
+import { Theme, useTheme } from "../theme";
 
 export default function Account() {
   const theme = useTheme();
@@ -27,19 +35,53 @@ export default function Account() {
   const [username, setUsername] = useState("");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
+
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [userCount, setUserCount] = useState<number | null>(null);
+
+  const version = Constants.expoConfig?.version || "1.0.0";
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       setUserEmail(user?.email ?? null);
       setUserName(user?.displayName ?? null);
+
+      if (user) {
+        // 1. Check if user is admin
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        } catch (err) {
+          console.error("Error checking admin status:", err);
+          setIsAdmin(false);
+        }
+
+        // 2. Fetch user count
+        try {
+          const coll = collection(db, "users");
+          const snapshot = await getCountFromServer(coll);
+          setUserCount(snapshot.data().count);
+        } catch (err) {
+          console.error("Error fetching user count:", err);
+        }
+      } else {
+        setIsAdmin(false);
+        setUserCount(null);
+      }
     });
     return unsub;
   }, []);
+
+
 
   async function handleSubmit() {
     if (!email || !password) {
@@ -59,14 +101,39 @@ export default function Account() {
         await signInWithEmailAndPassword(auth, email.trim(), password);
         setMessage("Signed in!");
       } else {
+        const trimmedName = username.trim();
+        const lowerName = trimmedName.toLowerCase();
+
+        // 1. Check if username is taken in Firestore
+        const nameRef = doc(db, "usernames", lowerName);
+        const nameSnap = await getDoc(nameRef);
+
+        if (nameSnap.exists()) {
+          setMessage("Username is already taken.");
+          setLoading(false);
+          return;
+        }
+
+        // 2. Create Auth User
         const result = await createUserWithEmailAndPassword(
           auth,
           email.trim(),
           password
         );
-        if (username.trim()) {
-          await updateProfile(result.user, { displayName: username.trim() });
-        }
+
+        // 3. Update Auth Profile
+        await updateProfile(result.user, { displayName: trimmedName });
+
+        // 4. Reserve username and create user doc in Firestore
+        const batch = writeBatch(db);
+        batch.set(nameRef, { uid: result.user.uid });
+        batch.set(doc(db, "users", result.user.uid), {
+          username: trimmedName,
+          role: "user",
+          email: email.trim(),
+        });
+        await batch.commit();
+
         setMessage("Account created and signed in.");
       }
     } catch (err: unknown) {
@@ -120,8 +187,8 @@ export default function Account() {
           {userEmail
             ? "Signed in with email"
             : isSignup
-            ? "Create an account to continue"
-            : "Welcome back"}
+              ? "Create an account to continue"
+              : "Welcome back"}
         </Text>
       </View>
       <View style={styles.card}>
@@ -135,6 +202,7 @@ export default function Account() {
             )}
             <Text style={styles.label}>Email</Text>
             <Text style={styles.value}>{userEmail}</Text>
+
             <Pressable style={styles.buttonSecondary} onPress={handleSignOut}>
               <Text style={styles.buttonText}>Sign out</Text>
             </Pressable>
@@ -205,6 +273,12 @@ export default function Account() {
         )}
 
         {message && <Text style={styles.message}>{message}</Text>}
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          {userCount !== null ? `Users: ${userCount} • ` : ""}Version {version}
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -302,11 +376,31 @@ function createStyles(theme: Theme) {
       textAlign: "center",
       fontSize: 14,
     },
+    footer: {
+      marginTop: 20,
+      alignItems: "center",
+      gap: 4,
+    },
+    footerText: {
+      color: theme.subtext,
+      fontSize: 12,
+      opacity: 0.7,
+    },
     errorText: {
       color: theme.destructive,
       fontSize: 13,
       marginTop: -4,
       marginBottom: 4,
+    },
+    adminSection: {
+      marginTop: 20,
+      gap: 12,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: theme.border,
+      width: '100%',
+      opacity: 0.5,
     },
   });
 }

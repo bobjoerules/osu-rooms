@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Accordion from '../../components/Accordion';
 import RoomList from '../../components/RoomList';
 import { BUILDINGS_DATA } from '../../data/rooms';
@@ -51,26 +52,47 @@ export default function Index() {
   }, [searchQuery]);
 
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
-      <View style={styles.header}>
-        <View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Ionicons name="search" size={20} color={theme.subtext} />
-          <TextInput
-            style={[styles.searchInput, { color: theme.text }]}
-            placeholder="Search buildings or rooms..."
-            placeholderTextColor={theme.subtext}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            clearButtonMode="while-editing"
-          />
-        </View>
-      </View>
+  const insets = useSafeAreaInsets();
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent}>
-        <Accordion items={accordionItems} />
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 70 } // Dynamic padding to account for fixed header
+        ]}
+      >
+        <Accordion
+          items={accordionItems}
+          forceExpandAll={searchQuery.trim().length > 0}
+        />
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Floating Header with Fade Effect */}
+      <View style={[styles.headerContainer, { top: 0, left: 0, right: 0, height: insets.top + 80 }]}>
+        <LinearGradient
+          colors={[theme.background, theme.background, theme.background + 'CC', theme.background + '00']}
+          locations={[0, 0.65, 0.85, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Ionicons name="search" size={20} color={theme.subtext} />
+              <TextInput
+                style={[styles.searchInput, { color: theme.text }]}
+                placeholder="Search buildings or rooms..."
+                placeholderTextColor={theme.subtext}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                clearButtonMode="while-editing"
+              />
+            </View>
+          </View>
+        </SafeAreaView>
+      </View>
+    </View>
   );
 }
 
@@ -80,10 +102,13 @@ function createStyles(theme: Theme) {
       flex: 1,
       backgroundColor: theme.background,
     },
+    headerContainer: {
+      position: 'absolute',
+      zIndex: 10,
+    },
     header: {
       paddingHorizontal: 16,
       paddingVertical: 12,
-      backgroundColor: theme.background,
     },
     searchBar: {
       flexDirection: 'row',
@@ -100,7 +125,7 @@ function createStyles(theme: Theme) {
     },
     scrollContent: {
       paddingHorizontal: 16,
-      paddingBottom: 20,
+      paddingBottom: 80,
     },
   });
 }
