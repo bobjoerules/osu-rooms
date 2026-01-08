@@ -1,8 +1,8 @@
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SystemUI from 'expo-system-ui';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, useColorScheme, View } from 'react-native';
 import AccountScreen from '../components/AccountScreen';
 import { auth } from '../firebaseConfig';
@@ -10,10 +10,22 @@ import { ThemeProvider, useTheme } from '../theme';
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const prevIsLoggedIn = useRef<boolean | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
+      const loggedIn = !!user;
+
+      // If we were explicitly logged out and now we are logged in, 
+      // redirect to home to reset any deep-linked state (like the rate modal)
+      if (prevIsLoggedIn.current === false && loggedIn === true) {
+        // Use replace to ensure we reset the stack
+        router.replace('/');
+      }
+
+      setIsLoggedIn(loggedIn);
+      prevIsLoggedIn.current = loggedIn;
     });
     return unsubscribe;
   }, []);

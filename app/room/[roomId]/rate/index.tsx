@@ -13,17 +13,25 @@ export default function RateRoomModal() {
 
     const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
 
+    const handleClose = () => {
+        if (router.canGoBack()) {
+            router.back();
+        } else {
+            router.replace(`/room/${finalRoomId}`);
+        }
+    };
+
     return (
         <TouchableOpacity
             style={styles.container}
             activeOpacity={1}
-            onPress={() => router.back()}
+            onPress={handleClose}
         >
             <TouchableWithoutFeedback>
                 <View style={styles.popup}>
                     <View style={styles.header}>
                         <Text style={[styles.title, { color: theme.text }]}>Rate Room</Text>
-                        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+                        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                             <Ionicons name="close" size={24} color={theme.text} />
                         </TouchableOpacity>
                     </View>
@@ -48,6 +56,13 @@ export default function RateRoomModal() {
                             <Text style={[styles.label, { color: theme.text }]}>Projector/Screen Visibility</Text>
                             <StarRating itemId={`${finalRoomId}_projector`} size={40} />
                         </View>
+
+                        <TouchableOpacity
+                            style={[styles.doneButton, { backgroundColor: theme.primary }]}
+                            onPress={handleClose}
+                        >
+                            <Text style={styles.doneButtonText}>Done</Text>
+                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </TouchableWithoutFeedback>

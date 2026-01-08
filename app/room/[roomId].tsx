@@ -74,6 +74,7 @@ export default function RoomDetail() {
                 renderItem={({ item, index }) => (
                   <Image
                     source={item}
+                    contentFit="cover"
                     style={[
                       styles.headerImage,
                       {
@@ -100,6 +101,7 @@ export default function RoomDetail() {
           ) : (
             <Image
               source={roomData.images[0]}
+              contentFit="cover"
               style={[styles.headerImage, { width: SCREEN_WIDTH - 32, marginHorizontal: 16 }]}
               transition={500}
             />
@@ -188,7 +190,6 @@ function createStyles(theme: Theme) {
     },
     headerImage: {
       height: 240,
-      resizeMode: 'cover',
       borderRadius: 16,
     },
     paginationDots: {

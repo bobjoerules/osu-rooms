@@ -26,8 +26,6 @@ export const BUILDINGS_DATA: Building[] = [
                 building: 'Owen Hall',
                 images: [
                     require('../assets/images/rooms/owen-hall-101.jpeg'),
-                    require('../assets/images/placeholder.png'),
-                    require('../assets/images/rooms/owen-hall-102.jpeg'),
                 ],
                 floor: '1',
                 capacity: '84',
@@ -38,7 +36,9 @@ export const BUILDINGS_DATA: Building[] = [
                 id: 'owen-hall-102',
                 name: 'Room 102',
                 building: 'Owen Hall',
-                images: [require('../assets/images/rooms/owen-hall-102.jpeg')],
+                images: [
+                    require('../assets/images/rooms/owen-hall-102.jpeg'),
+                ],
                 floor: '1',
                 capacity: '94',
                 roomType: 'Lecture Hall',
@@ -48,7 +48,9 @@ export const BUILDINGS_DATA: Building[] = [
                 id: 'owen-hall-106',
                 name: 'Room 106',
                 building: 'Owen Hall',
-                images: [require('../assets/images/rooms/owen-hall-106.jpeg')],
+                images: [
+                    require('../assets/images/rooms/owen-hall-106.jpeg'),
+                ],
                 floor: '1',
                 capacity: '56',
                 roomType: 'Classroom',
@@ -58,11 +60,25 @@ export const BUILDINGS_DATA: Building[] = [
                 id: 'owen-hall-109',
                 name: 'Room 109',
                 building: 'Owen Hall',
-                images: [require('../assets/images/rooms/owen-hall-109.jpeg')],
+                images: [
+                    require('../assets/images/rooms/owen-hall-109.jpeg')
+                ],
                 floor: '1',
                 capacity: '29',
                 roomType: 'Lab Room',
                 searchAliases: ['Owen 109'],
+            },
+            {
+                id: 'owen-hall-110',
+                name: 'Room 110',
+                building: 'Owen Hall',
+                images: [
+                    require('../assets/images/rooms/owen-hall-110.jpeg')
+                ],
+                floor: '1',
+                capacity: '41',
+                roomType: 'Classroom',
+                searchAliases: ['Owen 110'],
             },
         ]
     },
