@@ -31,6 +31,15 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
   const rowRef = useRef<View | null>(null);
   const rowBoxRef = useRef<{ x: number; y: number; width: number; height: number; ready: boolean }>({ x: 0, y: 0, width: 0, height: 0, ready: false });
 
+  // Safety check for undefined itemId
+  if (!itemId) {
+    return (
+      <View style={styles.wrapper}>
+        <Text style={styles.error}>Invalid item ID</Text>
+      </View>
+    );
+  }
+
   // Listen for aggregate rating changes
   useEffect(() => {
     const itemRef = doc(db, 'ratings', itemId);

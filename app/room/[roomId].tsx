@@ -1,18 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import { getRoomById } from '../../data/rooms';
 import { Theme, useTheme } from '../../theme';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function RoomDetail() {
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
   const router = useRouter();
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Fallback if roomId is an array (sometimes happens with dynamic routes)
   const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
@@ -21,9 +24,23 @@ export default function RoomDetail() {
     id: 'unknown',
     name: 'Unknown Room',
     building: 'Unknown Building',
-    image: require('../../assets/images/placeholder.png'),
+    images: [require('../../assets/images/placeholder.png')],
     floor: 'Unknown',
     capacity: 'Unknown',
+    roomType: 'Unknown',
+  };
+
+  const IMAGE_WIDTH = SCREEN_WIDTH * 0.88;
+  const GAP = 12;
+  const SNAP_INTERVAL = IMAGE_WIDTH + GAP;
+
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const scrollOffset = event.nativeEvent.contentOffset.x;
+    const index = scrollOffset / SNAP_INTERVAL;
+    const roundIndex = Math.round(index);
+    if (roundIndex !== activeImageIndex) {
+      setActiveImageIndex(roundIndex);
+    }
   };
 
   return (
@@ -40,9 +57,54 @@ export default function RoomDetail() {
           <View style={{ width: 40 }} />
         </View>
 
-        {roomData.image && (
-          <Image source={roomData.image} style={styles.headerImage} transition={500} />
-        )}
+        <View style={styles.imageContainer}>
+          {roomData.images.length > 1 ? (
+            <>
+              <FlatList
+                data={roomData.images}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+                snapToInterval={SNAP_INTERVAL}
+                snapToAlignment="start"
+                decelerationRate="fast"
+                contentContainerStyle={{ paddingHorizontal: 16 }}
+                keyExtractor={(_, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                  <Image
+                    source={item}
+                    style={[
+                      styles.headerImage,
+                      {
+                        width: IMAGE_WIDTH,
+                        marginRight: index === roomData.images.length - 1 ? 0 : GAP,
+                      }
+                    ]}
+                    transition={500}
+                  />
+                )}
+              />
+              <View style={styles.paginationDots}>
+                {roomData.images.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.dot,
+                      activeImageIndex === index ? styles.activeDot : { backgroundColor: theme.subtext + '50' }
+                    ]}
+                  />
+                ))}
+              </View>
+            </>
+          ) : (
+            <Image
+              source={roomData.images[0]}
+              style={[styles.headerImage, { width: SCREEN_WIDTH - 32, marginHorizontal: 16 }]}
+              transition={500}
+            />
+          )}
+        </View>
 
         <View style={styles.content}>
           <View style={styles.mainRatingSection}>
@@ -85,6 +147,8 @@ export default function RoomDetail() {
             <View style={styles.infoSeparator} />
             <Text style={[styles.buildingName, { color: theme.text }]}>Building: {roomData.building}</Text>
             <View style={styles.infoSeparator} />
+            <Text style={[styles.buildingName, { color: theme.text }]}>Room Type: {roomData.roomType || 'Unknown'}</Text>
+            <View style={styles.infoSeparator} />
             <Text style={[styles.buildingName, { color: theme.text }]}>Seating Size: {roomData.capacity}</Text>
             <View style={styles.infoSeparator} />
             <Text style={[styles.floor, { color: theme.text }]}>Floor: {roomData.floor}</Text>
@@ -119,12 +183,33 @@ function createStyles(theme: Theme) {
       fontSize: 18,
       fontWeight: '600',
     },
+    imageContainer: {
+      position: 'relative',
+    },
     headerImage: {
-      width: 'auto',
       height: 240,
       resizeMode: 'cover',
-      marginHorizontal: 16,
       borderRadius: 16,
+    },
+    paginationDots: {
+      flexDirection: 'row',
+      position: 'absolute',
+      bottom: 12,
+      alignSelf: 'center',
+      gap: 6,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 10,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    activeDot: {
+      backgroundColor: '#fff',
+      width: 12,
     },
     content: {
       paddingHorizontal: 16,

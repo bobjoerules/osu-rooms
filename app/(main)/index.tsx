@@ -18,9 +18,13 @@ export default function Index() {
     // 1. Filter
     const filtered = BUILDINGS_DATA.map(building => {
       const buildingNameMatch = building.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchingRooms = building.rooms.filter(room =>
-        room.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const matchingRooms = building.rooms.filter(room => {
+        const nameMatch = room.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const aliasMatch = room.searchAliases?.some(alias =>
+          alias.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        return nameMatch || aliasMatch;
+      });
 
       // If building name matches, show all rooms.
       if (buildingNameMatch) {

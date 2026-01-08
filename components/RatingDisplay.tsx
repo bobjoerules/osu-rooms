@@ -19,6 +19,15 @@ export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showM
   const [avg, setAvg] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
 
+  // Safety check for undefined itemId
+  if (!itemId) {
+    return (
+      <View style={[styles.wrapper, { alignItems: align }]}>
+        <Text style={styles.error}>Invalid item ID</Text>
+      </View>
+    );
+  }
+
   // Listen for aggregate rating changes
   useEffect(() => {
     const itemRef = doc(db, 'ratings', itemId);
@@ -91,5 +100,6 @@ function createStyles(theme: Theme) {
     row: { flexDirection: 'row' },
     starBtn: { paddingHorizontal: 4 },
     meta: { color: theme.subtext, fontSize: 14 },
+    error: { color: theme.destructive, fontSize: 13 },
   });
 }

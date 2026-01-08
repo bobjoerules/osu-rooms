@@ -6,11 +6,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
 
-interface Room {
-  id: string;
-  name: string;
-  image: any;
-}
+import { Room } from '../data/rooms';
 
 interface RoomListProps {
   rooms: Room[];
@@ -30,8 +26,8 @@ export default function RoomList({ rooms }: RoomListProps) {
       onPress={() => handleRoomPress(item.id)}
       activeOpacity={0.7}
     >
-      {item.image && (
-        <Image source={item.image} style={styles.roomImage} transition={300} />
+      {item.images && item.images.length > 0 && (
+        <Image source={item.images[0]} style={styles.roomImage} transition={300} />
       )}
       <View style={styles.roomContent}>
         <Text style={[styles.roomName, { color: theme.text }]}>{item.name}</Text>
