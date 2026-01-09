@@ -177,7 +177,7 @@ export default function RoomDetail() {
             </View>
 
             <TouchableOpacity
-              style={[styles.rateButton, { backgroundColor: theme.primary, marginTop: 8, flexDirection: 'row', gap: 8 }]}
+              style={[styles.rateButton, { backgroundColor: theme.primary, marginTop: 16, flexDirection: 'row', gap: 8 }]}
               onPress={() => router.push(`/room/${finalRoomId}/rate`)}
             >
               <Ionicons name="pencil" size={18} color="#fff" />
@@ -233,6 +233,8 @@ export default function RoomDetail() {
               )}
             </TouchableOpacity>
           )}
+
+
         </View>
       </ScrollView>
 
@@ -412,6 +414,21 @@ function createStyles(theme: Theme) {
     },
     resetButtonText: {
       fontSize: 16,
+      fontWeight: '600',
+    },
+    suggestButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      paddingVertical: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+      marginTop: 8,
+      borderStyle: 'dashed',
+    },
+    suggestButtonText: {
+      fontSize: 14,
       fontWeight: '600',
     },
   });

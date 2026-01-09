@@ -70,10 +70,10 @@ export default function Index() {
       </ScrollView>
 
       {/* Floating Header with Fade Effect */}
-      <View style={[styles.headerContainer, { top: 0, left: 0, right: 0, height: insets.top + 80 }]}>
+      <View style={[styles.headerContainer, { top: 0, left: 0, right: 0, height: insets.top + 70 }]}>
         <LinearGradient
           colors={[theme.background, theme.background, theme.background + 'CC', theme.background + '00']}
-          locations={[0, 0.65, 0.85, 1]}
+          locations={[0, 0.6, 0.8, 1]}
           style={StyleSheet.absoluteFill}
         />
         <SafeAreaView edges={['top']}>

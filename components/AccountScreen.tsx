@@ -1,4 +1,5 @@
 import Constants from "expo-constants";
+import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -28,6 +29,7 @@ import { Theme, useTheme } from "../theme";
 
 export default function Account() {
   const theme = useTheme();
+  const router = useRouter();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const [email, setEmail] = useState("");
@@ -206,6 +208,21 @@ export default function Account() {
             <Pressable style={styles.buttonSecondary} onPress={handleSignOut}>
               <Text style={styles.buttonText}>Sign out</Text>
             </Pressable>
+
+            {isAdmin && (
+              <View style={styles.adminSection}>
+                <View style={styles.separator} />
+                <Text style={styles.label}>Admin Tools</Text>
+                <Pressable
+                  style={styles.adminButton}
+                  onPress={() => {
+                    router.push("/admin" as any);
+                  }}
+                >
+                  <Text style={styles.adminButtonText}>Review Submissions</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
         ) : (
           <View style={styles.section}>
@@ -393,14 +410,29 @@ function createStyles(theme: Theme) {
       marginBottom: 4,
     },
     adminSection: {
-      marginTop: 20,
+      marginTop: 16,
       gap: 12,
+    },
+    adminButton: {
+      backgroundColor: theme.card,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.primary,
+      alignItems: "center",
+    },
+    adminButtonText: {
+      color: theme.primary,
+      fontWeight: "700",
+      fontSize: 16,
     },
     separator: {
       height: 1,
       backgroundColor: theme.border,
       width: '100%',
       opacity: 0.5,
+      marginVertical: 4,
     },
   });
 }

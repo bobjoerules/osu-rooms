@@ -90,12 +90,25 @@ function AuthenticatedStack() {
           }}
         >
           <Stack.Screen
+            name="(main)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="room/[roomId]/rate/index"
             options={{
               presentation: 'transparentModal',
               animation: 'fade',
               headerShown: false,
               contentStyle: { backgroundColor: 'transparent' },
+            }}
+          />
+          <Stack.Screen
+            name="admin"
+            options={{
+              headerShown: false,
+              animation: 'slide_from_bottom',
             }}
           />
         </Stack>

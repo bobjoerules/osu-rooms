@@ -12,6 +12,10 @@ export default function TabLayout() {
                 <Label>Home</Label>
                 <Icon sf="house.fill" drawable="ic_menu_home" />
             </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="submit">
+                <Label>Add Room</Label>
+                <Icon sf="plus.circle.fill" drawable="ic_input_add" />
+            </NativeTabs.Trigger>
             <NativeTabs.Trigger name="account">
                 <Label>Account</Label>
                 <Icon sf="person.fill" drawable="ic_menu_account" />
