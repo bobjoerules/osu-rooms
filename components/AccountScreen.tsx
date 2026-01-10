@@ -60,14 +60,24 @@ export default function Account() {
       if (user) {
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().role === "admin") {
-            setIsAdmin(true);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            if (userData.username) {
+              setUserName(userData.username);
+            }
+            
+            if (userData.role === "admin") {
+              setIsAdmin(true);
 
-            // Fetch pending submissions count for admin
-            const submissionsColl = collection(db, "submissions");
-            const q = query(submissionsColl, where("status", "==", "pending"));
-            const snapshot = await getCountFromServer(q);
-            setPendingCount(snapshot.data().count);
+              // Fetch pending submissions count for admin
+              const submissionsColl = collection(db, "submissions");
+              const q = query(submissionsColl, where("status", "==", "pending"));
+              const snapshot = await getCountFromServer(q);
+              setPendingCount(snapshot.data().count);
+            } else {
+              setIsAdmin(false);
+              setPendingCount(null);
+            }
           } else {
             setIsAdmin(false);
             setPendingCount(null);
@@ -210,15 +220,13 @@ export default function Account() {
       <View style={styles.card}>
         {userEmail ? (
           <View style={styles.section}>
-            {userName && (
-              <View style={styles.infoRow}>
-                <View>
-                  <Text style={styles.label}>Username</Text>
-                  <Text style={styles.value}>{userName}</Text>
-                </View>
-                <Ionicons name="person-circle-outline" size={24} color={theme.subtext} />
+            <View style={styles.infoRow}>
+              <View>
+                <Text style={styles.label}>Username</Text>
+                <Text style={styles.value}>{userName || "User"}</Text>
               </View>
-            )}
+              <Ionicons name="person-circle-outline" size={24} color={theme.subtext} />
+            </View>
             <View style={styles.infoRow}>
               <View>
                 <Text style={styles.label}>Email</Text>

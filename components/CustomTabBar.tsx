@@ -12,6 +12,7 @@ export default function CustomTabBar() {
 
   const isHome = pathname === '/' || pathname === '/index';
   const isAccount = pathname === '/account';
+  const isSubmit = pathname === '/submit';
 
   return (
     <View style={[styles.container, { 
@@ -21,14 +22,26 @@ export default function CustomTabBar() {
     }]}>
       <TouchableOpacity 
         style={styles.tab} 
+        onPress={() => router.push('/submit')}
+      >
+        <Ionicons 
+          name={isSubmit ? 'plus-circle' : 'plus-circle-outline'} 
+          size={24} 
+          color={isSubmit ? '#D73F09' : theme.subtext} 
+        />
+        <Text style={[styles.label, { color: isSubmit ? '#D73F09' : theme.subtext }]}>Add Room</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.tab} 
         onPress={() => router.push('/')}
       >
         <Ionicons 
-          name={isHome ? 'home' : 'home-outline'} 
+          name={isHome ? 'grid' : 'grid-outline'} 
           size={24} 
           color={isHome ? '#D73F09' : theme.subtext} 
         />
-        <Text style={[styles.label, { color: isHome ? '#D73F09' : theme.subtext }]}>Home</Text>
+        <Text style={[styles.label, { color: isHome ? '#D73F09' : theme.subtext }]}>Rooms</Text>
       </TouchableOpacity>
       
       <TouchableOpacity 
