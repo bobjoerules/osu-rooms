@@ -46,6 +46,7 @@ export default function Account() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [userCount, setUserCount] = useState<number | null>(null);
   const [pendingCount, setPendingCount] = useState<number | null>(null);
@@ -66,7 +67,10 @@ export default function Account() {
               setUserName(userData.username);
             }
             
-            if (userData.role === "admin") {
+            const role = userData.role;
+            setUserRole(role);
+            
+            if (role === "admin" || role === "owner") {
               setIsAdmin(true);
 
               // Fetch pending submissions count for admin
@@ -80,11 +84,13 @@ export default function Account() {
             }
           } else {
             setIsAdmin(false);
+            setUserRole(null);
             setPendingCount(null);
           }
         } catch (err) {
           console.error("Error checking admin status:", err);
           setIsAdmin(false);
+          setUserRole(null);
           setPendingCount(null);
         }
 
@@ -97,6 +103,7 @@ export default function Account() {
         }
       } else {
         setIsAdmin(false);
+        setUserRole(null);
         setUserCount(null);
         setPendingCount(null);
       }
@@ -204,8 +211,10 @@ export default function Account() {
             {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
           </Text>
           {isAdmin && (
-            <View style={styles.adminBadge}>
-              <Text style={styles.adminBadgeText}>ADMIN</Text>
+            <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
+              <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
+                {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
+              </Text>
             </View>
           )}
         </View>

@@ -30,7 +30,7 @@ export default function RoomDetail() {
       if (user) {
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().role === "admin") {
+          if (userDoc.exists() && (userDoc.data().role === "admin" || userDoc.data().role === "owner")) {
             setIsAdmin(true);
           } else {
             setIsAdmin(false);

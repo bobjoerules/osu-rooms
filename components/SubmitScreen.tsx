@@ -62,11 +62,6 @@ export default function SubmitScreen() {
             return;
         }
 
-        if (!building.trim() || !roomNumber.trim()) {
-            Alert.alert('Error', 'Please enter at least building and room number.');
-            return;
-        }
-
         setSubmitting(true);
         try {
             let imageUrl = null;
@@ -263,10 +258,10 @@ export default function SubmitScreen() {
                         <Pressable
                             style={[
                                 styles.submitButton,
-                                (!building || !roomNumber || submitting) && styles.submitButtonDisabled,
+                                (!building.trim() || !roomNumber.trim() || submitting) && styles.submitButtonDisabled,
                             ]}
                             onPress={handleSubmit}
-                            disabled={submitting}
+                            disabled={!building.trim() || !roomNumber.trim() || submitting}
                         >
                             {submitting ? (
                                 <ActivityIndicator color="#fff" />

@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import { collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
     ActivityIndicator,
     Alert,
+    Dimensions,
     FlatList,
     Pressable,
     StyleSheet,
@@ -15,6 +16,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../firebaseConfig';
 import { useTheme } from '../theme';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface Submission {
     id: string;
@@ -31,15 +34,17 @@ interface Submission {
 export default function AdminScreen() {
     const theme = useTheme();
     const router = useRouter();
+    const horizontalListRef = useRef<FlatList>(null);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
+
+    const statuses = ['pending', 'approved', 'rejected'] as const;
 
     useEffect(() => {
         setLoading(true);
         const q = query(
             collection(db, 'submissions'),
-            where('status', '==', statusFilter),
             orderBy('createdAt', 'desc')
         );
 
@@ -56,7 +61,15 @@ export default function AdminScreen() {
         });
 
         return unsubscribe;
-    }, [statusFilter]);
+    }, []);
+
+    const groupedSubmissions = useMemo(() => {
+        return {
+            pending: submissions.filter(s => s.status === 'pending'),
+            approved: submissions.filter(s => s.status === 'approved'),
+            rejected: submissions.filter(s => s.status === 'rejected'),
+        };
+    }, [submissions]);
 
     const handleAction = async (id: string, status: 'approved' | 'rejected') => {
         try {
@@ -92,7 +105,18 @@ export default function AdminScreen() {
         );
     };
 
-    const renderItem = ({ item }: { item: Submission }) => (
+    const handleTabPress = (status: 'pending' | 'approved' | 'rejected') => {
+        setStatusFilter(status);
+        const index = statuses.indexOf(status);
+        horizontalListRef.current?.scrollToIndex({ index, animated: true });
+    };
+
+    const onMomentumScrollEnd = (event: any) => {
+        const index = Math.round(event.nativeEvent.contentOffset.x / SCREEN_WIDTH);
+        setStatusFilter(statuses[index]);
+    };
+
+    const renderSubmissionItem = ({ item }: { item: Submission }) => (
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
             {item.imageUrl && (
                 <Image
@@ -116,7 +140,7 @@ export default function AdminScreen() {
                 </Text>
 
                 <View style={styles.actions}>
-                    {statusFilter === 'pending' && (
+                    {item.status === 'pending' && (
                         <>
                             <Pressable
                                 style={[styles.actionButton, styles.rejectButton]}
@@ -134,7 +158,7 @@ export default function AdminScreen() {
                             </Pressable>
                         </>
                     )}
-                    {statusFilter !== 'pending' && (
+                    {item.status !== 'pending' && (
                         <Pressable
                             style={[styles.actionButton, styles.deleteButton]}
                             onPress={() => handleDelete(item.id)}
@@ -148,6 +172,43 @@ export default function AdminScreen() {
         </View>
     );
 
+    const renderPage = ({ item: status }: { item: 'pending' | 'approved' | 'rejected' }) => {
+        const pageSubmissions = groupedSubmissions[status];
+
+        return (
+            <View style={{ width: SCREEN_WIDTH }}>
+                {loading ? (
+                    <View style={styles.centered}>
+                        <ActivityIndicator size="large" color={theme.primary} />
+                    </View>
+                ) : pageSubmissions.length === 0 ? (
+                    <View style={styles.centered}>
+                        <Ionicons name="documents-outline" size={64} color={theme.subtext} style={{ marginBottom: 16 }} />
+                        <Text style={[styles.emptyText, { color: theme.subtext }]}>
+                            No {status} submissions
+                        </Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={pageSubmissions}
+                        renderItem={renderSubmissionItem}
+                        keyExtractor={item => item.id}
+                        contentContainerStyle={styles.listContent}
+                    />
+                )}
+            </View>
+        );
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'pending': return '#FFCC00'; // Yellow
+            case 'approved': return '#34C759'; // Green
+            case 'rejected': return '#FF3B30'; // Red
+            default: return theme.primary;
+        }
+    };
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
             <View style={styles.header}>
@@ -159,44 +220,40 @@ export default function AdminScreen() {
             </View>
 
             <View style={styles.tabBar}>
-                {(['pending', 'approved', 'rejected'] as const).map((status) => (
-                    <Pressable
-                        key={status}
-                        onPress={() => setStatusFilter(status)}
-                        style={[
-                            styles.tabItem,
-                            statusFilter === status && { borderBottomColor: theme.primary }
-                        ]}
-                    >
-                        <Text style={[
-                            styles.tabText,
-                            { color: statusFilter === status ? theme.primary : theme.subtext }
-                        ]}>
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                        </Text>
-                    </Pressable>
-                ))}
+                {statuses.map((status) => {
+                    const statusColor = getStatusColor(status);
+                    const isActive = statusFilter === status;
+                    
+                    return (
+                        <Pressable
+                            key={status}
+                            onPress={() => handleTabPress(status)}
+                            style={[
+                                styles.tabItem,
+                                isActive && { borderBottomColor: statusColor }
+                            ]}
+                        >
+                            <Text style={[
+                                styles.tabText,
+                                { color: isActive ? statusColor : theme.subtext }
+                            ]}>
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </Text>
+                        </Pressable>
+                    );
+                })}
             </View>
 
-            {loading ? (
-                <View style={styles.centered}>
-                    <ActivityIndicator size="large" color={theme.primary} />
-                </View>
-            ) : submissions.length === 0 ? (
-                <View style={styles.centered}>
-                    <Ionicons name="documents-outline" size={64} color={theme.subtext} style={{ marginBottom: 16 }} />
-                    <Text style={[styles.emptyText, { color: theme.subtext }]}>
-                        No {statusFilter} submissions
-                    </Text>
-                </View>
-            ) : (
-                <FlatList
-                    data={submissions}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={styles.listContent}
-                />
-            )}
+            <FlatList
+                ref={horizontalListRef}
+                data={statuses}
+                renderItem={renderPage}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={onMomentumScrollEnd}
+                keyExtractor={item => item}
+            />
         </SafeAreaView>
     );
 }
