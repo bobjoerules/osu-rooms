@@ -1479,6 +1479,354 @@ export const BUILDINGS_DATA: Building[] = [
             }
         ]
     },
+    {
+        id: 'bexl',
+        name: 'Bexell Hall',
+        rooms: [
+            {
+                id: 'bexl-100M',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '17',
+                roomType: 'Computer Lab',
+                searchAliases: ['BEXL 100M'],
+            },
+            {
+                id: 'bexl-103',
+                images: [
+                    require('../assets/images/rooms/bexl-103.jpeg')
+                ],
+                floor: '1',
+                capacity: '36',
+                roomType: 'Colab Classroom',
+                searchAliases: ['BEXL 103'],
+            },
+            {
+                id: 'bexl-120',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '32',
+                roomType: 'Computer Lab',
+                searchAliases: ['BEXL 120'],
+            },
+            {
+                id: 'bexl-207',
+                images: [
+                    require('../assets/images/rooms/bexl-207.jpeg')
+                ],
+                floor: '2',
+                capacity: '44',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 207'],
+            },
+            {
+                id: 'bexl-211',
+                images: [
+                    require('../assets/images/rooms/bexl-211.jpeg')
+                ],
+                floor: '2',
+                capacity: '16',
+                roomType: 'Conference Room',
+                searchAliases: ['BEXL 211'],
+            },
+            {
+                id: 'bexl-320',
+                images: [
+                    require('../assets/images/rooms/bexl-320.jpeg')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 320'],
+            },
+            {
+                id: 'bexl-321',
+                images: [
+                    require('../assets/images/rooms/bexl-321.jpeg')
+                ],
+                floor: '3',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 321'],
+            },
+            {
+                id: 'bexl-322',
+                images: [
+                    require('../assets/images/rooms/bexl-322.jpeg')
+                ],
+                floor: '3',
+                capacity: '26',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 322'],
+            },
+            {
+                id: 'bexl-323',
+                images: [
+                    require('../assets/images/rooms/bexl-323.jpeg')
+                ],
+                floor: '3',
+                capacity: '36',
+                roomType: 'Collab Classroom',
+                searchAliases: ['BEXL 323'],
+            },
+            {
+                id: 'bexl-324',
+                images: [
+                    require('../assets/images/rooms/bexl-324.jpeg')
+                ],
+                floor: '3',
+                capacity: '45',
+                roomType: 'Computer Classroom',
+                searchAliases: ['BEXL 324'],
+            },
+            {
+                id: 'bexl-326',
+                images: [
+                    require('../assets/images/rooms/bexl-326.jpeg')
+                ],
+                floor: '3',
+                capacity: '12',
+                roomType: 'Conference Room',
+                searchAliases: ['BEXL 326'],
+            },
+            {
+                id: 'bexl-328',
+                images: [
+                    require('../assets/images/rooms/bexl-328.jpeg')
+                ],
+                floor: '3',
+                capacity: '37',
+                roomType: 'U-Shaped Classroom',
+                searchAliases: ['BEXL 328'],
+            },
+            {
+                id: 'bexl-412',
+                images: [
+                    require('../assets/images/rooms/bexl-412.jpeg')
+                ],
+                floor: '4',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 412'],
+            },
+            {
+                id: 'bexl-414',
+                images: [
+                    require('../assets/images/rooms/bexl-414.jpeg')
+                ],
+                floor: '4',
+                capacity: '26',
+                roomType: 'Conference Room',
+                searchAliases: ['BEXL 414'],
+            },
+            {
+                id: 'bexl-415',
+                images: [
+                    require('../assets/images/rooms/bexl-415.jpeg')
+                ],
+                floor: '4',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 415'],
+            },
+            {
+                id: 'bexl-416',
+                images: [
+                    require('../assets/images/rooms/bexl-416.jpeg')
+                ],
+                floor: '4',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 416'],
+            },
+            {
+                id: 'bexl-417',
+                images: [
+                    require('../assets/images/rooms/bexl-417.jpeg')
+                ],
+                floor: '4',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['BEXL 417'],
+            },
+        ]
+    },
+    {
+        id: 'gbad',
+        name: 'Gilbert Hall Addition',
+        rooms: [
+            {
+                id: 'gbad-009',
+                images: [
+                    require('../assets/images/rooms/gbad-009.jpeg')
+                ],
+                floor: '0',
+                capacity: '120',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 009'],
+            },
+            {
+                id: 'gbad-101',
+                images: [
+                    require('../assets/images/rooms/gbad-101.jpeg')
+                ],
+                floor: '1',
+                capacity: '50',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 101'],
+            },
+            {
+                id: 'gbad-103',
+                images: [
+                    require('../assets/images/rooms/gbad-103.jpeg')
+                ],
+                floor: '1',
+                capacity: '44',
+                roomType: 'Classroom',
+                searchAliases: ['GBAD 103'],
+            },
+            {
+                id: 'gbad-209',
+                images: [
+                    require('../assets/images/rooms/gbad-209.jpeg')
+                ],
+                floor: '2',
+                capacity: '120',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 209'],
+            },
+            {
+                id: 'gbad-209F',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 209F'],
+            },
+            {
+                id: 'gbad-211',
+                images: [
+                    require('../assets/images/rooms/gbad-211.jpeg')
+                ],
+                floor: '2',
+                capacity: '26',
+                roomType: 'Classroom',
+                searchAliases: ['GBAD 211'],
+            },
+            {
+                id: 'gbad-220',
+                images: [
+                    require('../assets/images/rooms/gbad-220.jpeg')
+                ],
+                floor: '2',
+                capacity: '10',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 220'],
+            },
+            {
+                id: 'gbad-309',
+                images: [
+                    require('../assets/images/rooms/gbad-309.jpeg')
+                ],
+                floor: '3',
+                capacity: '90',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 309'],
+            },
+            {
+                id: 'gbad-311',
+                images: [
+                    require('../assets/images/rooms/gbad-311.jpeg')
+                ],
+                floor: '3',
+                capacity: '19',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 311'],
+            },
+            {
+                id: 'gbad-409',
+                images: [
+                    require('../assets/images/rooms/gbad-409.jpeg')
+                ],
+                floor: '4',
+                capacity: '120',
+                roomType: 'Lab Room',
+                searchAliases: ['GBAD 409'],
+            },
+            {
+                id: 'gbad-411',
+                images: [
+                    require('../assets/images/rooms/gbad-411.jpeg')
+                ],
+                floor: '4',
+                capacity: '20',
+                roomType: 'Classroom',
+                searchAliases: ['GBAD 411'],
+            }
+        ]
+    },
+    {
+        id: 'gilb',
+        name: 'Gilbert Hall',
+        rooms: [
+            {
+                id: 'gilb-109',
+                images: [
+                    require('../assets/images/rooms/gilb-109.jpeg')
+                ],
+                floor: '1',
+                capacity: '18',
+                roomType: 'Meeting Room',
+                searchAliases: ['GILB 109'],
+            },
+            {
+                id: 'gilb-124',
+                images: [
+                    require('../assets/images/rooms/gilb-124.jpeg')
+                ],
+                floor: '1',
+                capacity: '192',
+                roomType: 'Lecture Hall',
+                searchAliases: ['GILB 124'],
+            },
+            {
+                id: 'gilb-224',
+                images: [
+                    require('../assets/images/rooms/gilb-224.jpeg')
+                ],
+                floor: '2',
+                capacity: '197',
+                roomType: 'Lecture Hall',
+                searchAliases: ['GILB 224'],
+            },
+            {
+                id: 'gilb-228',
+                images: [
+                    require('../assets/images/rooms/gilb-228.jpeg')
+                ],
+                floor: '2',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['GILB 228'],
+            },
+            {
+                id: 'gilb-324',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '53',
+                roomType: 'Classroom',
+                searchAliases: ['GILB 324'],
+            }
+        ]
+    }
 ];
 
 export function getRoomById(roomId: string): (Room & { building: string, name: string }) | null {

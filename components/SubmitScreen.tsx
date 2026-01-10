@@ -136,7 +136,12 @@ export default function SubmitScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView contentContainerStyle={styles.scrollContent}>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollContent}
+                    bounces={false}
+                    alwaysBounceVertical={false}
+                    overScrollMode="never"
+                >
                     <View style={styles.header}>
                         {(initialBuilding || initialRoomNumber) ? (
                             <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -249,7 +254,7 @@ export default function SubmitScreen() {
                                 <Image source={{ uri: image }} style={styles.previewImage} contentFit="cover" />
                             ) : (
                                 <View style={styles.imagePlaceholder}>
-                                    <Ionicons name="camera-outline" size={40} color={theme.subtext} />
+                                    <Ionicons name="camera-outline" size={24} color={theme.subtext} />
                                     <Text style={styles.imagePlaceholderText}>Tap to add a photo</Text>
                                 </View>
                             )}
@@ -284,13 +289,13 @@ function createStyles(theme: Theme) {
         },
         scrollContent: {
             paddingHorizontal: 20,
-            paddingBottom: 40,
+            paddingBottom: 20,
         },
         header: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingVertical: 16,
+            paddingVertical: 12,
         },
         backButton: {
             width: 40,
@@ -303,26 +308,26 @@ function createStyles(theme: Theme) {
             color: theme.text,
         },
         form: {
-            marginTop: 20,
-            gap: 16,
+            marginTop: 12,
+            gap: 12,
         },
         label: {
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: '600',
             color: theme.text,
-            marginBottom: -8,
+            marginBottom: -6,
         },
         input: {
             backgroundColor: theme.card,
             borderRadius: 12,
-            padding: 16,
+            padding: 12,
             fontSize: 16,
             color: theme.text,
             borderWidth: 1,
             borderColor: theme.border,
         },
         textArea: {
-            height: 100,
+            height: 80,
             textAlignVertical: 'top',
         },
         imagePicker: {
@@ -351,22 +356,22 @@ function createStyles(theme: Theme) {
         submitButton: {
             backgroundColor: theme.primary,
             borderRadius: 12,
-            padding: 18,
+            padding: 16,
             alignItems: 'center',
-            marginTop: 20,
+            marginTop: 12,
         },
         submitButtonDisabled: {
             opacity: 0.5,
         },
         submitButtonText: {
             color: '#fff',
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: 'bold',
         },
         pickerTrigger: {
             backgroundColor: theme.card,
             borderRadius: 12,
-            padding: 16,
+            padding: 12,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
