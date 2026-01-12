@@ -20,8 +20,10 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View
@@ -29,9 +31,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth, db } from "../firebaseConfig";
 import { Theme, useTheme } from "../theme";
+import { useSettings, useHapticFeedback } from "../lib/SettingsContext";
 
 export default function Account() {
   const theme = useTheme();
+  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics } = useSettings();
+  const triggerHaptic = useHapticFeedback();
   const router = useRouter();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -187,6 +192,7 @@ export default function Account() {
   }
 
   async function handleSignOut() {
+    triggerHaptic();
     setMessage(null);
     try {
       await signOut(auth);
@@ -272,6 +278,42 @@ export default function Account() {
                 </Pressable>
               </View>
             )}
+
+            <View style={styles.settingsContainer}>
+              <View style={styles.separator} />
+              <Text style={styles.settingsTitle}>Settings</Text>
+              <View style={styles.settingRow}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
+                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images</Text>
+                </View>
+                <Switch
+                  value={showPlaceholders}
+                  onValueChange={(val) => {
+                    triggerHaptic();
+                    setShowPlaceholders(val);
+                  }}
+                  trackColor={{ false: theme.border, true: theme.primary }}
+                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                />
+              </View>
+
+              <View style={styles.settingRow}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
+                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
+                </View>
+                <Switch
+                  value={useHaptics}
+                  onValueChange={(val) => {
+                    triggerHaptic();
+                    setUseHaptics(val);
+                  }}
+                  trackColor={{ false: theme.border, true: theme.primary }}
+                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                />
+              </View>
+            </View>
 
             <Pressable style={styles.buttonSecondary} onPress={handleSignOut}>
               <Text style={styles.buttonText}>Sign out</Text>
@@ -532,6 +574,32 @@ function createStyles(theme: Theme) {
       width: '100%',
       opacity: 0.3,
       marginVertical: 12,
+    },
+    settingsContainer: {
+      marginTop: 4,
+      gap: 12,
+    },
+    settingsTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.subtext,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+    },
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingVertical: 4,
+    },
+    settingLabel: {
+      fontSize: 15,
+      fontWeight: '600',
+    },
+    settingDescription: {
+      fontSize: 12,
+      opacity: 0.8,
     },
   });
 }

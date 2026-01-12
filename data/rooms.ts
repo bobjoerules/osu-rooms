@@ -3336,6 +3336,462 @@ export const BUILDINGS_DATA: Building[] = [
                 searchAliases: ['GILK 115'],
             },
         ]
+    },
+    {
+        id: 'glsn',
+        name: 'Gleeson Hall',
+        rooms: [
+            {
+                id: 'glsn-003',
+                images: [
+                    require('../assets/images/rooms/glsn-003.jpeg')
+                ],
+                floor: '0',
+                capacity: '28',
+                roomType: 'Lab Room',
+                searchAliases: ['GLSN 003'],
+            },
+            {
+                id: 'glsn-009',
+                images: [
+                    require('../assets/images/rooms/glsn-009.jpeg')
+                ],
+                floor: '0',
+                capacity: '63',
+                roomType: 'Lab Room',
+                searchAliases: ['GLSN 009'],
+            },
+            {
+                id: 'glsn-100',
+                images: [
+                    require('../assets/images/rooms/glsn-100.jpeg')
+                ],
+                floor: '1',
+                capacity: '48',
+                roomType: 'Classroom',
+                searchAliases: ['GLSN 100'],
+            },
+            {
+                id: 'glsn-200',
+                images: [
+                    require('../assets/images/rooms/glsn-200.jpeg')
+                ],
+                floor: '2',
+                capacity: '88',
+                roomType: 'Classroom',
+                searchAliases: ['GLSN 200'],
+            },
+            {
+                id: 'glsn-306',
+                images: [
+                    require('../assets/images/rooms/glsn-306.jpeg')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Conference Room',
+                searchAliases: ['GLSN 306'],
+            },
+            {
+                id: 'glsn-308',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '27',
+                roomType: 'Lab Room',
+                searchAliases: ['GLSN 308'],
+            },
+        ]
+    },
+    {
+        id: 'graf',
+        name: 'Graf Hall',
+        rooms: [
+            {
+                id: 'graf-106',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '39',
+                roomType: 'Lab Room',
+                searchAliases: ['GRAF 106'],
+            },
+            {
+                id: 'graf-107',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['GRAF 107'],
+            },
+        ]
+    },
+    {
+        id: 'gvgc',
+        name: 'Gladys Valley Gymnastics Center',
+        rooms: [
+            {
+                id: 'gvgc-106',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '27',
+                roomType: 'Lab Room',
+                searchAliases: ['GVGC 106'],
+            },
+            {
+                id: 'gvgc-107',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '23',
+                roomType: 'Lab Room',
+                searchAliases: ['GVGC 107'],
+            },
+            {
+                id: 'gvgc-109',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '32',
+                roomType: 'Lab Room',
+                searchAliases: ['GVGC 109'],
+            },
+        ]
+    },
+    {
+        id: 'indp',
+        name: 'Merritt Truax Indoor Center',
+        rooms: [
+            {
+                id: 'indp-101',
+                images: [
+                    require('../assets/images/rooms/indp-101.jpeg')
+                ],
+                floor: '1',
+                capacity: '500',
+                roomType: 'Indoor Football Practice Field',
+                searchAliases: ['INDP 101', 'A0101', 'Football Field'],
+            },
+        ]
+    },
+    {
+        id: 'haml',
+        name: 'Hogg Animal Metabolism Lab',
+        rooms: [
+            {
+                id: 'haml-0100',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['HAML 0100'],
+            },
+        ]
+    },
+    {
+        id: 'hfc',
+        name: 'Hallie E. Ford Center',
+        rooms: [
+            {
+                id: 'hfc-115',
+                images: [
+                    require('../assets/images/rooms/hfc-115.jpeg')
+                ],
+                floor: '1',
+                capacity: '56',
+                roomType: 'Classroom',
+                searchAliases: ['HFC 115'],
+            },
+        ]
+    },
+    {
+        id: 'hkrt',
+        name: 'Heckart Lodge',
+        rooms: [
+            {
+                id: 'hkrt-110',
+                images: [
+                    require('../assets/images/rooms/hkrt-110.jpeg')
+                ],
+                floor: '1',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['HKRT 110'],
+            },
+        ]
+    },
+    {
+        id: 'hov',
+        name: 'Hovland Hall ',
+        rooms: [
+            {
+                id: 'hov-100',
+                images: [
+                    require('../assets/images/rooms/hov-100.jpeg')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['HOV 100'],
+            },
+            {
+                id: 'hov-104',
+                images: [
+                    require('../assets/images/rooms/hov-104.jpeg')
+                ],
+                floor: '1',
+                capacity: '17',
+                roomType: 'Conference Room',
+                searchAliases: ['HOV 104'],
+            },
+            {
+                id: 'hov-202',
+                images: [
+                    require('../assets/images/rooms/hov-202.jpeg')
+                ],
+                floor: '2',
+                capacity: '37',
+                roomType: 'Classroom',
+                searchAliases: ['HOV 202'],
+            },
+        ]
+    },
+    {
+        id: 'hsbn',
+        name: 'Horse Barn',
+        rooms: [
+            {
+                id: 'hsbn-100',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '68',
+                roomType: 'Barn',
+                searchAliases: ['HSBN 100', 'Horse Barn'],
+            },
+        ]
+    },
+    {
+        id: 'hwrl',
+        name: 'Hindsdale Wave Research Lab',
+        rooms: [
+            {
+                id: 'hwrl-M0201',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['HWRL M0201'],
+            },
+        ]
+    },
+    {
+        id: 'illc',
+        name: 'International Learning-Living Center (ILLC)',
+        rooms: [
+            {
+                id: 'illc-134',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '22',
+                roomType: 'Computer Lab',
+                searchAliases: ['ILLC 134'],
+            },
+            {
+                id: 'illc-136',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '16',
+                roomType: 'Computer Lab',
+                searchAliases: ['ILLC 136'],
+            },
+            {
+                id: 'illc-144',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '24',
+                roomType: 'Computer Lab',
+                searchAliases: ['ILLC 144'],
+            },
+            {
+                id: 'illc-155',
+                images: [
+                    require('../assets/images/rooms/illc-155.jpeg')
+                ],
+                floor: '1',
+                capacity: '105',
+                roomType: 'Lecture Hall',
+                searchAliases: ['ILLC 155'],
+            },
+            {
+                id: 'illc-242',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 242'],
+            },
+            {
+                id: 'illc-244',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 244'],
+            },
+            {
+                id: 'illc-250',
+                images: [
+                    require('../assets/images/rooms/illc-250.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Computer Lab',
+                searchAliases: ['ILLC 250'],
+            },
+            {
+                id: 'illc-252',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Computer Lab',
+                searchAliases: ['ILLC 252'],
+            },
+            {
+                id: 'illc-253',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 253'],
+            },
+            {
+                id: 'illc-255',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 255'],
+            },
+            {
+                id: 'illc-342',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 342'],
+            },
+            {
+                id: 'illc-344',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 344'],
+            },
+            {
+                id: 'illc-345',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 345'],
+            },
+            {
+                id: 'illc-345-347',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 345/347'],
+            },
+            {
+                id: 'illc-347',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 347'],
+            },
+            {
+                id: 'illc-350',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 350'],
+            },
+            {
+                id: 'illc-350-352',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 350/352'],
+            },
+            {
+                id: 'illc-352',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 352'],
+            },
+            {
+                id: 'illc-353',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['ILLC 353'],
+            },
+        ]
     }
 ];
 

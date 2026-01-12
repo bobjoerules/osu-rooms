@@ -5,6 +5,7 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
+import { useHapticFeedback } from '../lib/SettingsContext';
 
 import { Room } from '../data/rooms';
 
@@ -15,8 +16,10 @@ interface RoomListProps {
 export default function RoomList({ rooms }: RoomListProps) {
   const theme = useTheme();
   const router = useRouter();
+  const triggerHaptic = useHapticFeedback();
 
   const handleRoomPress = (roomId: string) => {
+    triggerHaptic();
     router.push(`/room/${roomId}`);
   };
 

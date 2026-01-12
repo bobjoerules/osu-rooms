@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../firebaseConfig';
 import { Theme, useTheme } from '../theme';
+import { useHapticFeedback } from '../lib/SettingsContext';
 
 export type StarRatingProps = {
   itemId: string;
@@ -19,6 +20,7 @@ export type StarRatingProps = {
 
 export default function StarRating({ itemId, initialMax = 5, size = 40, showMetaText = false }: StarRatingProps) {
   const theme = useTheme();
+  const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [avg, setAvg] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
@@ -188,7 +190,8 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
 
     const { pageX, pageY } = event.nativeEvent;
     const rating = calculateRatingFromTouch(pageX, pageY);
-    if (rating !== null) {
+    if (rating !== null && rating !== lastPreviewRef.current) {
+      triggerHaptic();
       setPreviewRating(rating);
       lastPreviewRef.current = rating;
     }
@@ -196,6 +199,7 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
 
   const handleDragEnd = async () => {
     if (lastPreviewRef.current !== null) {
+      triggerHaptic();
       await rate(lastPreviewRef.current);
     }
     setPreviewRating(null);

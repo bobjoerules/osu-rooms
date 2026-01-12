@@ -7,6 +7,7 @@ import { ActivityIndicator, StyleSheet, useColorScheme, View } from 'react-nativ
 import AccountScreen from '../components/AccountScreen';
 import { auth } from '../firebaseConfig';
 import { ThemeProvider, useTheme } from '../theme';
+import { SettingsProvider } from '../lib/SettingsContext';
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -37,16 +38,20 @@ export default function RootLayout() {
 
   if (!isLoggedIn) {
     return (
-      <ThemeProvider>
-        <AccountScreen />
-      </ThemeProvider>
+      <SettingsProvider>
+        <ThemeProvider>
+          <AccountScreen />
+        </ThemeProvider>
+      </SettingsProvider>
     );
   }
 
   return (
-    <ThemeProvider>
-      <AuthenticatedStack />
-    </ThemeProvider>
+    <SettingsProvider>
+      <ThemeProvider>
+        <AuthenticatedStack />
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 

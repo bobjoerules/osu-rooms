@@ -21,10 +21,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BUILDINGS_DATA } from '../data/rooms';
 import { auth, db, storage } from '../firebaseConfig';
 import { Theme, useTheme } from '../theme';
+import { useHapticFeedback } from '../lib/SettingsContext';
 
 export default function SubmitScreen() {
     const theme = useTheme();
     const router = useRouter();
+    const triggerHaptic = useHapticFeedback();
     const styles = useMemo(() => createStyles(theme), [theme]);
 
     const { initialBuilding, initialRoomNumber } = useLocalSearchParams<{ initialBuilding?: string, initialRoomNumber?: string }>();
@@ -44,6 +46,7 @@ export default function SubmitScreen() {
     ], []);
 
     const pickImage = async () => {
+        triggerHaptic();
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: 'images',
             allowsEditing: false,
@@ -56,6 +59,7 @@ export default function SubmitScreen() {
     };
 
     const handleSubmit = async () => {
+        triggerHaptic();
         if (!auth.currentUser) {
             Alert.alert('Error', 'You must be signed in to submit room info.');
             return;

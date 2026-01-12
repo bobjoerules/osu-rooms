@@ -7,11 +7,13 @@ import Accordion from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { BUILDINGS_DATA } from '../../data/rooms';
+import { useSettings } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
 const PlaceholderImage = require('../../assets/images/placeholder.png');
 
 export default function Index() {
   const theme = useTheme();
+  const { showPlaceholders } = useSettings();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
@@ -35,7 +37,7 @@ export default function Index() {
           return nameMatch || aliasMatch;
         }
 
-        return hasPhotos;
+        return showPlaceholders || hasPhotos;
       });
 
       if (isSearching && buildingNameMatch) {
@@ -61,7 +63,7 @@ export default function Index() {
       ),
       content: <RoomList rooms={building.rooms} />,
     }));
-  }, [searchQuery, styles.title, theme.text]);
+  }, [searchQuery, styles.title, theme.text, showPlaceholders]);
 
 
   const insets = useSafeAreaInsets();
