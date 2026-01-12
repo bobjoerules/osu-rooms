@@ -250,6 +250,10 @@ export default function Account() {
               <Ionicons name="mail-outline" size={24} color={theme.subtext} />
             </View>
 
+            <Pressable style={[styles.buttonSecondary, { marginTop: 20 }]} onPress={handleSignOut}>
+              <Text style={styles.buttonText}>Sign out</Text>
+            </Pressable>
+
             {isAdmin && (
               <View style={styles.adminContainer}>
                 <View style={styles.separator} />
@@ -314,10 +318,6 @@ export default function Account() {
                 />
               </View>
             </View>
-
-            <Pressable style={styles.buttonSecondary} onPress={handleSignOut}>
-              <Text style={styles.buttonText}>Sign out</Text>
-            </Pressable>
           </View>
         ) : (
           <View style={styles.section}>
