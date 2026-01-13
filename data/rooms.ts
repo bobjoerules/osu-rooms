@@ -4406,6 +4406,2446 @@ export const BUILDINGS_DATA: Building[] = [
                 searchAliases: ['KIDD 364'],
             },
         ]
+    },
+    {
+        id: 'lang',
+        name: 'Langton Hall',
+        rooms: [
+            {
+                id: 'lang-006',
+                images: [
+                    require('../assets/images/rooms/lang-006.jpeg')
+                ],
+                floor: '0',
+                capacity: '49',
+                roomType: 'Weight Room',
+                searchAliases: ['LANG 006', 'Weight Room'],
+            },
+            {
+                id: 'lang-013',
+                images: [
+                    require('../assets/images/rooms/lang-013.jpeg')
+                ],
+                floor: '0',
+                capacity: '40',
+                roomType: 'Therapeutic Exercise Room',
+                searchAliases: ['LANG 013', 'Therapeutic Exercise Room'],
+            },
+            {
+                id: 'lang-124',
+                images: [
+                    require('../assets/images/rooms/lang-124.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['LANG 124'],
+            },
+            {
+                id: 'lang-126',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['LANG 126'],
+            },
+            {
+                id: 'lang-127',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['LANG 127'],
+            },
+            {
+                id: 'lang-129',
+                images: [
+                    require('../assets/images/rooms/lang-129.jpeg')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['LANG 129'],
+            },
+            {
+                id: 'lang-130',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['LANG 130'],
+            },
+            {
+                id: 'lang-134',
+                images: [
+                    require('../assets/images/rooms/lang-134.jpeg')
+                ],
+                floor: '1',
+                capacity: '16',
+                roomType: 'Exercise Room',
+                searchAliases: ['LANG 134', 'Exercise Room'],
+            },
+            {
+                id: 'lang-200',
+                images: [
+                    require('../assets/images/rooms/lang-200.jpeg')
+                ],
+                floor: '2',
+                capacity: '49',
+                roomType: 'Aerobics Room',
+                searchAliases: ['LANG 200', 'Aerobics Room'],
+            },
+            {
+                id: 'lang-300',
+                images: [
+                    require('../assets/images/rooms/lang-300.jpeg')
+                ],
+                floor: '3',
+                capacity: '307',
+                roomType: 'Large Gym',
+                searchAliases: ['LANG 300', 'Large Gym'],
+            },
+            {
+                id: 'lang-301',
+                images: [
+                    require('../assets/images/rooms/lang-301.jpeg')
+                ],
+                floor: '3',
+                capacity: '49',
+                roomType: 'Wrestling Room',
+                searchAliases: ['LANG 301', 'Wrestling Room'],
+            },
+            {
+                id: 'lang-310',
+                images: [
+                    require('../assets/images/rooms/lang-310.jpeg')
+                ],
+                floor: '3',
+                capacity: '114',
+                roomType: 'Gymnastics Room',
+                searchAliases: ['LANG 310', 'Gymnastics Room'],
+            },
+            {
+                id: 'lang-arch',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: 'Nan',
+                capacity: '35',
+                roomType: 'Outdoors Archery Range',
+                searchAliases: ['LANG ARCH', 'Outdoors Archery Range'],
+            },
+            {
+                id: 'lang-0018',
+                images: [
+                    require('../assets/images/rooms/lang-0018.jpeg')
+                ],
+                floor: '1',
+                capacity: '49',
+                roomType: 'Pool',
+                searchAliases: ['LANG 0018', 'Pool'],
+            },
+        ]
+    },
+    {
+        id: 'lpsc',
+        name: 'Linus Pauling Science Center',
+        rooms: [
+            {
+                id: 'lpsc-125',
+                images: [
+                    require('../assets/images/rooms/lpsc-125.jpeg')
+                ],
+                floor: '1',
+                capacity: '180',
+                roomType: 'Lecture Hall',
+                searchAliases: ['LPSC 125'],
+            },
+            {
+                id: 'lpsc-160',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '67',
+                roomType: 'Lab Room',
+                searchAliases: ['LPSC 160'],
+            },
+            {
+                id: 'lpsc-176',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '67',
+                roomType: 'Lab Room',
+                searchAliases: ['LPSC 176'],
+            },
+            {
+                id: 'lpsc-178',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '67',
+                roomType: 'Lab Room',
+                searchAliases: ['LPSC 178'],
+            },
+            {
+                id: 'lpsc-219',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '69',
+                roomType: 'Lab Room',
+                searchAliases: ['LPSC 219'],
+            },
+            {
+                id: 'lpsc-239',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '17',
+                roomType: 'Conference Room',
+                searchAliases: ['LPSC 239'],
+            },
+            {
+                id: 'lpsc-259',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '17',
+                roomType: 'Conference Room',
+                searchAliases: ['LPSC 259'],
+            },
+            {
+                id: 'lpsc-402',
+                images: [
+                    require('../assets/images/rooms/lpsc-402.jpeg')
+                ],
+                floor: '4',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['LPSC 402'],
+            },
+        ]
+    },
+    {
+        id: 'magr',
+        name: 'Magruder Hall',
+        rooms: [
+            {
+                id: 'magr-102',
+                images: [
+                    require('../assets/images/rooms/magr-102.jpeg')
+                ],
+                floor: '1',
+                capacity: '100',
+                roomType: 'Classroom',
+                searchAliases: ['MAGR 102'],
+            },
+            {
+                id: 'magr-113',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '16',
+                roomType: 'Conference Room',
+                searchAliases: ['MAGR 113'],
+            },
+            {
+                id: 'magr-1152',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '98',
+                roomType: 'Classroom',
+                searchAliases: ['MAGR 1152'],
+            },
+            {
+                id: 'magr-118A',
+                images: [
+                    require('../assets/images/rooms/magr-118A.jpeg')
+                ],
+                floor: '1',
+                capacity: '58',
+                roomType: 'Lab Room',
+                searchAliases: ['MAGR 118A'],
+            },
+            {
+                id: 'magr-202',
+                images: [
+                    require('../assets/images/rooms/magr-202.jpeg')
+                ],
+                floor: '2',
+                capacity: '75',
+                roomType: 'Classroom',
+                searchAliases: ['MAGR 202'],
+            },
+            {
+                id: 'magr-202-205',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '143',
+                roomType: 'Classroom/Lab Room',
+                searchAliases: ['MAGR 202/205'],
+            },
+            {
+                id: 'magr-205',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '82',
+                roomType: 'Lab Room',
+                searchAliases: ['MAGR 205'],
+            },
+            {
+                id: 'magr-208',
+                images: [
+                    require('../assets/images/rooms/magr-208.jpeg')
+                ],
+                floor: '2',
+                capacity: '67',
+                roomType: 'Classroom',
+                searchAliases: ['MAGR 208'],
+            },
+            {
+                id: 'magr-208-251',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '143',
+                roomType: 'Lab Room',
+                searchAliases: ['MAGR 208/251'],
+            },
+            {
+                id: 'magr-251',
+                images: [
+                    require('../assets/images/rooms/magr-251.jpeg')
+                ],
+                floor: '2',
+                capacity: '76',
+                roomType: 'Lab Room',
+                searchAliases: ['MAGR 251'],
+            },
+            {
+                id: 'magr-298',
+                images: [
+                    require('../assets/images/rooms/magr-298.jpeg')
+                ],
+                floor: '2',
+                capacity: '62',
+                roomType: 'Classroom',
+                searchAliases: ['MAGR 298'],
+            },
+        ]
+    },
+    {
+        id: 'mlh',
+        name: 'Magruder - Lecture Hall',
+        rooms: [
+            {
+                id: 'mlh-1152',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '98',
+                roomType: 'Lecture Hall',
+                searchAliases: ['MLH 1152'],
+            },
+        ]
+    },
+    {
+        id: 'mcaf',
+        name: 'McAlexander Fieldhouse',
+        rooms: [
+            {
+                id: 'mcaf-114',
+                images: [
+                    require('../assets/images/rooms/mcaf-114.jpeg')
+                ],
+                floor: '1',
+                capacity: '1650',
+                roomType: 'Large Gymnasium',
+                searchAliases: ['MCAF 114', 'Large Gymnasium'],
+            },
+            {
+                id: 'mcaf-124',
+                images: [
+                    require('../assets/images/rooms/mcaf-124.jpeg')
+                ],
+                floor: '1',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['MCAF 124'],
+            },
+            {
+                id: 'mcaf-209',
+                images: [
+                    require('../assets/images/rooms/mcaf-209.jpeg')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['MCAF 209'],
+            },
+            {
+                id: 'mcaf-210',
+                images: [
+                    require('../assets/images/rooms/mcaf-210.jpeg')
+                ],
+                floor: '2',
+                capacity: '28',
+                roomType: 'Classroom',
+                searchAliases: ['MCAF 210'],
+            },
+            {
+                id: 'mcaf-306',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Classroom',
+                searchAliases: ['MCAF 306'],
+            },
+            {
+                id: 'mcaf-307',
+                images: [
+                    require('../assets/images/rooms/mcaf-307.jpeg')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['MCAF 307'],
+            },
+        ]
+    },
+    {
+        id: 'mfd',
+        name: 'Merryfield Hall',
+        rooms: [
+            {
+                id: 'mfd-108',
+                images: [
+                    require('../assets/images/rooms/mfd-108.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Lab Room',
+                searchAliases: ['MFD 108'],
+            },
+            {
+                id: 'mfd-112',
+                images: [
+                    require('../assets/images/rooms/mfd-112.jpeg')
+                ],
+                floor: '1',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['MFD 112'],
+            },
+        ]
+    },
+    {
+        id: 'more',
+        name: 'Moreland Hall',
+        rooms: [
+            {
+                id: 'more-126',
+                images: [
+                    require('../assets/images/rooms/more-126.jpeg')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['MORE 126'],
+            },
+            {
+                id: 'more-130B',
+                images: [
+                    require('../assets/images/rooms/more-130B.jpeg')
+                ],
+                floor: '1',
+                capacity: '27',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 130B'],
+            },
+            {
+                id: 'more-204C',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '15',
+                roomType: 'Conference Room',
+                searchAliases: ['MORE 204C'],
+            },
+            {
+                id: 'more-206',
+                images: [
+                    require('../assets/images/rooms/more-206.jpeg')
+                ],
+                floor: '2',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 206'],
+            },
+            {
+                id: 'more-214',
+                images: [
+                    require('../assets/images/rooms/more-214.jpeg')
+                ],
+                floor: '2',
+                capacity: '18',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 214'],
+            },
+            {
+                id: 'more-330',
+                images: [
+                    require('../assets/images/rooms/more-330.jpeg')
+                ],
+                floor: '3',
+                capacity: '55',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 330'],
+            },
+            {
+                id: 'more-332',
+                images: [
+                    require('../assets/images/rooms/more-332.jpeg')
+                ],
+                floor: '3',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 332'],
+            },
+            {
+                id: 'more-334',
+                images: [
+                    require('../assets/images/rooms/more-334.jpeg')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 334'],
+            },
+            {
+                id: 'more-362',
+                images: [
+                    require('../assets/images/rooms/more-362.jpeg')
+                ],
+                floor: '3',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['MORE 362'],
+            },
+        ]
+    },
+    {
+        id: 'mu',
+        name: 'Memorial Union',
+        rooms: [
+            {
+                id: 'mu-lanes',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '32',
+                roomType: 'Memorial Union Lanes',
+                searchAliases: ['MU 0043', 'MU Lanes'],
+            },
+        ]
+    },
+    {
+        id: 'nash',
+        name: 'Nash Hall',
+        rooms: [
+            {
+                id: 'nash-032',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '42',
+                roomType: 'Classroom',
+                searchAliases: ['NASH 032'],
+            },
+            {
+                id: 'nash-033',
+                images: [
+                    require('../assets/images/rooms/nash-033.jpeg')
+                ],
+                floor: '0',
+                capacity: '42',
+                roomType: 'Classroom',
+                searchAliases: ['NASH 033'],
+            },
+            {
+                id: 'nash-104J',
+                images: [
+                    require('../assets/images/rooms/nash-104J.jpeg')
+                ],
+                floor: '1',
+                capacity: '16',
+                roomType: 'Conference Room',
+                searchAliases: ['NASH 104J'],
+            },
+            {
+                id: 'nash-164',
+                images: [
+                    require('../assets/images/rooms/nash-164.jpeg')
+                ],
+                floor: '1',
+                capacity: '12',
+                roomType: 'Conference Room',
+                searchAliases: ['NASH 164'],
+            },
+            {
+                id: 'nash-204',
+                images: [
+                    require('../assets/images/rooms/nash-204.jpeg')
+                ],
+                floor: '2',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['NASH 204'],
+            },
+            {
+                id: 'nash-206',
+                images: [
+                    require('../assets/images/rooms/nash-206.jpeg')
+                ],
+                floor: '2',
+                capacity: '82',
+                roomType: 'Classroom',
+                searchAliases: ['NASH 206'],
+            },
+            {
+                id: 'nash-214',
+                images: [
+                    require('../assets/images/rooms/nash-214.jpeg')
+                ],
+                floor: '2',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['NASH 214'],
+            },
+            {
+                id: 'nash-218',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '22',
+                roomType: 'Conference Room',
+                searchAliases: ['NASH 218'],
+            },
+            {
+                id: 'nash-234',
+                images: [
+                    require('../assets/images/rooms/nash-234.jpeg')
+                ],
+                floor: '2',
+                capacity: '13',
+                roomType: 'Conference Room',
+                searchAliases: ['NASH 234'],
+            },
+            {
+                id: 'nash-304',
+                images: [
+                    require('../assets/images/rooms/nash-304.jpeg')
+                ],
+                floor: '3',
+                capacity: '72',
+                roomType: 'Lab Room',
+                searchAliases: ['NASH 304'],
+            },
+            {
+                id: 'nash-316',
+                images: [
+                    require('../assets/images/rooms/nash-316.jpeg')
+                ],
+                floor: '3',
+                capacity: '72',
+                roomType: 'Lab Room',
+                searchAliases: ['NASH 316'],
+            },
+            {
+                id: 'nash-318',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '10',
+                roomType: 'Lab Room',
+                searchAliases: ['NASH 318'],
+            },
+            {
+                id: 'nash-404',
+                images: [
+                    require('../assets/images/rooms/nash-404.jpeg')
+                ],
+                floor: '4',
+                capacity: '35',
+                roomType: 'Conference Room',
+                searchAliases: ['NASH 404'],
+            },
+        ]
+    },
+    {
+        id: 'oao',
+        name: 'Oceanography Administration Building',
+        rooms: [
+            {
+                id: 'oao-106',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '26',
+                roomType: 'Classroom',
+                searchAliases: ['OAO 106'],
+            },
+        ]
+    },
+    {
+        id: 'oatf',
+        name: 'James E. Oldfield Animal Teaching Facility',
+        rooms: [
+            {
+                id: 'oatf-106',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['OATF 106'],
+            },
+            {
+                id: 'oatf-108',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['OATF 108'],
+            },
+            {
+                id: 'oatf-109',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['OATF 109'],
+            },
+            {
+                id: 'oatf-112',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '65',
+                roomType: 'Classroom',
+                searchAliases: ['OATF 112'],
+            },
+        ]
+    },
+    {
+        id: 'pfsc',
+        name: 'George W. Peavy Forest Science Center',
+        rooms: [
+            {
+                id: 'pfsc-104',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 104'],
+            },
+            {
+                id: 'pfsc-117',
+                images: [
+                    require('../assets/images/rooms/pfsc-117.jpeg')
+                ],
+                floor: '1',
+                capacity: '118',
+                roomType: 'Lecture Hall',
+                searchAliases: ['PFSC 117'],
+            },
+            {
+                id: 'pfsc-125',
+                images: [
+                    require('../assets/images/rooms/pfsc-125.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 125'],
+            },
+            {
+                id: 'pfsc-129',
+                images: [
+                    require('../assets/images/rooms/pfsc-129.jpeg')
+                ],
+                floor: '1',
+                capacity: '70',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 129'],
+            },
+            {
+                id: 'pfsc-177',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '36',
+                roomType: 'Lab Room',
+                searchAliases: ['PFSC 177'],
+            },
+            {
+                id: 'pfsc-215',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '36',
+                roomType: 'Computer Lab',
+                searchAliases: ['PFSC 215'],
+            },
+            {
+                id: 'pfsc-217',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '36',
+                roomType: 'Computer Lab',
+                searchAliases: ['PFSC 217'],
+            },
+            {
+                id: 'pfsc-301',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '18',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 301'],
+            },
+            {
+                id: 'pfsc-302',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '48',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 302'],
+            },
+            {
+                id: 'pfsc-315',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '48',
+                roomType: 'Classroom',
+                searchAliases: ['PFSC 315'],
+            },
+        ]
+    },
+    {
+        id: 'pole',
+        name: 'Pole Building',
+        rooms: [
+            {
+                id: 'pole-Vet-Horse-Barn',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '58',
+                roomType: 'Vet Horse Barn',
+                searchAliases: ['Pole Vet Horse Barn', 'POLE 0001'],
+            },
+        ]
+    },
+    {
+        id: 'poling',
+        name: 'Poling Hall',
+        rooms: [
+            {
+                id: 'poling-133',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '49',
+                roomType: 'Classroom',
+                searchAliases: ['POLING 133'],
+            },
+        ]
+    },
+    {
+        id: 'prax',
+        name: 'Patricia Valian Reser Center for the Performing Arts',
+        rooms: [
+            {
+                id: 'prax-107',
+                images: [
+                    require('../assets/images/rooms/prax-107.jpeg')
+                ],
+                floor: '1',
+                capacity: '22',
+                roomType: 'Dressing Room',
+                searchAliases: ['PRAX 107', 'Dressing Room'],
+            },
+            {
+                id: 'prax-120',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '351 (150)',
+                roomType: 'Unknown (high chance to be a auditorium)',
+                searchAliases: ['PRAX 120', 'Auditorium'],
+            },
+            {
+                id: 'prax-143',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '38 (24)',
+                roomType: 'Unknown',
+                searchAliases: ['PRAX 143'],
+            },
+            {
+                id: 'prax-150',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '596 (433)',
+                roomType: 'Unknown (high chance to be a auditorium)',
+                searchAliases: ['PRAX 150', 'Auditorium'],
+            },
+            {
+                id: 'prax-234',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '24 (12)',
+                roomType: 'Unknown',
+                searchAliases: ['PRAX 234'],
+            },
+        ]
+    },
+    {
+        id: 'rc',
+        name: 'Radiation Center',
+        rooms: [
+            {
+                id: 'rc-104C',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '44',
+                roomType: 'Classroom',
+                searchAliases: ['RC 104C'],
+            },
+            {
+                id: 'rc-104D',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['RC 104D'],
+            },
+            {
+                id: 'rc-118C',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '42',
+                roomType: 'Lab Room',
+                searchAliases: ['RC 118C'],
+            },
+            {
+                id: 'rc-120C',
+                images: [
+                    require('../assets/images/rooms/rc-120C.jpeg')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['RC 120C'],
+            },
+            {
+                id: 'rc-124C',
+                images: [
+                    require('../assets/images/rooms/rc-124C.jpeg')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['RC 124C'],
+            },
+            {
+                id: 'rc-136A',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['RC 136A'],
+            },
+            {
+                id: 'rc-300D',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Conference Room',
+                searchAliases: ['RC 300D'],
+            },
+        ]
+    },
+    {
+        id: 'rcb',
+        name: 'Rehearsal Classroom Building',
+        rooms: [
+            {
+                id: 'rcb-105',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '80',
+                roomType: 'Classroom',
+                searchAliases: ['RCB 105'],
+            },
+        ]
+    },
+    {
+        id: 'reed',
+        name: 'Reed Lodge',
+        rooms: [
+            {
+                id: 'reed-111',
+                images: [
+                    require('../assets/images/rooms/reed-111.jpeg')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Computer Lab',
+                searchAliases: ['REED 111'],
+            },
+            {
+                id: 'reed-219',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '15',
+                roomType: 'Lab Room',
+                searchAliases: ['REED 219'],
+            },
+            {
+                id: 'reed-321',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '11',
+                roomType: 'Classroom',
+                searchAliases: ['REED 321'],
+            },
+        ]
+    },
+    {
+        id: 'resr',
+        name: 'Reser Stadium',
+        rooms: [
+            {
+                id: 'resr-100',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '1000',
+                roomType: 'Football Field',
+                searchAliases: ['RESR 100', 'Football Field'],
+            },
+            {
+                id: 'resr-club',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: 'Club Floor',
+                capacity: '250',
+                roomType: 'Club Level',
+                searchAliases: ['RESR CLUB', 'Reser Club Level'],
+            },
+            {
+                id: 'resr-loge',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: 'Loge Floor',
+                capacity: '120',
+                roomType: 'Loge Level',
+                searchAliases: ['RESR LOGE', 'Reser Loge Level'],
+            },
+        ]
+    },
+    {
+        id: 'rich',
+        name: 'Richardson Hall',
+        rooms: [
+            {
+                id: 'rich-107',
+                images: [
+                    require('../assets/images/rooms/rich-107.jpeg')
+                ],
+                floor: '1',
+                capacity: '56',
+                roomType: 'Classroom',
+                searchAliases: ['RICH 107'],
+            },
+            {
+                id: 'rich-115',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '47',
+                roomType: 'Conference Room',
+                searchAliases: ['RICH 115'],
+            },
+            {
+                id: 'rich-123',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['RICH 123'],
+            },
+            {
+                id: 'rich-203',
+                images: [
+                    require('../assets/images/rooms/rich-203.jpeg')
+                ],
+                floor: '2',
+                capacity: '18',
+                roomType: 'Computer Lab',
+                searchAliases: ['RICH 203'],
+            },
+            {
+                id: 'rich-243',
+                images: [
+                    require('../assets/images/rooms/rich-243.jpeg')
+                ],
+                floor: '2',
+                capacity: '51',
+                roomType: 'Classroom',
+                searchAliases: ['RICH 243'],
+            },
+            {
+                id: 'rich-289',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '35',
+                roomType: 'Lab Room',
+                searchAliases: ['RICH 289'],
+            },
+            {
+                id: 'rich-313',
+                images: [
+                    require('../assets/images/rooms/rich-313.jpeg')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['RICH 313'],
+            },
+        ]
+    },
+    {
+        id: 'rog',
+        name: 'Rogers Hall',
+        rooms: [
+            {
+                id: 'rog-104',
+                images: [
+                    require('../assets/images/rooms/rog-104.jpeg')
+                ],
+                floor: '1',
+                capacity: '17',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 104'],
+            },
+            {
+                id: 'rog-118',
+                images: [
+                    require('../assets/images/rooms/rog-118.jpeg')
+                ],
+                floor: '1',
+                capacity: '73',
+                roomType: 'Workshop',
+                searchAliases: ['ROG 118'],
+            },
+            {
+                id: 'rog-126',
+                images: [
+                    require('../assets/images/rooms/rog-126.jpeg')
+                ],
+                floor: '1',
+                capacity: '42',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 126'],
+            },
+            {
+                id: 'rog-222',
+                images: [
+                    require('../assets/images/rooms/rog-222.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 222'],
+            },
+            {
+                id: 'rog-226',
+                images: [
+                    require('../assets/images/rooms/rog-226.jpeg')
+                ],
+                floor: '2',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['ROG 226'],
+            },
+            {
+                id: 'rog-228',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '36',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 228'],
+            },
+            {
+                id: 'rog-230',
+                images: [
+                    require('../assets/images/rooms/rog-230.jpeg')
+                ],
+                floor: '2',
+                capacity: '74',
+                roomType: 'Classroom',
+                searchAliases: ['ROG 230'],
+            },
+            {
+                id: 'rog-304',
+                images: [
+                    require('../assets/images/rooms/rog-304.jpeg')
+                ],
+                floor: '3',
+                capacity: '16',
+                roomType: 'Conference Room',
+                searchAliases: ['ROG 304'],
+            },
+            {
+                id: 'rog-330',
+                images: [
+                    require('../assets/images/rooms/rog-330.jpeg')
+                ],
+                floor: '3',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 330'],
+            },
+            {
+                id: 'rog-332',
+                images: [
+                    require('../assets/images/rooms/rog-332.jpeg')
+                ],
+                floor: '3',
+                capacity: '28',
+                roomType: 'Classroom',
+                searchAliases: ['ROG 332'],
+            },
+            {
+                id: 'rog-334',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '14',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 334'],
+            },
+            {
+                id: 'rog-342',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '31',
+                roomType: 'Lab Room',
+                searchAliases: ['ROG 342'],
+            },
+            {
+                id: 'rog-440',
+                images: [
+                    require('../assets/images/rooms/rog-440.jpeg')
+                ],
+                floor: '3',
+                capacity: '32',
+                roomType: 'Classroom',
+                searchAliases: ['ROG 440'],
+            },
+        ]
+    },
+    {
+        id: 'sec',
+        name: 'Student Experience Center',
+        rooms: [
+            {
+                id: 'sec-354',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '40',
+                roomType: 'Conference Room',
+                searchAliases: ['SEC 354'],
+            },
+            {
+                id: 'sec-421',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '4',
+                capacity: '25',
+                roomType: 'Media Room',
+                searchAliases: ['SEC 421'],
+            },
+            {
+                id: 'sec-plaza',
+                images: [
+                    require('../assets/images/rooms/sec-plaza.jpeg')
+                ],
+                floor: '1',
+                capacity: '1000',
+                roomType: 'Plaza',
+                searchAliases: ['SEC Plaza'],
+            },
+        ]
+    },
+    {
+        id: 'shep',
+        name: 'Shepherd Hall',
+        rooms: [
+            {
+                id: 'shep-101',
+                images: [
+                    require('../assets/images/rooms/shep-101.jpeg')
+                ],
+                floor: '1',
+                capacity: '32',
+                roomType: 'Classroom',
+                searchAliases: ['SHEP 101'],
+            },
+            {
+                id: 'shep-105',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '15',
+                roomType: 'Conference Room',
+                searchAliases: ['SHEP 105'],
+            },
+            {
+                id: 'shep-106',
+                images: [
+                    require('../assets/images/rooms/shep-106.jpeg')
+                ],
+                floor: '1',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['SHEP 106'],
+            },
+            {
+                id: 'shep-202',
+                images: [
+                    require('../assets/images/rooms/shep-202.jpeg')
+                ],
+                floor: '2',
+                capacity: '28',
+                roomType: 'Classroom',
+                searchAliases: ['SHEP 106'],
+            },
+        ]
+    },
+    {
+        id: 'slp',
+        name: 'Student Legacy Park ',
+        rooms: [
+            {
+                id: 'slp-east-fields',
+                images: [
+                    require('../assets/images/rooms/slp-east-fields.jpeg'),
+                    require('../assets/images/rooms/slp-east-fields2.jpeg'),
+                ],
+                floor: 'N/A',
+                capacity: '100',
+                roomType: 'East Fields',
+                searchAliases: ['SLP East Fields'],
+            },
+            {
+                id: 'slp-east-fields',
+                images: [
+                    require('../assets/images/rooms/slp-west-fields.jpeg'),
+                ],
+                floor: 'N/A',
+                capacity: '50',
+                roomType: 'West Fields',
+                searchAliases: ['SLP West Fields'],
+            },
+        ]
+    },
+    {
+        id: 'snell',
+        name: 'Snell Hall',
+        rooms: [
+            {
+                id: 'snel-0003',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '32',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0003'],
+            },
+            {
+                id: 'snel-003',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '32',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 003'],
+            },
+            {
+                id: 'snel-0054',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '24',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0054'],
+            },
+            {
+                id: 'snel-0056',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0056'],
+            },
+            {
+                id: 'snel-0066',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0066'],
+            },
+            {
+                id: 'snel-0071',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0071'],
+            },
+            {
+                id: 'snel-0073',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0073'],
+            },
+            {
+                id: 'snel-0074',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0074'],
+            },
+            {
+                id: 'snel-0085',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '0',
+                capacity: '55',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 0085'],
+            },
+            {
+                id: 'snel-100A',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '24',
+                roomType: 'Computer Lab',
+                searchAliases: ['SNEL 100A'],
+            },
+            {
+                id: 'snel-100G',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '15',
+                roomType: 'Lab Room',
+                searchAliases: ['SNEL 100G'],
+            },
+            {
+                id: 'snel-200B',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '18',
+                roomType: 'Computer Lab',
+                searchAliases: ['SNEL 200B'],
+            },
+            {
+                id: 'snel-204',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '27',
+                roomType: 'Office Room',
+                searchAliases: ['SNEL 204'],
+            },
+            {
+                id: 'snel-448',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '4',
+                capacity: '15',
+                roomType: 'Classroom',
+                searchAliases: ['SNEL 448'],
+            },
+        ]
+    },
+    {
+        id: 'spav',
+        name: 'Stock Judging Pavilion',
+        rooms: [
+            {
+                id: 'spav-101',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '25',
+                roomType: 'Unknown',
+                searchAliases: ['SPAV 101'],
+            },
+        ]
+    },
+    {
+        id: 'tens',
+        name: 'Tennis Courts (Indoor)',
+        rooms: [
+            {
+                id: 'tens-101',
+                images: [
+                    require('../assets/images/rooms/tens-101.jpeg')
+                ],
+                floor: '1',
+                capacity: '100',
+                roomType: 'Tennis Courts',
+                searchAliases: ['TENS 101', 'Tennis Courts'],
+            },
+        ]
+    },
+    {
+        id: 'tens-crts',
+        name: 'Tennis Courts (Outdoor)',
+        rooms: [
+            {
+                id: 'tens-crts-1',
+                images: [
+                    require('../assets/images/rooms/tens-crts.jpeg')
+                ],
+                floor: 'N/A',
+                capacity: '35',
+                roomType: 'Tennis Courts',
+                searchAliases: ['Tennis Courts'],
+            },
+        ]
+    },
+    {
+        id: 'vlib',
+        name: 'Valley Library',
+        rooms: [
+            {
+                id: 'vlib-2024',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '49',
+                roomType: 'Computer Lab',
+                searchAliases: ['VLIB 2024'],
+            },
+            {
+                id: 'vlib-2082',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '80',
+                roomType: 'Autzen Room',
+                searchAliases: ['VLIB 2082', 'Autzen Room'],
+            },
+            {
+                id: 'vlib-3622',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '25',
+                roomType: 'Willamette East/West Seminar Rooms',
+                searchAliases: ['VLIB 3622', 'Willamette East/West Seminar Rooms'],
+            },
+            {
+                id: 'vlib-5420',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '5',
+                capacity: '15',
+                roomType: 'Unknown',
+                searchAliases: ['VLIB 5420'],
+            },
+        ]
+    },
+    {
+        id: 'wald',
+        name: 'Waldo Hall',
+        rooms: [
+            {
+                id: 'wald-120',
+                images: [
+                    require('../assets/images/rooms/wald-120.jpeg')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Conference Room',
+                searchAliases: ['WALD 120'],
+            },
+            {
+                id: 'wald-132',
+                images: [
+                    require('../assets/images/rooms/wald-132.jpeg')
+                ],
+                floor: '1',
+                capacity: '23',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 132'],
+            },
+            {
+                id: 'wald-200',
+                images: [
+                    require('../assets/images/rooms/wald-200.jpeg')
+                ],
+                floor: '2',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['WALD 200'],
+            },
+            {
+                id: 'wald-201',
+                images: [
+                    require('../assets/images/rooms/wald-201.jpeg')
+                ],
+                floor: '2',
+                capacity: '10',
+                roomType: 'Conference Room',
+                searchAliases: ['WALD 201'],
+            },
+            {
+                id: 'wald-201A',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '37',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 201A'],
+            },
+            {
+                id: 'wald-240',
+                images: [
+                    require('../assets/images/rooms/wald-240.jpeg')
+                ],
+                floor: '2',
+                capacity: '27',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 240'],
+            },
+            {
+
+                id: 'wald-244',
+                images: [
+                    require('../assets/images/rooms/wald-244.jpeg')
+                ],
+                floor: '2',
+                capacity: '27',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 244'],
+            },
+            {
+                id: 'wald-252',
+                images: [
+                    require('../assets/images/rooms/wald-252.jpeg')
+                ],
+                floor: '2',
+                capacity: '10',
+                roomType: 'Conference Room',
+                searchAliases: ['WALD 252'],
+            },
+            {
+
+                id: 'wald-329',
+                images: [
+                    require('../assets/images/rooms/wald-329.jpeg')
+                ],
+                floor: '3',
+                capacity: '21',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 329'],
+            },
+            {
+
+                id: 'wald-421',
+                images: [
+                    require('../assets/images/rooms/wald-421.jpeg')
+                ],
+                floor: '4',
+                capacity: '34',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 421'],
+            },
+            {
+
+                id: 'wald-432',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '4',
+                capacity: '14',
+                roomType: 'Conference Room',
+                searchAliases: ['WALD 432'],
+            },
+            {
+
+                id: 'wald-456',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '4',
+                capacity: '33',
+                roomType: 'Classroom',
+                searchAliases: ['WALD 456'],
+            },
+        ]
+    },
+    {
+        id: 'wfd',
+        name: 'Weatherford Hall',
+        rooms: [
+            {
+                id: 'wfd-EG01',
+                images: [
+                    require('../assets/images/rooms/wfd-eg01.jpeg')
+                ],
+                floor: '1',
+                capacity: '41',
+                roomType: 'Classroom',
+                searchAliases: ['WFD EG01'],
+            },
+        ]
+    },
+    {
+        id: 'with',
+        name: 'Withycombe Hall',
+        rooms: [
+            {
+                id: 'with-062',
+                images: [
+                    require('../assets/images/rooms/with-062.jpeg')
+                ],
+                floor: '0',
+                capacity: '16',
+                roomType: 'Classroom',
+                searchAliases: ['WITH 062'],
+            },
+            {
+                id: 'with-064',
+                images: [
+                    require('../assets/images/rooms/with-064.jpeg')
+                ],
+                floor: '0',
+                capacity: '50',
+                roomType: 'Classroom',
+                searchAliases: ['WITH 064'],
+            },
+            {
+                id: 'with-074',
+                images: [
+                    require('../assets/images/rooms/with-074.jpeg')
+                ],
+                floor: '0',
+                capacity: '24',
+                roomType: 'Computer Lab',
+                searchAliases: ['WITH 074'],
+            },
+            {
+                id: 'with-153',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '362',
+                roomType: 'Auditorium',
+                searchAliases: ['WITH 153'],
+            },
+            {
+                id: 'with-155',
+                images: [
+                    require('../assets/images/rooms/with-155.jpeg')
+                ],
+                floor: '1',
+                capacity: '217',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WITH 155'],
+            },
+            {
+                id: 'with-159',
+                images: [
+                    require('../assets/images/rooms/with-159.jpeg')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['WITH 159'],
+            },
+            {
+                id: 'with-159C',
+                images: [
+                    require('../assets/images/rooms/with-159C.jpeg')
+                ],
+                floor: '1',
+                capacity: '15',
+                roomType: 'Lab Room',
+                searchAliases: ['WITH 159C'],
+            },
+            {
+                id: 'with-161C',
+                images: [
+                    require('../assets/images/rooms/with-161C.jpeg')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Makeup Room',
+                searchAliases: ['WITH 161C', 'Makeup Room'],
+            },
+            {
+                id: 'with-165',
+                images: [
+                    require('../assets/images/rooms/with-165.jpeg')
+                ],
+                floor: '1',
+                capacity: '27',
+                roomType: 'Classroom',
+                searchAliases: ['WITH 165'],
+            },
+            {
+                id: 'with-167',
+                images: [
+                    require('../assets/images/rooms/with-167.jpeg')
+                ],
+                floor: '1',
+                capacity: '15',
+                roomType: 'Dressing Room',
+                searchAliases: ['WITH 167', 'Dressing Room'],
+            },
+            {
+                id: 'with-199',
+                images: [
+                    require('../assets/images/rooms/with-199.jpeg')
+                ],
+                floor: '1',
+                capacity: '120',
+                roomType: 'Small Performance Theater',
+                searchAliases: ['WITH 199', 'Small Performance Theater'],
+            },
+            {
+                id: 'with-201',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '23',
+                roomType: 'Conference Room',
+                searchAliases: ['WITH 201'],
+            },
+            {
+                id: 'with-203',
+                images: [
+                    require('../assets/images/rooms/with-203.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['WITH 203'],
+            },
+        ]
+    },
+    {
+        id: 'wlkn',
+        name: 'Wilkinson Hall',
+        rooms: [
+            {
+                id: 'wlkn-004',
+                images: [
+                    require('../assets/images/rooms/wlkn-004.jpeg')
+                ],
+                floor: '0',
+                capacity: '25',
+                roomType: 'Lab Room',
+                searchAliases: ['WLKN 004'],
+            },
+            {
+                id: 'wlkn-010',
+                images: [
+                    require('../assets/images/rooms/wlkn-010.jpeg')
+                ],
+                floor: '0',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['WLKN 010'],
+            },
+            {
+                id: 'wlkn-106',
+                images: [
+                    require('../assets/images/rooms/wlkn-106.jpeg')
+                ],
+                floor: '1',
+                capacity: '18',
+                roomType: 'Lab Room',
+                searchAliases: ['WLKN 106'],
+            },
+            {
+                id: 'wlkn-108',
+                images: [
+                    require('../assets/images/rooms/wlkn-108.jpeg')
+                ],
+                floor: '1',
+                capacity: '65',
+                roomType: 'Classroom',
+                searchAliases: ['WLKN 108'],
+            },
+            {
+                id: 'wlkn-110',
+                images: [
+                    require('../assets/images/rooms/wlkn-110.jpeg')
+                ],
+                floor: '1',
+                capacity: '299',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WLKN 110', 'Gilfillan Auditorium'],
+            },
+            {
+                id: 'wlkn-127',
+                images: [
+                    require('../assets/images/rooms/wlkn-127.jpeg')
+                ],
+                floor: '1',
+                capacity: '20',
+                roomType: 'Conference Room',
+                searchAliases: ['WLKN 127'],
+            },
+            {
+                id: 'wlkn-129',
+                images: [
+                    require('../assets/images/rooms/wlkn-129.jpeg')
+                ],
+                floor: '1',
+                capacity: '32',
+                roomType: 'Lab Room',
+                searchAliases: ['WLKN 129'],
+            },
+            {
+                id: 'wlkn-203',
+                images: [
+                    require('../assets/images/rooms/wlkn-203.jpeg')
+                ],
+                floor: '2',
+                capacity: '25',
+                roomType: 'Conference Room',
+                searchAliases: ['WLKN 203'],
+            },
+            {
+                id: 'wlkn-207',
+                images: [
+                    require('../assets/images/rooms/wlkn-207.jpeg')
+                ],
+                floor: '2',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['WLKN 207'],
+            },
+            {
+                id: 'wlkn-210',
+                images: [
+                    require('../assets/images/rooms/wlkn-210.jpeg')
+                ],
+                floor: '2',
+                capacity: '27',
+                roomType: 'Computer Lab',
+                searchAliases: ['WLKN 210'],
+            },
+            {
+                id: 'wlkn-235',
+                images: [
+                    require('../assets/images/rooms/wlkn-235.jpeg')
+                ],
+                floor: '2',
+                capacity: '48',
+                roomType: 'Classroom',
+                searchAliases: ['WLKN 235'],
+            },
+        ]
+    },
+    {
+        id: 'wngr',
+        name: 'Weniger Hall',
+        rooms: [
+            {
+                id: 'wngr-112',
+                images: [
+                    require('../assets/images/rooms/wngr-112.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 112'],
+            },
+            {
+                id: 'wngr-116',
+                images: [
+                    require('../assets/images/rooms/wngr-116.jpeg')
+                ],
+                floor: '1',
+                capacity: '100',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WNGR 116'],
+            },
+            {
+                id: 'wngr-127',
+                images: [
+                    require('../assets/images/rooms/wngr-127.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 127'],
+            },
+            {
+                id: 'wngr-129',
+                images: [
+                    require('../assets/images/rooms/wngr-129.jpeg')
+                ],
+                floor: '1',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 129'],
+            },
+            {
+                id: 'wngr-145',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '1',
+                capacity: '12',
+                roomType: 'Conference Room',
+                searchAliases: ['WNGR 145'],
+            },
+            {
+                id: 'wngr-149',
+                images: [
+                    require('../assets/images/rooms/wngr-149.jpeg')
+                ],
+                floor: '1',
+                capacity: '78',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WNGR 149'],
+            },
+            {
+                id: 'wngr-151',
+                images: [
+                    require('../assets/images/rooms/wngr-151.jpeg')
+                ],
+                floor: '1',
+                capacity: '201',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WNGR 151'],
+            },
+            {
+                id: 'wngr-153',
+                images: [
+                    require('../assets/images/rooms/wngr-153.jpeg')
+                ],
+                floor: '1',
+                capacity: '128',
+                roomType: 'Lecture Hall',
+                searchAliases: ['WNGR 153'],
+            },
+            {
+                id: 'wngr-200',
+                images: [
+                    require('../assets/images/rooms/wngr-200.jpeg')
+                ],
+                floor: '2',
+                capacity: '35',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 200'],
+            },
+            {
+                id: 'wngr-201',
+                images: [
+                    require('../assets/images/rooms/wngr-201.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 201'],
+            },
+            {
+                id: 'wngr-204',
+                images: [
+                    require('../assets/images/rooms/wngr-204.jpeg')
+                ],
+                floor: '2',
+                capacity: '35 (30)',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 204'],
+            },
+            {
+                id: 'wngr-206',
+                images: [
+                    require('../assets/images/rooms/wngr-206.jpeg')
+                ],
+                floor: '2',
+                capacity: '30',
+                roomType: 'Computer Lab',
+                searchAliases: ['WNGR 206'],
+            },
+            {
+                id: 'wngr-212',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '94',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 212'],
+            },
+            {
+                id: 'wngr-222',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '34',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 222'],
+            },
+            {
+                id: 'wngr-226',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '2',
+                capacity: '40',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 226'],
+            },
+            {
+                id: 'wngr-228',
+                images: [
+                    require('../assets/images/rooms/wngr-228.jpeg')
+                ],
+                floor: '2',
+                capacity: '48',
+                roomType: 'Classroom/Lab Room',
+                searchAliases: ['WNGR 228'],
+            },
+            {
+                id: 'wngr-232',
+                images: [
+                    require('../assets/images/rooms/wngr-232.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 232'],
+            },
+            {
+                id: 'wngr-234',
+                images: [
+                    require('../assets/images/rooms/wngr-234.jpeg')
+                ],
+                floor: '2',
+                capacity: '35',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 234'],
+            },
+            {
+                id: 'wngr-238',
+                images: [
+                    require('../assets/images/rooms/wngr-238.jpeg')
+                ],
+                floor: '2',
+                capacity: '35',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 238'],
+            },
+            {
+                id: 'wngr-245',
+                images: [
+                    require('../assets/images/rooms/wngr-245.jpeg')
+                ],
+                floor: '2',
+                capacity: '34',
+                roomType: 'Conference Room',
+                searchAliases: ['WNGR 245'],
+            },
+            {
+                id: 'wngr-247',
+                images: [
+                    require('../assets/images/rooms/wngr-247.jpeg')
+                ],
+                floor: '2',
+                capacity: '45',
+                roomType: 'Classroom/Lab Room',
+                searchAliases: ['WNGR 247'],
+            },
+            {
+                id: 'wngr-275',
+                images: [
+                    require('../assets/images/rooms/wngr-275.jpeg')
+                ],
+                floor: '2',
+                capacity: '32',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 275'],
+            },
+            {
+                id: 'wngr-285',
+                images: [
+                    require('../assets/images/rooms/wngr-285.jpeg')
+                ],
+                floor: '2',
+                capacity: '24',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 285'],
+            },
+            {
+                id: 'wngr-287',
+                images: [
+                    require('../assets/images/rooms/wngr-287.jpeg')
+                ],
+                floor: '2',
+                capacity: '30',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 287'],
+            },
+            {
+                id: 'wngr-300',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '24',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 300'],
+            },
+            {
+                id: 'wngr-302',
+                images: [
+                    require('../assets/images/rooms/wngr-302.jpeg')
+                ],
+                floor: '3',
+                capacity: '24',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 302'],
+            },
+            {
+                id: 'wngr-304',
+                images: [
+                    require('../assets/images/rooms/wngr-304.jpeg')
+                ],
+                floor: '3',
+                capacity: '36',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 304'],
+            },
+            {
+                id: 'wngr-304F',
+                images: [
+                    require('../assets/images/rooms/wngr-304F.jpeg')
+                ],
+                floor: '3',
+                capacity: '49',
+                roomType: 'Computer Lab',
+                searchAliases: ['WNGR 304F'],
+            },
+            {
+                id: 'wngr-305',
+                images: [
+                    require('../assets/images/rooms/wngr-305.jpeg')
+                ],
+                floor: '3',
+                capacity: '16',
+                roomType: 'Conference Room',
+                searchAliases: ['WNGR 305'],
+            },
+            {
+                id: 'wngr-328',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '80',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 328'],
+            },
+            {
+                id: 'wngr-334',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '3',
+                capacity: '20',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 334'],
+            },
+            {
+                id: 'wngr-345',
+                images: [
+                    require('../assets/images/rooms/wngr-345.jpeg')
+                ],
+                floor: '3',
+                capacity: '23',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 345'],
+            },
+            {
+                id: 'wngr-377',
+                images: [
+                    require('../assets/images/rooms/wngr-377.jpeg')
+                ],
+                floor: '3',
+                capacity: '21',
+                roomType: 'Classroom',
+                searchAliases: ['WNGR 377'],
+            },
+            {
+                id: 'wngr-412',
+                images: [
+                    require('../assets/images/placeholder.png')
+                ],
+                floor: '4',
+                capacity: '30',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 412'],
+            },
+            {
+                id: 'wngr-426',
+                images: [
+                    require('../assets/images/rooms/wngr-426.jpeg')
+                ],
+                floor: '4',
+                capacity: '18',
+                roomType: 'Lab Room',
+                searchAliases: ['WNGR 426'],
+            },
+        ]
     }
 ];
 

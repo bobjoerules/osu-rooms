@@ -256,7 +256,7 @@ export default function Account() {
             </View>
 
             <Pressable style={[styles.buttonSecondary, { marginTop: 20 }]} onPress={handleSignOut}>
-              <Text style={styles.buttonText}>Sign out</Text>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
             </Pressable>
 
             {isAdmin && (
@@ -294,7 +294,7 @@ export default function Account() {
               <View style={styles.settingRow}>
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
-                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images</Text>
+                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images (these rooms have a higher chance of being inaccurate)</Text>
                 </View>
                 <Switch
                   value={showPlaceholders}
@@ -473,11 +473,13 @@ function createStyles(theme: Theme) {
       opacity: 0.5,
     },
     buttonSecondary: {
-      backgroundColor: theme.destructive,
+      backgroundColor: theme.inputBg,
       paddingVertical: 12,
       borderRadius: 12,
       alignItems: "center",
       marginTop: 8,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     buttonText: {
       color: theme.buttonText,
