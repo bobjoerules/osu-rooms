@@ -10,6 +10,7 @@ export interface Room {
 export interface Building {
     id: string;
     name: string;
+    images?: any[];
     rooms: Room[];
 }
 
@@ -17,6 +18,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'owen',
         name: 'Owen Hall',
+        images: [require('../assets/images/buildings/owenhall.jpg')],
         rooms: [
             {
                 id: 'owen-hall-101',
@@ -133,6 +135,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'linc',
         name: 'Learning Innovation Center (LINC)',
+        images: [require('../assets/images/buildings/linc.jpeg')],
         rooms: [
             {
                 id: 'linc-100',
@@ -289,6 +292,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wgnd',
         name: 'Wiegand Hall',
+        images: [require('../assets/images/buildings/wgnd.jpeg')],
         rooms: [
             {
                 id: 'wgnd-106',
@@ -385,6 +389,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'phar',
         name: 'Pharmacy Building',
+        images: [require('../assets/images/buildings/phar.jpeg')],
         rooms: [
             {
                 id: 'phar-107',
@@ -461,6 +466,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'cord',
         name: 'Cordley Hall',
+        images: [require('../assets/images/buildings/cord.jpeg')],
         rooms: [
             {
                 id: 'cord-1100',
@@ -658,6 +664,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mlm',
         name: 'Milam Hall',
+        images: [require('../assets/images/buildings/mlm.jpeg')],
         rooms: [
             {
                 id: 'mlm-006',
@@ -924,6 +931,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'casc',
         name: 'Cascade Hall',
+        images: [require('../assets/images/buildings/casc.jpeg')],
         rooms: [
             {
                 id: 'casc-118',
@@ -1010,6 +1018,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'stag',
         name: 'Strand Agriculture Hall',
+        images: [require('../assets/images/buildings/stag.jpeg')],
         rooms: [
             {
                 id: 'stag-110',
@@ -1256,6 +1265,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'als',
         name: 'Agricultural & Life Sciences',
+        images: [require('../assets/images/buildings/als.jpeg')],
         rooms: [
             {
                 id: 'als-0006',
@@ -1482,6 +1492,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bexl',
         name: 'Bexell Hall',
+        images: [require('../assets/images/buildings/bexl.jpeg')],
         rooms: [
             {
                 id: 'bexl-100M',
@@ -1658,6 +1669,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gbad',
         name: 'Gilbert Hall Addition',
+        images: [require('../assets/images/buildings/gbad.jpeg')],
         rooms: [
             {
                 id: 'gbad-009',
@@ -1774,6 +1786,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilb',
         name: 'Gilbert Hall',
+        images: [require('../assets/images/buildings/gilb.jpeg')],
         rooms: [
             {
                 id: 'gilb-109',
@@ -1830,6 +1843,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wb',
         name: 'Women\'s Building',
+        images: [require('../assets/images/buildings/wb.jpeg')],
         rooms: [
             {
                 id: 'wb-0005',
@@ -1946,6 +1960,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilm',
         name: 'Gilmore Hall',
+        images: [require('../assets/images/buildings/gilm.jpeg')],
         rooms: [
             {
                 id: 'gilm-206',
@@ -1972,6 +1987,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gman',
         name: 'Gilmore Annex',
+        images: [require('../assets/images/buildings/gman.jpeg')],
         rooms: [
             {
                 id: 'gman-101',
@@ -1988,6 +2004,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'aust',
         name: 'Austin Hall',
+        images: [require('../assets/images/buildings/aust.jpeg')],
         rooms: [
             {
                 id: 'aust-100',
@@ -2124,6 +2141,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bale',
         name: 'Ballard Extension Hall',
+        images: [require('../assets/images/buildings/bale.jpeg')],
         rooms: [
             {
                 id: 'bale-200C',
@@ -2160,6 +2178,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bat',
         name: 'Batcheller Hall',
+        images: [require('../assets/images/buildings/bat.jpeg')],
         rooms: [
             {
                 id: 'bat-045',
@@ -2226,6 +2245,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'brc',
         name: 'Beth Ray Center for Academic Support',
+        images: [require('../assets/images/buildings/brc.jpeg')],
         rooms: [
             {
                 id: 'brc-133',
@@ -2272,6 +2292,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'burt',
         name: 'Burt Hall',
+        images: [require('../assets/images/buildings/burt.jpeg')],
         rooms: [
             {
                 id: 'burt-128',
@@ -2318,6 +2339,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bates',
         name: 'Bates Hall',
+        images: [require('../assets/images/buildings/bates.jpeg')],
         rooms: [
             {
                 id: 'bates-129',
@@ -2334,6 +2356,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'buxton',
         name: 'Buxton Hall',
+        images: [require('../assets/images/buildings/buxton.jpeg')],
         rooms: [
             {
                 id: 'buxton-169',
@@ -2350,6 +2373,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'call',
         name: 'Callahan Hall',
+        images: [require('../assets/images/buildings/call.jpeg')],
         rooms: [
             {
                 id: 'call-125',
@@ -2366,6 +2390,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'clkl',
         name: 'Clark Laboratory',
+        images: [require('../assets/images/buildings/clkl.jpeg')],
         rooms: [
             {
                 id: 'clkl-104',
@@ -2402,6 +2427,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'coar',
         name: 'Coast Range Building',
+        images: [require('../assets/images/buildings/coar.jpeg')],
         rooms: [
             {
                 id: 'coar-2123',
@@ -2428,6 +2454,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'comh',
         name: 'Community Hall',
+        images: [require('../assets/images/buildings/comh.jpeg')],
         rooms: [
             {
                 id: 'comh-102',
@@ -2534,6 +2561,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'covl',
         name: 'Covell Hall',
+        images: [require('../assets/images/buildings/covl.jpeg')],
         rooms: [
             {
                 id: 'covl-001',
@@ -2630,6 +2658,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'crps',
         name: 'Crop Science Building',
+        images: [require('../assets/images/buildings/crps.jpeg')],
         rooms: [
             {
                 id: 'crps-119',
@@ -2686,6 +2715,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dear',
         name: 'Dearborn Hall',
+        images: [require('../assets/images/buildings/dear.jpeg')],
         rooms: [
             {
                 id: 'dear-001E',
@@ -2882,6 +2912,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dryd',
         name: 'Dryden Hall',
+        images: [require('../assets/images/buildings/dryd.jpeg')],
         rooms: [
             {
                 id: 'dryd-104',
@@ -2908,6 +2939,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dxrc',
         name: 'Dixon Recreation Center',
+        images: [require('../assets/images/buildings/dxrc.jpeg')],
         rooms: [
             {
                 id: 'dxrc-126',
@@ -2994,6 +3026,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dybn',
         name: 'DC Dairy Barn',
+        images: [require('../assets/images/buildings/dybn.jpeg')],
         rooms: [
             {
                 id: 'dybn-101',
@@ -3010,6 +3043,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'egrn',
         name: 'East Greenhouse 16',
+        images: [require('../assets/images/buildings/egrn.jpeg')],
         rooms: [
             {
                 id: 'egrn-16',
@@ -3026,6 +3060,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'emac',
         name: 'Entomology Machine Storage',
+        images: [require('../assets/images/buildings/emac.jpeg')],
         rooms: [
             {
                 id: 'emac-130',
@@ -3042,6 +3077,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'fair',
         name: 'Fairbanks Hall',
+        images: [require('../assets/images/buildings/fair.jpeg')],
         rooms: [
             {
                 id: 'fair-104',
@@ -3158,6 +3194,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'furm',
         name: 'Joyce Collin Furman Hall',
+        images: [require('../assets/images/buildings/furm.jpeg')],
         rooms: [
             {
                 id: 'furm-100',
@@ -3284,6 +3321,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilk',
         name: 'Gilkey Hall',
+        images: [require('../assets/images/buildings/gilk.jpeg')],
         rooms: [
             {
                 id: 'gilk-100',
@@ -3340,6 +3378,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'glsn',
         name: 'Gleeson Hall',
+        images: [require('../assets/images/buildings/glsn.jpeg')],
         rooms: [
             {
                 id: 'glsn-003',
@@ -3406,6 +3445,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'graf',
         name: 'Graf Hall',
+        images: [require('../assets/images/buildings/graf.jpeg')],
         rooms: [
             {
                 id: 'graf-106',
@@ -3432,6 +3472,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gvgc',
         name: 'Gladys Valley Gymnastics Center',
+        images: [require('../assets/images/buildings/gvgc.jpeg')],
         rooms: [
             {
                 id: 'gvgc-106',
@@ -3468,6 +3509,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'indp',
         name: 'Merritt Truax Indoor Center',
+        images: [require('../assets/images/buildings/indp.jpeg')],
         rooms: [
             {
                 id: 'indp-101',
@@ -3484,6 +3526,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'haml',
         name: 'Hogg Animal Metabolism Lab',
+        images: [require('../assets/images/buildings/haml.jpeg')],
         rooms: [
             {
                 id: 'haml-0100',
@@ -3500,6 +3543,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hfc',
         name: 'Hallie E. Ford Center',
+        images: [require('../assets/images/buildings/hfc.jpeg')],
         rooms: [
             {
                 id: 'hfc-115',
@@ -3516,6 +3560,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hkrt',
         name: 'Heckart Lodge',
+        images: [require('../assets/images/buildings/hkrt.jpeg')],
         rooms: [
             {
                 id: 'hkrt-110',
@@ -3531,7 +3576,8 @@ export const BUILDINGS_DATA: Building[] = [
     },
     {
         id: 'hov',
-        name: 'Hovland Hall ',
+        name: 'Hovland Hall',
+        images: [require('../assets/images/buildings/hov.jpeg')],
         rooms: [
             {
                 id: 'hov-100',
@@ -3568,6 +3614,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hsbn',
         name: 'Horse Barn',
+        images: [require('../assets/images/buildings/hsbn.jpeg')],
         rooms: [
             {
                 id: 'hsbn-100',
@@ -3584,6 +3631,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hwrl',
         name: 'Hindsdale Wave Research Lab',
+        images: [require('../assets/images/buildings/hwrl.jpeg')],
         rooms: [
             {
                 id: 'hwrl-M0201',
@@ -3600,6 +3648,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'illc',
         name: 'International Learning-Living Center (ILLC)',
+        images: [require('../assets/images/buildings/illc.jpeg')],
         rooms: [
             {
                 id: 'illc-134',
@@ -3975,7 +4024,8 @@ export const BUILDINGS_DATA: Building[] = [
     },
     {
         id: 'john',
-        name: 'Johnson Hall ',
+        name: 'Johnson Hall',
+        images: [require('../assets/images/buildings/john.jpeg')],
         rooms: [
             {
                 id: 'john-102',
@@ -4042,6 +4092,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kear',
         name: 'Kearney Hall',
+        images: [require('../assets/images/buildings/kear.jpeg')],
         rooms: [
             {
                 id: 'kear-112',
@@ -4128,6 +4179,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kec',
         name: 'Kelley Engineering Center',
+        images: [require('../assets/images/buildings/kec.jpeg')],
         rooms: [
             {
                 id: 'kec-1001',
@@ -4174,6 +4226,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kidd',
         name: 'Kidder Hall',
+        images: [require('../assets/images/buildings/kidd.jpeg')],
         rooms: [
             {
                 id: 'kidd-022',
@@ -4410,6 +4463,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'lang',
         name: 'Langton Hall',
+        images: [require('../assets/images/buildings/lang.jpeg')],
         rooms: [
             {
                 id: 'lang-006',
@@ -4556,6 +4610,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'lpsc',
         name: 'Linus Pauling Science Center',
+        images: [require('../assets/images/buildings/lpsc.jpeg')],
         rooms: [
             {
                 id: 'lpsc-125',
@@ -4642,6 +4697,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'magr',
         name: 'Magruder Hall',
+        images: [require('../assets/images/buildings/magr.jpeg')],
         rooms: [
             {
                 id: 'magr-102',
@@ -4758,6 +4814,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mlh',
         name: 'Magruder - Lecture Hall',
+        images: [require('../assets/images/buildings/mlh.jpeg')],
         rooms: [
             {
                 id: 'mlh-1152',
@@ -4774,6 +4831,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mcaf',
         name: 'McAlexander Fieldhouse',
+        images: [require('../assets/images/buildings/mcaf.jpeg')],
         rooms: [
             {
                 id: 'mcaf-114',
@@ -4840,6 +4898,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mfd',
         name: 'Merryfield Hall',
+        images: [require('../assets/images/buildings/mfd.jpeg')],
         rooms: [
             {
                 id: 'mfd-108',
@@ -4866,6 +4925,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'more',
         name: 'Moreland Hall',
+        images: [require('../assets/images/buildings/more.jpeg')],
         rooms: [
             {
                 id: 'more-126',
@@ -4962,6 +5022,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mu',
         name: 'Memorial Union',
+        images: [require('../assets/images/buildings/mu.jpeg')],
         rooms: [
             {
                 id: 'mu-lanes',
@@ -4978,6 +5039,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'nash',
         name: 'Nash Hall',
+        images: [require('../assets/images/buildings/nash.jpeg')],
         rooms: [
             {
                 id: 'nash-032',
@@ -5114,6 +5176,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'oao',
         name: 'Oceanography Administration Building',
+        images: [require('../assets/images/buildings/oao.jpeg')],
         rooms: [
             {
                 id: 'oao-106',
@@ -5130,6 +5193,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'oatf',
         name: 'James E. Oldfield Animal Teaching Facility',
+        images: [require('../assets/images/buildings/oatf.jpeg')],
         rooms: [
             {
                 id: 'oatf-106',
@@ -5176,6 +5240,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'pfsc',
         name: 'George W. Peavy Forest Science Center',
+        images: [require('../assets/images/buildings/pfsc.jpeg')],
         rooms: [
             {
                 id: 'pfsc-104',
@@ -5282,6 +5347,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'pole',
         name: 'Pole Building',
+        images: [require('../assets/images/buildings/pole.jpeg')],
         rooms: [
             {
                 id: 'pole-Vet-Horse-Barn',
@@ -5298,6 +5364,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'poling',
         name: 'Poling Hall',
+        images: [require('../assets/images/buildings/poling.jpeg')],
         rooms: [
             {
                 id: 'poling-133',
@@ -5314,6 +5381,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'prax',
         name: 'Patricia Valian Reser Center for the Performing Arts',
+        images: [require('../assets/images/buildings/prax.jpeg')],
         rooms: [
             {
                 id: 'prax-107',
@@ -5370,6 +5438,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rc',
         name: 'Radiation Center',
+        images: [require('../assets/images/buildings/rc.jpeg')],
         rooms: [
             {
                 id: 'rc-104C',
@@ -5446,6 +5515,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rcb',
         name: 'Rehearsal Classroom Building',
+        images: [require('../assets/images/buildings/rcb.jpeg')],
         rooms: [
             {
                 id: 'rcb-105',
@@ -5462,6 +5532,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'reed',
         name: 'Reed Lodge',
+        images: [require('../assets/images/buildings/reed.jpeg')],
         rooms: [
             {
                 id: 'reed-111',
@@ -5498,6 +5569,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'resr',
         name: 'Reser Stadium',
+        images: [require('../assets/images/buildings/resr.jpeg')],
         rooms: [
             {
                 id: 'resr-100',
@@ -5534,6 +5606,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rich',
         name: 'Richardson Hall',
+        images: [require('../assets/images/buildings/rich.jpeg')],
         rooms: [
             {
                 id: 'rich-107',
@@ -5610,6 +5683,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rog',
         name: 'Rogers Hall',
+        images: [require('../assets/images/buildings/rog.jpeg')],
         rooms: [
             {
                 id: 'rog-104',
@@ -5746,6 +5820,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'sec',
         name: 'Student Experience Center',
+        images: [require('../assets/images/buildings/sec.jpeg')],
         rooms: [
             {
                 id: 'sec-354',
@@ -5782,6 +5857,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'shep',
         name: 'Shepherd Hall',
+        images: [require('../assets/images/buildings/shep.jpeg')],
         rooms: [
             {
                 id: 'shep-101',
@@ -5827,7 +5903,8 @@ export const BUILDINGS_DATA: Building[] = [
     },
     {
         id: 'slp',
-        name: 'Student Legacy Park ',
+        name: 'Student Legacy Park',
+        images: [require('../assets/images/buildings/slp.jpeg')],
         rooms: [
             {
                 id: 'slp-east-fields',
@@ -5855,6 +5932,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'snell',
         name: 'Snell Hall',
+        images: [require('../assets/images/buildings/snell.jpeg')],
         rooms: [
             {
                 id: 'snel-0003',
@@ -6001,6 +6079,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'spav',
         name: 'Stock Judging Pavilion',
+        images: [require('../assets/images/buildings/spav.jpeg')],
         rooms: [
             {
                 id: 'spav-101',
@@ -6017,6 +6096,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'tens',
         name: 'Tennis Courts (Indoor)',
+        images: [require('../assets/images/buildings/tens.jpeg')],
         rooms: [
             {
                 id: 'tens-101',
@@ -6033,6 +6113,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'tens-crts',
         name: 'Tennis Courts (Outdoor)',
+        images: [require('../assets/images/buildings/tens-crts.jpeg')],
         rooms: [
             {
                 id: 'tens-crts-1',
@@ -6049,6 +6130,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'vlib',
         name: 'Valley Library',
+        images: [require('../assets/images/buildings/vlib.jpeg')],
         rooms: [
             {
                 id: 'vlib-2024',
@@ -6095,6 +6177,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wald',
         name: 'Waldo Hall',
+        images: [require('../assets/images/buildings/wald.jpeg')],
         rooms: [
             {
                 id: 'wald-120',
@@ -6226,6 +6309,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wfd',
         name: 'Weatherford Hall',
+        images: [require('../assets/images/buildings/wfd.jpeg')],
         rooms: [
             {
                 id: 'wfd-EG01',
@@ -6242,6 +6326,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'with',
         name: 'Withycombe Hall',
+        images: [require('../assets/images/buildings/with.jpeg')],
         rooms: [
             {
                 id: 'with-062',
@@ -6378,6 +6463,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wlkn',
         name: 'Wilkinson Hall',
+        images: [require('../assets/images/buildings/wlkn.jpeg')],
         rooms: [
             {
                 id: 'wlkn-004',
@@ -6494,6 +6580,7 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wngr',
         name: 'Weniger Hall',
+        images: [require('../assets/images/buildings/wngr.jpeg')],
         rooms: [
             {
                 id: 'wngr-112',

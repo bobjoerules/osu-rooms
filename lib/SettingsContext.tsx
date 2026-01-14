@@ -8,25 +8,30 @@ interface SettingsContextType {
     setShowPlaceholders: (value: boolean) => void;
     useHaptics: boolean;
     setUseHaptics: (value: boolean) => void;
+    showBuildingImages: boolean;
+    setShowBuildingImages: (value: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 const PLACEHOLDERS_KEY = '@osu_room_rates_show_placeholders';
 const HAPTICS_KEY = '@osu_room_rates_use_haptics';
+const BUILDING_IMAGES_KEY = '@osu_room_rates_show_building_images';
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showPlaceholders, setShowPlaceholders] = useState(false);
     const [useHaptics, setUseHaptics] = useState(true);
+    const [showBuildingImages, setShowBuildingImages] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Load initial settings
         const loadSettings = async () => {
             try {
-                const [placeholdersValue, hapticsValue] = await Promise.all([
+                const [placeholdersValue, hapticsValue, buildingImagesValue] = await Promise.all([
                     AsyncStorage.getItem(PLACEHOLDERS_KEY),
                     AsyncStorage.getItem(HAPTICS_KEY),
+                    AsyncStorage.getItem(BUILDING_IMAGES_KEY),
                 ]);
 
                 if (placeholdersValue !== null) {
@@ -34,6 +39,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 }
                 if (hapticsValue !== null) {
                     setUseHaptics(JSON.parse(hapticsValue));
+                }
+                if (buildingImagesValue !== null) {
+                    setShowBuildingImages(JSON.parse(buildingImagesValue));
                 }
             } catch (e) {
                 console.error('Failed to load settings', e);
@@ -62,6 +70,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const updateShowBuildingImages = async (value: boolean) => {
+        try {
+            setShowBuildingImages(value);
+            await AsyncStorage.setItem(BUILDING_IMAGES_KEY, JSON.stringify(value));
+        } catch (e) {
+            console.error('Failed to save settings', e);
+        }
+    };
+
     if (isLoading) {
         return null; // Or a loading spinner
     }
@@ -71,7 +88,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             showPlaceholders,
             setShowPlaceholders: updateShowPlaceholders,
             useHaptics,
-            setUseHaptics: updateUseHaptics
+            setUseHaptics: updateUseHaptics,
+            showBuildingImages,
+            setShowBuildingImages: updateShowBuildingImages
         }}>
             {children}
         </SettingsContext.Provider>

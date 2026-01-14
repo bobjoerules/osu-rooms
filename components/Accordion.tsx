@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
+import { Image, LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
 import { useTheme } from '../theme';
 import { useHapticFeedback } from '../lib/SettingsContext';
 
@@ -13,9 +13,11 @@ interface AccordionItemProps {
   children: React.ReactNode;
   isExpanded: boolean;
   onPress: () => void;
+  image?: string | number;
+  showImage?: boolean;
 }
 
-const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpanded, onPress }) => {
+const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpanded, onPress, image, showImage }) => {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
 
@@ -45,6 +47,15 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpand
           color={theme.subtext}
         />
       </TouchableOpacity>
+      {!isExpanded && image && showImage && (
+        <View style={[styles.imageContainer, { borderTopColor: theme.border }]}>
+          <Image
+            source={typeof image === 'string' ? { uri: image } : image}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+      )}
       {isExpanded && (
         <View style={[styles.content, { borderTopColor: theme.border }]}>
           {children}
@@ -59,6 +70,8 @@ interface AccordionProps {
     id: string;
     title: React.ReactNode;
     content: React.ReactNode;
+    image?: string | number;
+    showImage?: boolean;
   }>;
   forceExpandAll?: boolean;
 }
@@ -81,6 +94,8 @@ export default function Accordion({ items, forceExpandAll = false }: AccordionPr
             title={item.title}
             isExpanded={isExpanded}
             onPress={() => toggleItem(item.id)}
+            image={item.image}
+            showImage={item.showImage}
           >
             {item.content}
           </AccordionItem>
@@ -110,6 +125,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  imageContainer: {
+    borderTopWidth: 1,
+    height: 150,
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   content: {
     borderTopWidth: 1,

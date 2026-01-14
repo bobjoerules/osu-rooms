@@ -36,7 +36,7 @@ import { BUILDINGS_DATA } from "../data/rooms";
 
 export default function Account() {
   const theme = useTheme();
-  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics } = useSettings();
+  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -322,6 +322,22 @@ export default function Account() {
                   thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
                 />
               </View>
+
+              <View style={styles.settingRow}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
+                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers</Text>
+                </View>
+                <Switch
+                  value={showBuildingImages}
+                  onValueChange={(val) => {
+                    triggerHaptic();
+                    setShowBuildingImages(val);
+                  }}
+                  trackColor={{ false: theme.border, true: theme.primary }}
+                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                />
+              </View>
             </View>
           </View>
         ) : (
@@ -406,9 +422,10 @@ function createStyles(theme: Theme) {
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      justifyContent: "center",
+      justifyContent: "flex-start",
       alignItems: "center",
       paddingHorizontal: 16,
+      paddingTop: 20,
     },
     header: {
       marginBottom: 16,

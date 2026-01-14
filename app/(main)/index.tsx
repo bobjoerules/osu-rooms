@@ -13,7 +13,7 @@ const PlaceholderImage = require('../../assets/images/placeholder.png');
 
 export default function Index() {
   const theme = useTheme();
-  const { showPlaceholders } = useSettings();
+  const { showPlaceholders, showBuildingImages } = useSettings();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
@@ -62,8 +62,10 @@ export default function Index() {
         </View>
       ),
       content: <RoomList rooms={building.rooms} />,
+      image: building.images?.[0],
+      showImage: showBuildingImages,
     }));
-  }, [searchQuery, styles.title, theme.text, showPlaceholders]);
+  }, [searchQuery, styles.title, theme.text, showPlaceholders, showBuildingImages]);
 
 
   const insets = useSafeAreaInsets();
