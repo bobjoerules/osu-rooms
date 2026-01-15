@@ -431,7 +431,7 @@ function createStyles(theme: Theme) {
       justifyContent: "flex-start",
       alignItems: "center",
       paddingHorizontal: 16,
-      paddingTop: 20,
+      paddingTop: Platform.OS === 'web' ? 75 : 20,
     },
     containerCentered: {
       justifyContent: "center",

@@ -300,12 +300,13 @@ function createStyles(theme: Theme) {
         scrollContent: {
             paddingHorizontal: 20,
             paddingBottom: 20,
+            ...(Platform.OS === 'web' && { paddingTop: 75 }),
         },
         header: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingVertical: 12,
+            paddingVertical: Platform.OS === 'web' ? 0 : 12,
         },
         backButton: {
             width: 40,

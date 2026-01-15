@@ -81,7 +81,7 @@ export default function Index() {
         style={{ flex: 1 }}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + headerHeight }
+          { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 : insets.top + headerHeight) }
         ]}
       >
         <Accordion
@@ -90,11 +90,14 @@ export default function Index() {
         />
       </ScrollView>
 
-      <View style={[styles.headerContainer, { top: 0, left: 0, right: 0, height: insets.top + headerHeight }]}>
+      <View style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: 0, height: insets.top + headerHeight }]}>
+        {Platform.OS === 'web' && (
+          <View style={{ position: 'absolute', top: -75, left: 0, right: 0, height: 75, backgroundColor: theme.background }} />
+        )}
         <View style={StyleSheet.absoluteFill}>
           <LinearGradient
             colors={[theme.background, theme.background, theme.background + '00']}
-            locations={[0, 0.92, 1]}
+            locations={Platform.OS === 'web' ? [0, 0.5, 1] : [0, 0.92, 1]}
             style={[StyleSheet.absoluteFill, { right: 8 }]}
           />
         </View>
