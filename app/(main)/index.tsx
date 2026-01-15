@@ -25,6 +25,11 @@ export default function Index() {
     const lowerQuery = searchQuery.toLowerCase();
 
     const filtered = BUILDINGS_DATA.map(building => {
+      const isHiddenByDefault = building.id === 'backrooms';
+      if (!isSearching && isHiddenByDefault) {
+        return null;
+      }
+
       const buildingNameMatch = building.name.toLowerCase().includes(lowerQuery);
 
       const matchingRooms = building.rooms.filter(room => {

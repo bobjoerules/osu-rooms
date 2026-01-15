@@ -5918,7 +5918,7 @@ export const BUILDINGS_DATA: Building[] = [
                 searchAliases: ['SLP East Fields'],
             },
             {
-                id: 'slp-east-fields',
+                id: 'slp-west-fields',
                 images: [
                     require('../assets/images/rooms/slp-west-fields.jpeg'),
                 ],

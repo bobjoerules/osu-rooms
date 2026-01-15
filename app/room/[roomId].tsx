@@ -97,10 +97,11 @@ export default function RoomDetail() {
   const IMAGE_WIDTH = SCREEN_WIDTH * 0.88;
   const GAP = 12;
   const SNAP_INTERVAL = IMAGE_WIDTH + GAP;
+  const SIDE_PADDING = (SCREEN_WIDTH - IMAGE_WIDTH) / 2;
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollOffset = event.nativeEvent.contentOffset.x;
-    const index = scrollOffset / SNAP_INTERVAL;
+    const index = (scrollOffset + SIDE_PADDING) / SNAP_INTERVAL;
     const roundIndex = Math.round(index);
     if (roundIndex !== activeImageIndex) {
       setActiveImageIndex(roundIndex);
@@ -125,9 +126,11 @@ export default function RoomDetail() {
                 onScroll={onScroll}
                 scrollEventThrottle={16}
                 snapToInterval={SNAP_INTERVAL}
-                snapToAlignment="start"
-                decelerationRate="fast"
-                contentContainerStyle={{ paddingHorizontal: 16 }}
+                snapToAlignment="center"
+                decelerationRate="normal"
+                disableIntervalMomentum
+                pagingEnabled
+                contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
                 keyExtractor={(_, index) => index.toString()}
                 renderItem={({ item, index }) => (
                   <Image
