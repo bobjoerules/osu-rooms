@@ -6933,6 +6933,41 @@ export const BUILDINGS_DATA: Building[] = [
                 searchAliases: ['WNGR 426'],
             },
         ]
+    },
+    {
+        id: 'backrooms',
+        name: 'The Backrooms',
+        images: [require('../assets/images/buildings/backrooms.jpeg')],
+        rooms: [
+            {
+                id: 'the-backrooms',
+                images: [
+                    require('../assets/images/rooms/the-backrooms-1.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-2.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-3.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-4.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-5.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-6.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-7.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-8.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-9.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-10.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-11.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-12.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-13.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-14.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-15.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-16.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-17.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-18.jpeg'),
+                    require('../assets/images/rooms/the-backrooms-19.jpeg'),
+                ],
+                floor: '-1',
+                capacity: 'Infinite',
+                roomType: 'Alternate dimension',
+                searchAliases: ['THE BACKROOMS', 'Yellow place', 'no clip'],
+            },
+        ]
     }
 ];
 

@@ -13,9 +13,10 @@ import {
   doc,
   getCountFromServer,
   getDoc,
+  onSnapshot,
   query,
   where,
-  writeBatch
+  writeBatch,
 } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -83,11 +84,12 @@ export default function Account() {
             if (role === "admin" || role === "owner") {
               setIsAdmin(true);
 
-              // Fetch pending submissions count for admin
+              // Set up real-time listener for pending submissions count
               const submissionsColl = collection(db, "submissions");
               const q = query(submissionsColl, where("status", "==", "pending"));
-              const snapshot = await getCountFromServer(q);
-              setPendingCount(snapshot.data().count);
+              onSnapshot(q, (snapshot) => {
+                setPendingCount(snapshot.size);
+              });
             } else {
               setIsAdmin(false);
               setPendingCount(null);
@@ -274,7 +276,7 @@ export default function Account() {
                 >
                   <View style={styles.adminCardContent}>
                     <View style={styles.adminIconContainer}>
-                      <Ionicons name="documents-outline" size={22} color={theme.primary} />
+                      <Ionicons name="documents-outline" size={22} color="#34C759" />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.adminCardTitle, { color: theme.text }]}>Review Submissions</Text>
@@ -590,7 +592,7 @@ function createStyles(theme: Theme) {
       width: 40,
       height: 40,
       borderRadius: 10,
-      backgroundColor: theme.primary + '15',
+      backgroundColor: '#34C75922',
       alignItems: 'center',
       justifyContent: 'center',
     },
