@@ -215,7 +215,7 @@ export default function Account() {
     : !email.trim() || !password.trim();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, !userEmail && styles.containerCentered]}>
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Text style={styles.headerTitle}>
@@ -304,6 +304,8 @@ export default function Account() {
                   }}
                   trackColor={{ false: theme.border, true: theme.primary }}
                   thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                  activeThumbColor="#fff"
+                  activeTrackColor={theme.primary}
                 />
               </View>
 
@@ -320,6 +322,8 @@ export default function Account() {
                   }}
                   trackColor={{ false: theme.border, true: theme.primary }}
                   thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                  activeThumbColor="#fff"
+                  activeTrackColor={theme.primary}
                 />
               </View>
 
@@ -336,6 +340,8 @@ export default function Account() {
                   }}
                   trackColor={{ false: theme.border, true: theme.primary }}
                   thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                  activeThumbColor="#fff"
+                  activeTrackColor={theme.primary}
                 />
               </View>
             </View>
@@ -426,6 +432,10 @@ function createStyles(theme: Theme) {
       alignItems: "center",
       paddingHorizontal: 16,
       paddingTop: 20,
+    },
+    containerCentered: {
+      justifyContent: "center",
+      paddingTop: 0,
     },
     header: {
       marginBottom: 16,

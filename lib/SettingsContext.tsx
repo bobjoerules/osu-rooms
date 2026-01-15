@@ -21,7 +21,7 @@ const BUILDING_IMAGES_KEY = '@osu_room_rates_show_building_images';
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showPlaceholders, setShowPlaceholders] = useState(false);
     const [useHaptics, setUseHaptics] = useState(true);
-    const [showBuildingImages, setShowBuildingImages] = useState(true);
+    const [showBuildingImages, setShowBuildingImages] = useState(Platform.OS !== 'web');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
