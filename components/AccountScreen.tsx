@@ -330,7 +330,7 @@ export default function Account() {
               <View style={styles.settingRow}>
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
-                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers</Text>
+                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers{Platform.OS === 'web' ? ' (images may look bad due to screen size)' : ''}</Text>
                 </View>
                 <Switch
                   value={showBuildingImages}

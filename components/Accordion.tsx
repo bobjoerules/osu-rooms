@@ -94,28 +94,43 @@ export default function Accordion({ items, forceExpandAll = false }: AccordionPr
   };
 
   return (
-    <View>
-      {items.map((item) => {
-        const isExpanded = forceExpandAll || expandedId === item.id;
+    <View style={Platform.OS === 'web' ? styles.webGridContainer : undefined}>
+      <View style={Platform.OS === 'web' ? styles.gridWrapper : undefined}>
+        {items.map((item) => {
+          const isExpanded = forceExpandAll || expandedId === item.id;
 
-        return (
-          <AccordionItem
-            key={item.id}
-            title={item.title}
-            isExpanded={isExpanded}
-            onPress={() => toggleItem(item.id)}
-            image={item.image}
-            showImage={item.showImage}
-          >
-            {item.content}
-          </AccordionItem>
-        );
-      })}
+          return (
+            <View key={item.id} style={Platform.OS === 'web' ? styles.gridItem : undefined}>
+              <AccordionItem
+                title={item.title}
+                isExpanded={isExpanded}
+                onPress={() => toggleItem(item.id)}
+                image={item.image}
+                showImage={item.showImage}
+              >
+                {item.content}
+              </AccordionItem>
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  webGridContainer: {
+    flex: 1,
+  },
+  gridWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  gridItem: {
+    width: 'calc(33.333% - 11px)',
+    marginBottom: 8,
+  },
   itemContainer: {
     marginVertical: 8,
     borderRadius: 12,
@@ -142,7 +157,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 300,
+    height: Platform.OS === 'web' ? 500 : 300,
   },
   gradientOverlay: {
     position: 'absolute',
