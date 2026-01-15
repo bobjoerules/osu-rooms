@@ -77,6 +77,26 @@ export default function Index() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {Platform.OS === 'web' && (
+        <style>
+          {`
+            /* Style scrollbar on web */
+            ::-webkit-scrollbar {
+              width: 12px;
+            }
+            ::-webkit-scrollbar-track {
+              background: ${theme.background};
+            }
+            ::-webkit-scrollbar-thumb {
+              background: ${theme.border};
+              border-radius: 6px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+              background: ${theme.subtext};
+            }
+          `}
+        </style>
+      )}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={[
@@ -92,13 +112,14 @@ export default function Index() {
 
       <View style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: 0, height: insets.top + headerHeight }]}>
         {Platform.OS === 'web' && (
-          <View style={{ position: 'absolute', top: -75, left: 0, right: 0, height: 75, backgroundColor: theme.background }} />
+          <View style={{ position: 'absolute', top: -75, left: 0, right: Platform.OS === 'web' ? 20 : 0, height: 75, backgroundColor: theme.background }} />
         )}
         <View style={StyleSheet.absoluteFill}>
           <LinearGradient
             colors={[theme.background, theme.background, theme.background + '00']}
             locations={Platform.OS === 'web' ? [0, 0.5, 1] : [0, 0.92, 1]}
-            style={[StyleSheet.absoluteFill, { right: 8 }]}
+            style={[StyleSheet.absoluteFill, { right: Platform.OS === 'web' ? 20 : 8 }]}
+            pointerEvents="none"
           />
         </View>
         <SafeAreaView edges={['top']}>
