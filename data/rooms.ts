@@ -1,3 +1,10 @@
+const STORAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/osu-room-rates.firebasestorage.app/o';
+
+const firebaseImage = (path: string): string => {
+    const encodedPath = encodeURIComponent(path);
+    return `${STORAGE_URL}/${encodedPath}?alt=media`;
+};
+
 export interface Room {
     id: string;
     images: any[];
@@ -18,12 +25,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'owen',
         name: 'Owen Hall',
-        images: [require('../assets/images/buildings/owenhall.jpg')],
+        images: [firebaseImage('building-images/owenhall.jpg')],
         rooms: [
             {
                 id: 'owen-hall-101',
                 images: [
-                    require('../assets/images/rooms/owen-hall-101.jpeg'),
+                    firebaseImage('room-images/owen-hall-101.jpeg'),
                 ],
                 floor: '1',
                 capacity: '84',
@@ -33,7 +40,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-102',
                 images: [
-                    require('../assets/images/rooms/owen-hall-102.jpeg'),
+                    firebaseImage('room-images/owen-hall-102.jpeg'),
                 ],
                 floor: '1',
                 capacity: '94',
@@ -43,7 +50,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-106',
                 images: [
-                    require('../assets/images/rooms/owen-hall-106.jpeg'),
+                    firebaseImage('room-images/owen-hall-106.jpeg'),
                 ],
                 floor: '1',
                 capacity: '56',
@@ -53,7 +60,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-109',
                 images: [
-                    require('../assets/images/rooms/owen-hall-109.jpeg')
+                    firebaseImage('room-images/owen-hall-109.jpeg')
                 ],
                 floor: '1',
                 capacity: '29',
@@ -63,7 +70,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-110',
                 images: [
-                    require('../assets/images/rooms/owen-hall-110.jpeg')
+                    firebaseImage('room-images/owen-hall-110.jpeg')
                 ],
                 floor: '1',
                 capacity: '41',
@@ -73,7 +80,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-217',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '13',
@@ -83,7 +90,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-224',
                 images: [
-                    require('../assets/images/rooms/owen-hall-224.jpeg')
+                    firebaseImage('room-images/owen-hall-224.jpeg')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -93,7 +100,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-237',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '41',
@@ -103,7 +110,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-241',
                 images: [
-                    require('../assets/images/rooms/owen-hall-241.jpeg')
+                    firebaseImage('room-images/owen-hall-241.jpeg')
                 ],
                 floor: '2',
                 capacity: '63',
@@ -113,7 +120,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-424',
                 images: [
-                    require('../assets/images/rooms/owen-hall-424.jpeg')
+                    firebaseImage('room-images/owen-hall-424.jpeg')
                 ],
                 floor: '4',
                 capacity: '12',
@@ -123,7 +130,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'owen-hall-433',
                 images: [
-                    require('../assets/images/rooms/owen-hall-433.jpeg')
+                    firebaseImage('room-images/owen-hall-433.jpeg')
                 ],
                 floor: '4',
                 capacity: '18',
@@ -135,12 +142,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'linc',
         name: 'Learning Innovation Center (LINC)',
-        images: [require('../assets/images/buildings/linc.jpeg')],
+        images: [firebaseImage('building-images/linc.jpeg')],
         rooms: [
             {
                 id: 'linc-100',
                 images: [
-                    require('../assets/images/rooms/linc-100.jpeg')
+                    firebaseImage('room-images/linc-100.jpeg')
                 ],
                 floor: '1',
                 capacity: '588',
@@ -150,7 +157,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-128',
                 images: [
-                    require('../assets/images/rooms/linc-128.jpeg')
+                    firebaseImage('room-images/linc-128.jpeg')
                 ],
                 floor: '1',
                 capacity: '395',
@@ -160,7 +167,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-200',
                 images: [
-                    require('../assets/images/rooms/linc-200.jpeg')
+                    firebaseImage('room-images/linc-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '174',
@@ -170,7 +177,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-210',
                 images: [
-                    require('../assets/images/rooms/linc-210.jpeg')
+                    firebaseImage('room-images/linc-210.jpeg')
                 ],
                 floor: '2',
                 capacity: '225',
@@ -180,7 +187,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-228',
                 images: [
-                    require('../assets/images/rooms/linc-228.jpeg')
+                    firebaseImage('room-images/linc-228.jpeg')
                 ],
                 floor: '2',
                 capacity: '277',
@@ -190,7 +197,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-268',
                 images: [
-                    require('../assets/images/rooms/linc-268.jpeg')
+                    firebaseImage('room-images/linc-268.jpeg')
                 ],
                 floor: '2',
                 capacity: '60',
@@ -200,7 +207,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-302',
                 images: [
-                    require('../assets/images/rooms/linc-302.jpeg')
+                    firebaseImage('room-images/linc-302.jpeg')
                 ],
                 floor: '3',
                 capacity: '96',
@@ -210,7 +217,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-303',
                 images: [
-                    require('../assets/images/rooms/linc-303.jpeg')
+                    firebaseImage('room-images/linc-303.jpeg')
                 ],
                 floor: '3',
                 capacity: '72',
@@ -220,7 +227,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-307',
                 images: [
-                    require('../assets/images/rooms/linc-307.jpeg')
+                    firebaseImage('room-images/linc-307.jpeg')
                 ],
                 floor: '3',
                 capacity: '72',
@@ -230,7 +237,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-314',
                 images: [
-                    require('../assets/images/rooms/linc-314.jpeg')
+                    firebaseImage('room-images/linc-314.jpeg')
                 ],
                 floor: '3',
                 capacity: '60',
@@ -240,7 +247,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-343',
                 images: [
-                    require('../assets/images/rooms/linc-343.jpeg')
+                    firebaseImage('room-images/linc-343.jpeg')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -250,7 +257,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-345',
                 images: [
-                    require('../assets/images/rooms/linc-345.jpeg')
+                    firebaseImage('room-images/linc-345.jpeg')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -260,7 +267,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-350',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '16',
@@ -270,7 +277,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-360',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '16',
@@ -280,7 +287,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'linc-368',
                 images: [
-                    require('../assets/images/rooms/linc-368.jpeg')
+                    firebaseImage('room-images/linc-368.jpeg')
                 ],
                 floor: '3',
                 capacity: '60',
@@ -292,12 +299,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wgnd',
         name: 'Wiegand Hall',
-        images: [require('../assets/images/buildings/wgnd.jpeg')],
+        images: [firebaseImage('building-images/wgnd.jpeg')],
         rooms: [
             {
                 id: 'wgnd-106',
                 images: [
-                    require('../assets/images/rooms/wgnd-106.jpeg')
+                    firebaseImage('room-images/wgnd-106.jpeg')
                 ],
                 floor: '1',
                 capacity: '80',
@@ -307,7 +314,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-115',
                 images: [
-                    require('../assets/images/rooms/wgnd-115.jpeg')
+                    firebaseImage('room-images/wgnd-115.jpeg')
                 ],
                 floor: '1',
                 capacity: '217',
@@ -317,7 +324,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-118',
                 images: [
-                    require('../assets/images/rooms/wgnd-118.jpeg')
+                    firebaseImage('room-images/wgnd-118.jpeg')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -327,7 +334,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-120',
                 images: [
-                    require('../assets/images/rooms/wgnd-120.jpeg')
+                    firebaseImage('room-images/wgnd-120.jpeg')
                 ],
                 floor: '1',
                 capacity: '10',
@@ -337,7 +344,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-126',
                 images: [
-                    require('../assets/images/rooms/wgnd-126.jpeg')
+                    firebaseImage('room-images/wgnd-126.jpeg')
                 ],
                 floor: '1',
                 capacity: '17',
@@ -347,7 +354,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-130',
                 images: [
-                    require('../assets/images/rooms/wgnd-130.jpeg')
+                    firebaseImage('room-images/wgnd-130.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -357,7 +364,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-132',
                 images: [
-                    require('../assets/images/rooms/wgnd-132.jpeg')
+                    firebaseImage('room-images/wgnd-132.jpeg')
                 ],
                 floor: '1',
                 capacity: '50',
@@ -367,7 +374,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-206',
                 images: [
-                    require('../assets/images/rooms/wgnd-206.jpeg')
+                    firebaseImage('room-images/wgnd-206.jpeg')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -377,7 +384,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wgnd-238',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -389,12 +396,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'phar',
         name: 'Pharmacy Building',
-        images: [require('../assets/images/buildings/phar.jpeg')],
+        images: [firebaseImage('building-images/phar.jpeg')],
         rooms: [
             {
                 id: 'phar-107',
                 images: [
-                    require('../assets/images/rooms/phar-107.jpeg')
+                    firebaseImage('room-images/phar-107.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -404,7 +411,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-213',
                 images: [
-                    require('../assets/images/rooms/phar-213.jpeg')
+                    firebaseImage('room-images/phar-213.jpeg')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -414,7 +421,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-219',
                 images: [
-                    require('../assets/images/rooms/phar-219.jpeg')
+                    firebaseImage('room-images/phar-219.jpeg')
                 ],
                 floor: '2',
                 capacity: '60',
@@ -424,7 +431,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-227',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '34',
@@ -434,7 +441,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-237',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -444,7 +451,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-305',
                 images: [
-                    require('../assets/images/rooms/phar-305.jpeg')
+                    firebaseImage('room-images/phar-305.jpeg')
                 ],
                 floor: '3',
                 capacity: '149',
@@ -454,7 +461,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'phar-329',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -466,12 +473,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'cord',
         name: 'Cordley Hall',
-        images: [require('../assets/images/buildings/cord.jpeg')],
+        images: [firebaseImage('building-images/cord.jpeg')],
         rooms: [
             {
                 id: 'cord-1100',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '34',
@@ -481,7 +488,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1112',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '34',
@@ -491,7 +498,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1200',
                 images: [
-                    require('../assets/images/rooms/cord-1200.jpeg')
+                    firebaseImage('room-images/cord-1200.jpeg')
                 ],
                 floor: '1',
                 capacity: '45',
@@ -501,7 +508,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1210',
                 images: [
-                    require('../assets/images/rooms/cord-1210.jpeg')
+                    firebaseImage('room-images/cord-1210.jpeg')
                 ],
                 floor: '1',
                 capacity: '45',
@@ -511,7 +518,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1302',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '45',
@@ -521,7 +528,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1316',
                 images: [
-                    require('../assets/images/rooms/cord-1316.jpeg')
+                    firebaseImage('room-images/cord-1316.jpeg')
                 ],
                 floor: '1',
                 capacity: '211',
@@ -531,7 +538,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1424',
                 images: [
-                    require('../assets/images/rooms/cord-1424.jpeg')
+                    firebaseImage('room-images/cord-1424.jpeg')
                 ],
                 floor: '1',
                 capacity: '45',
@@ -541,7 +548,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1506',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -551,7 +558,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1518',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '29',
@@ -561,7 +568,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1604',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '37',
@@ -571,7 +578,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-1616',
                 images: [
-                    require('../assets/images/rooms/cord-1616.jpeg')
+                    firebaseImage('room-images/cord-1616.jpeg')
                 ],
                 floor: '1',
                 capacity: '60',
@@ -581,7 +588,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2200',
                 images: [
-                    require('../assets/images/rooms/cord-2200.jpeg')
+                    firebaseImage('room-images/cord-2200.jpeg')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -591,7 +598,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2212',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -601,7 +608,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2306',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -611,7 +618,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2316',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -621,7 +628,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2406',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -631,7 +638,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2414',
                 images: [
-                    require('../assets/images/rooms/cord-2414.jpeg')
+                    firebaseImage('room-images/cord-2414.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -641,7 +648,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-2602',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -651,7 +658,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'cord-4629',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '8',
@@ -664,12 +671,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mlm',
         name: 'Milam Hall',
-        images: [require('../assets/images/buildings/mlm.jpeg')],
+        images: [firebaseImage('building-images/mlm.jpeg')],
         rooms: [
             {
                 id: 'mlm-006',
                 images: [
-                    require('../assets/images/rooms/mlm-006.jpeg')
+                    firebaseImage('room-images/mlm-006.jpeg')
                 ],
                 floor: '0',
                 capacity: '16',
@@ -679,7 +686,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-019',
                 images: [
-                    require('../assets/images/rooms/mlm-019.jpeg')
+                    firebaseImage('room-images/mlm-019.jpeg')
                 ],
                 floor: '0',
                 capacity: '69',
@@ -689,7 +696,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-026',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: 'Unknown',
@@ -699,7 +706,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-031A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '14',
@@ -709,7 +716,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-033',
                 images: [
-                    require('../assets/images/rooms/mlm-033.jpeg')
+                    firebaseImage('room-images/mlm-033.jpeg')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -719,7 +726,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-119',
                 images: [
-                    require('../assets/images/rooms/mlm-119.jpeg')
+                    firebaseImage('room-images/mlm-119.jpeg')
                 ],
                 floor: '1',
                 capacity: '50',
@@ -729,7 +736,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-123',
                 images: [
-                    require('../assets/images/rooms/mlm-123.jpeg')
+                    firebaseImage('room-images/mlm-123.jpeg')
                 ],
                 floor: '1',
                 capacity: '62',
@@ -739,7 +746,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-159',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -749,7 +756,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-202',
                 images: [
-                    require('../assets/images/rooms/mlm-202.jpeg')
+                    firebaseImage('room-images/mlm-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '46',
@@ -759,7 +766,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-203',
                 images: [
-                    require('../assets/images/rooms/mlm-203.jpeg')
+                    firebaseImage('room-images/mlm-203.jpeg')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -769,7 +776,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-205',
                 images: [
-                    require('../assets/images/rooms/mlm-205.jpeg')
+                    firebaseImage('room-images/mlm-205.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -779,7 +786,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-206',
                 images: [
-                    require('../assets/images/rooms/mlm-206.jpeg')
+                    firebaseImage('room-images/mlm-206.jpeg')
                 ],
                 floor: '2',
                 capacity: '44',
@@ -789,7 +796,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-213',
                 images: [
-                    require('../assets/images/rooms/mlm-213.jpeg')
+                    firebaseImage('room-images/mlm-213.jpeg')
                 ],
                 floor: '2',
                 capacity: '61',
@@ -799,7 +806,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-215',
                 images: [
-                    require('../assets/images/rooms/mlm-215.jpeg')
+                    firebaseImage('room-images/mlm-215.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -809,7 +816,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-218',
                 images: [
-                    require('../assets/images/rooms/mlm-218.jpeg')
+                    firebaseImage('room-images/mlm-218.jpeg')
                 ],
                 floor: '2',
                 capacity: '32',
@@ -819,7 +826,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-233',
                 images: [
-                    require('../assets/images/rooms/mlm-233.jpeg')
+                    firebaseImage('room-images/mlm-233.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -829,7 +836,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-234',
                 images: [
-                    require('../assets/images/rooms/mlm-234.jpeg')
+                    firebaseImage('room-images/mlm-234.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -839,7 +846,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-236',
                 images: [
-                    require('../assets/images/rooms/mlm-236.jpeg')
+                    firebaseImage('room-images/mlm-236.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -849,7 +856,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-301',
                 images: [
-                    require('../assets/images/rooms/mlm-301.jpeg')
+                    firebaseImage('room-images/mlm-301.jpeg')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -859,7 +866,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-318',
                 images: [
-                    require('../assets/images/rooms/mlm-318.jpeg')
+                    firebaseImage('room-images/mlm-318.jpeg')
                 ],
                 floor: '3',
                 capacity: '64',
@@ -869,7 +876,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-319',
                 images: [
-                    require('../assets/images/rooms/mlm-319.jpeg')
+                    firebaseImage('room-images/mlm-319.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -879,7 +886,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-319A',
                 images: [
-                    require('../assets/images/rooms/mlm-319a.jpeg')
+                    firebaseImage('room-images/mlm-319a.jpeg')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -889,7 +896,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-332',
                 images: [
-                    require('../assets/images/rooms/mlm-332.jpeg')
+                    firebaseImage('room-images/mlm-332.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -899,7 +906,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-335',
                 images: [
-                    require('../assets/images/rooms/mlm-335.jpeg')
+                    firebaseImage('room-images/mlm-335.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -909,7 +916,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-336',
                 images: [
-                    require('../assets/images/rooms/mlm-336.jpeg')
+                    firebaseImage('room-images/mlm-336.jpeg')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -919,7 +926,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mlm-337',
                 images: [
-                    require('../assets/images/rooms/mlm-337.jpeg')
+                    firebaseImage('room-images/mlm-337.jpeg')
                 ],
                 floor: '3',
                 capacity: '43',
@@ -931,12 +938,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'casc',
         name: 'Cascade Hall',
-        images: [require('../assets/images/buildings/casc.jpeg')],
+        images: [firebaseImage('building-images/casc.jpeg')],
         rooms: [
             {
                 id: 'casc-118',
                 images: [
-                    require('../assets/images/rooms/casc-118.jpeg')
+                    firebaseImage('room-images/casc-118.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -946,7 +953,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-120',
                 images: [
-                    require('../assets/images/rooms/casc-120.jpeg')
+                    firebaseImage('room-images/casc-120.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -956,7 +963,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-134',
                 images: [
-                    require('../assets/images/rooms/casc-134.jpeg')
+                    firebaseImage('room-images/casc-134.jpeg')
                 ],
                 floor: '1',
                 capacity: '31',
@@ -966,7 +973,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-135',
                 images: [
-                    require('../assets/images/rooms/casc-135.jpeg')
+                    firebaseImage('room-images/casc-135.jpeg')
                 ],
                 floor: '1',
                 capacity: '27',
@@ -976,7 +983,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-137',
                 images: [
-                    require('../assets/images/rooms/casc-137.jpeg')
+                    firebaseImage('room-images/casc-137.jpeg')
                 ],
                 floor: '1',
                 capacity: '32',
@@ -986,7 +993,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-139',
                 images: [
-                    require('../assets/images/rooms/casc-139.jpeg')
+                    firebaseImage('room-images/casc-139.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -996,7 +1003,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-141',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '31',
@@ -1006,7 +1013,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'casc-143',
                 images: [
-                    require('../assets/images/rooms/casc-143.jpeg')
+                    firebaseImage('room-images/casc-143.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -1018,12 +1025,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'stag',
         name: 'Strand Agriculture Hall',
-        images: [require('../assets/images/buildings/stag.jpeg')],
+        images: [firebaseImage('building-images/stag.jpeg')],
         rooms: [
             {
                 id: 'stag-110',
                 images: [
-                    require('../assets/images/rooms/stag-110.jpeg')
+                    firebaseImage('room-images/stag-110.jpeg')
                 ],
                 floor: '1',
                 capacity: '38',
@@ -1033,7 +1040,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-111',
                 images: [
-                    require('../assets/images/rooms/stag-111.jpeg')
+                    firebaseImage('room-images/stag-111.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -1043,7 +1050,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-112',
                 images: [
-                    require('../assets/images/rooms/stag-112.jpeg')
+                    firebaseImage('room-images/stag-112.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -1053,7 +1060,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-113',
                 images: [
-                    require('../assets/images/rooms/stag-113.jpeg')
+                    firebaseImage('room-images/stag-113.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -1063,7 +1070,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-118',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '13',
@@ -1073,7 +1080,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-131',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '23',
@@ -1083,7 +1090,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-160',
                 images: [
-                    require('../assets/images/rooms/stag-160.jpeg')
+                    firebaseImage('room-images/stag-160.jpeg')
                 ],
                 floor: '1',
                 capacity: '38',
@@ -1093,7 +1100,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-161',
                 images: [
-                    require('../assets/images/rooms/stag-161.jpeg')
+                    firebaseImage('room-images/stag-161.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -1103,7 +1110,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-162',
                 images: [
-                    require('../assets/images/rooms/stag-162.jpeg')
+                    firebaseImage('room-images/stag-162.jpeg')
                 ],
                 floor: '1',
                 capacity: '38',
@@ -1113,7 +1120,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-163',
                 images: [
-                    require('../assets/images/rooms/stag-163.jpeg')
+                    firebaseImage('room-images/stag-163.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -1123,7 +1130,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-210',
                 images: [
-                    require('../assets/images/rooms/stag-210.jpeg')
+                    firebaseImage('room-images/stag-210.jpeg')
                 ],
                 floor: '2',
                 capacity: '38',
@@ -1133,7 +1140,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-211',
                 images: [
-                    require('../assets/images/rooms/stag-211.jpeg')
+                    firebaseImage('room-images/stag-211.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -1143,7 +1150,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-212',
                 images: [
-                    require('../assets/images/rooms/stag-212.jpeg')
+                    firebaseImage('room-images/stag-212.jpeg')
                 ],
                 floor: '2',
                 capacity: '38',
@@ -1153,7 +1160,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-213',
                 images: [
-                    require('../assets/images/rooms/stag-213.jpeg')
+                    firebaseImage('room-images/stag-213.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -1163,7 +1170,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-240',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -1173,7 +1180,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-260',
                 images: [
-                    require('../assets/images/rooms/stag-260.jpeg')
+                    firebaseImage('room-images/stag-260.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -1183,7 +1190,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-261',
                 images: [
-                    require('../assets/images/rooms/stag-261.jpeg')
+                    firebaseImage('room-images/stag-261.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -1193,7 +1200,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-262',
                 images: [
-                    require('../assets/images/rooms/stag-262.jpeg')
+                    firebaseImage('room-images/stag-262.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -1203,7 +1210,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-263',
                 images: [
-                    require('../assets/images/rooms/stag-263.jpeg')
+                    firebaseImage('room-images/stag-263.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -1213,7 +1220,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-311',
                 images: [
-                    require('../assets/images/rooms/stag-311.jpeg')
+                    firebaseImage('room-images/stag-311.jpeg')
                 ],
                 floor: '3',
                 capacity: '39',
@@ -1223,7 +1230,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-313',
                 images: [
-                    require('../assets/images/rooms/stag-313.jpeg')
+                    firebaseImage('room-images/stag-313.jpeg')
                 ],
                 floor: '3',
                 capacity: '32',
@@ -1233,7 +1240,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-340',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '26',
@@ -1243,7 +1250,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-361',
                 images: [
-                    require('../assets/images/rooms/stag-361.jpeg')
+                    firebaseImage('room-images/stag-361.jpeg')
                 ],
                 floor: '3',
                 capacity: '31',
@@ -1253,7 +1260,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'stag-363',
                 images: [
-                    require('../assets/images/rooms/stag-363.jpeg')
+                    firebaseImage('room-images/stag-363.jpeg')
                 ],
                 floor: '3',
                 capacity: '29',
@@ -1265,12 +1272,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'als',
         name: 'Agricultural & Life Sciences',
-        images: [require('../assets/images/buildings/als.jpeg')],
+        images: [firebaseImage('building-images/als.jpeg')],
         rooms: [
             {
                 id: 'als-0006',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '43',
@@ -1280,7 +1287,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-0007',
                 images: [
-                    require('../assets/images/rooms/als-0007.jpeg')
+                    firebaseImage('room-images/als-0007.jpeg')
                 ],
                 floor: '0',
                 capacity: '31',
@@ -1290,7 +1297,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-0012',
                 images: [
-                    require('../assets/images/rooms/als-0012.jpeg')
+                    firebaseImage('room-images/als-0012.jpeg')
                 ],
                 floor: '0',
                 capacity: '32',
@@ -1300,7 +1307,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-0018',
                 images: [
-                    require('../assets/images/rooms/als-0018.jpeg')
+                    firebaseImage('room-images/als-0018.jpeg')
                 ],
                 floor: '0',
                 capacity: '25',
@@ -1310,7 +1317,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-0023',
                 images: [
-                    require('../assets/images/rooms/als-0023.jpeg')
+                    firebaseImage('room-images/als-0023.jpeg')
                 ],
                 floor: '0',
                 capacity: '63',
@@ -1320,7 +1327,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-1019A',
                 images: [
-                    require('../assets/images/rooms/als-1019A.jpeg')
+                    firebaseImage('room-images/als-1019A.jpeg')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -1330,7 +1337,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-1019B',
                 images: [
-                    require('../assets/images/rooms/als-1019B.jpeg')
+                    firebaseImage('room-images/als-1019B.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -1340,7 +1347,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-1019C',
                 images: [
-                    require('../assets/images/rooms/als-1019C.jpeg')
+                    firebaseImage('room-images/als-1019C.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -1350,7 +1357,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2009A',
                 images: [
-                    require('../assets/images/rooms/als-2009A.jpeg')
+                    firebaseImage('room-images/als-2009A.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -1360,7 +1367,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2018',
                 images: [
-                    require('../assets/images/rooms/als-2018.jpeg')
+                    firebaseImage('room-images/als-2018.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -1370,7 +1377,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2034',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '14',
@@ -1380,7 +1387,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2040',
                 images: [
-                    require('../assets/images/rooms/als-2040.jpeg')
+                    firebaseImage('room-images/als-2040.jpeg')
                 ],
                 floor: '2',
                 capacity: '20',
@@ -1390,7 +1397,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2114',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '16',
@@ -1400,7 +1407,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-2116',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '16',
@@ -1410,7 +1417,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-3005',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '47',
@@ -1420,7 +1427,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-3006A',
                 images: [
-                    require('../assets/images/rooms/als-3006A.jpeg')
+                    firebaseImage('room-images/als-3006A.jpeg')
                 ],
                 floor: '3',
                 capacity: '22',
@@ -1430,7 +1437,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-3096',
                 images: [
-                    require('../assets/images/rooms/als-3096.jpeg')
+                    firebaseImage('room-images/als-3096.jpeg')
                 ],
                 floor: '3',
                 capacity: '18',
@@ -1440,7 +1447,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-4000',
                 images: [
-                    require('../assets/images/rooms/als-4000.jpeg')
+                    firebaseImage('room-images/als-4000.jpeg')
                 ],
                 floor: '4',
                 capacity: '65',
@@ -1450,7 +1457,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-4001',
                 images: [
-                    require('../assets/images/rooms/als-4001.jpeg')
+                    firebaseImage('room-images/als-4001.jpeg')
                 ],
                 floor: '4',
                 capacity: '96',
@@ -1460,7 +1467,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-4009',
                 images: [
-                    require('../assets/images/rooms/als-4009.jpeg')
+                    firebaseImage('room-images/als-4009.jpeg')
                 ],
                 floor: '4',
                 capacity: '20',
@@ -1470,7 +1477,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-4103',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '14',
@@ -1480,7 +1487,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-4120B',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '20',
@@ -1492,12 +1499,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bexl',
         name: 'Bexell Hall',
-        images: [require('../assets/images/buildings/bexl.jpeg')],
+        images: [firebaseImage('building-images/bexl.jpeg')],
         rooms: [
             {
                 id: 'bexl-100M',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '17',
@@ -1507,7 +1514,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-103',
                 images: [
-                    require('../assets/images/rooms/bexl-103.jpeg')
+                    firebaseImage('room-images/bexl-103.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -1517,7 +1524,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-120',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '32',
@@ -1527,7 +1534,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-207',
                 images: [
-                    require('../assets/images/rooms/bexl-207.jpeg')
+                    firebaseImage('room-images/bexl-207.jpeg')
                 ],
                 floor: '2',
                 capacity: '44',
@@ -1537,7 +1544,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-211',
                 images: [
-                    require('../assets/images/rooms/bexl-211.jpeg')
+                    firebaseImage('room-images/bexl-211.jpeg')
                 ],
                 floor: '2',
                 capacity: '16',
@@ -1547,7 +1554,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-320',
                 images: [
-                    require('../assets/images/rooms/bexl-320.jpeg')
+                    firebaseImage('room-images/bexl-320.jpeg')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -1557,7 +1564,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-321',
                 images: [
-                    require('../assets/images/rooms/bexl-321.jpeg')
+                    firebaseImage('room-images/bexl-321.jpeg')
                 ],
                 floor: '3',
                 capacity: '50',
@@ -1567,7 +1574,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-322',
                 images: [
-                    require('../assets/images/rooms/bexl-322.jpeg')
+                    firebaseImage('room-images/bexl-322.jpeg')
                 ],
                 floor: '3',
                 capacity: '26',
@@ -1577,7 +1584,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-323',
                 images: [
-                    require('../assets/images/rooms/bexl-323.jpeg')
+                    firebaseImage('room-images/bexl-323.jpeg')
                 ],
                 floor: '3',
                 capacity: '36',
@@ -1587,7 +1594,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-324',
                 images: [
-                    require('../assets/images/rooms/bexl-324.jpeg')
+                    firebaseImage('room-images/bexl-324.jpeg')
                 ],
                 floor: '3',
                 capacity: '45',
@@ -1597,7 +1604,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-326',
                 images: [
-                    require('../assets/images/rooms/bexl-326.jpeg')
+                    firebaseImage('room-images/bexl-326.jpeg')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -1607,7 +1614,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-328',
                 images: [
-                    require('../assets/images/rooms/bexl-328.jpeg')
+                    firebaseImage('room-images/bexl-328.jpeg')
                 ],
                 floor: '3',
                 capacity: '37',
@@ -1617,7 +1624,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-412',
                 images: [
-                    require('../assets/images/rooms/bexl-412.jpeg')
+                    firebaseImage('room-images/bexl-412.jpeg')
                 ],
                 floor: '4',
                 capacity: '50',
@@ -1627,7 +1634,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-414',
                 images: [
-                    require('../assets/images/rooms/bexl-414.jpeg')
+                    firebaseImage('room-images/bexl-414.jpeg')
                 ],
                 floor: '4',
                 capacity: '26',
@@ -1637,7 +1644,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-415',
                 images: [
-                    require('../assets/images/rooms/bexl-415.jpeg')
+                    firebaseImage('room-images/bexl-415.jpeg')
                 ],
                 floor: '4',
                 capacity: '50',
@@ -1647,7 +1654,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-416',
                 images: [
-                    require('../assets/images/rooms/bexl-416.jpeg')
+                    firebaseImage('room-images/bexl-416.jpeg')
                 ],
                 floor: '4',
                 capacity: '50',
@@ -1657,7 +1664,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bexl-417',
                 images: [
-                    require('../assets/images/rooms/bexl-417.jpeg')
+                    firebaseImage('room-images/bexl-417.jpeg')
                 ],
                 floor: '4',
                 capacity: '50',
@@ -1669,12 +1676,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gbad',
         name: 'Gilbert Hall Addition',
-        images: [require('../assets/images/buildings/gbad.jpeg')],
+        images: [firebaseImage('building-images/gbad.jpeg')],
         rooms: [
             {
                 id: 'gbad-009',
                 images: [
-                    require('../assets/images/rooms/gbad-009.jpeg')
+                    firebaseImage('room-images/gbad-009.jpeg')
                 ],
                 floor: '0',
                 capacity: '120',
@@ -1684,7 +1691,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-101',
                 images: [
-                    require('../assets/images/rooms/gbad-101.jpeg')
+                    firebaseImage('room-images/gbad-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '50',
@@ -1694,7 +1701,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-103',
                 images: [
-                    require('../assets/images/rooms/gbad-103.jpeg')
+                    firebaseImage('room-images/gbad-103.jpeg')
                 ],
                 floor: '1',
                 capacity: '44',
@@ -1704,7 +1711,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-209',
                 images: [
-                    require('../assets/images/rooms/gbad-209.jpeg')
+                    firebaseImage('room-images/gbad-209.jpeg')
                 ],
                 floor: '2',
                 capacity: '120',
@@ -1714,7 +1721,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-209F',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '20',
@@ -1724,7 +1731,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-211',
                 images: [
-                    require('../assets/images/rooms/gbad-211.jpeg')
+                    firebaseImage('room-images/gbad-211.jpeg')
                 ],
                 floor: '2',
                 capacity: '26',
@@ -1734,7 +1741,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-220',
                 images: [
-                    require('../assets/images/rooms/gbad-220.jpeg')
+                    firebaseImage('room-images/gbad-220.jpeg')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -1744,7 +1751,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-309',
                 images: [
-                    require('../assets/images/rooms/gbad-309.jpeg')
+                    firebaseImage('room-images/gbad-309.jpeg')
                 ],
                 floor: '3',
                 capacity: '90',
@@ -1754,7 +1761,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-311',
                 images: [
-                    require('../assets/images/rooms/gbad-311.jpeg')
+                    firebaseImage('room-images/gbad-311.jpeg')
                 ],
                 floor: '3',
                 capacity: '19',
@@ -1764,7 +1771,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-409',
                 images: [
-                    require('../assets/images/rooms/gbad-409.jpeg')
+                    firebaseImage('room-images/gbad-409.jpeg')
                 ],
                 floor: '4',
                 capacity: '120',
@@ -1774,7 +1781,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gbad-411',
                 images: [
-                    require('../assets/images/rooms/gbad-411.jpeg')
+                    firebaseImage('room-images/gbad-411.jpeg')
                 ],
                 floor: '4',
                 capacity: '20',
@@ -1786,12 +1793,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilb',
         name: 'Gilbert Hall',
-        images: [require('../assets/images/buildings/gilb.jpeg')],
+        images: [firebaseImage('building-images/gilb.jpeg')],
         rooms: [
             {
                 id: 'gilb-109',
                 images: [
-                    require('../assets/images/rooms/gilb-109.jpeg')
+                    firebaseImage('room-images/gilb-109.jpeg')
                 ],
                 floor: '1',
                 capacity: '18',
@@ -1801,7 +1808,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilb-124',
                 images: [
-                    require('../assets/images/rooms/gilb-124.jpeg')
+                    firebaseImage('room-images/gilb-124.jpeg')
                 ],
                 floor: '1',
                 capacity: '192',
@@ -1811,7 +1818,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilb-224',
                 images: [
-                    require('../assets/images/rooms/gilb-224.jpeg')
+                    firebaseImage('room-images/gilb-224.jpeg')
                 ],
                 floor: '2',
                 capacity: '197',
@@ -1821,7 +1828,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilb-228',
                 images: [
-                    require('../assets/images/rooms/gilb-228.jpeg')
+                    firebaseImage('room-images/gilb-228.jpeg')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -1831,7 +1838,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilb-324',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '53',
@@ -1843,12 +1850,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wb',
         name: 'Women\'s Building',
-        images: [require('../assets/images/buildings/wb.jpeg')],
+        images: [firebaseImage('building-images/wb.jpeg')],
         rooms: [
             {
                 id: 'wb-0005',
                 images: [
-                    require('../assets/images/rooms/wb-0005.jpeg')
+                    firebaseImage('room-images/wb-0005.jpeg')
                 ],
                 floor: '0',
                 capacity: '49',
@@ -1858,7 +1865,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-003',
                 images: [
-                    require('../assets/images/rooms/wb-003.jpeg')
+                    firebaseImage('room-images/wb-003.jpeg')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -1868,7 +1875,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-008',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '49',
@@ -1878,7 +1885,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-009',
                 images: [
-                    require('../assets/images/rooms/wb-009.jpeg')
+                    firebaseImage('room-images/wb-009.jpeg')
                 ],
                 floor: '0',
                 capacity: '45',
@@ -1888,7 +1895,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-015',
                 images: [
-                    require('../assets/images/rooms/wb-015.jpeg')
+                    firebaseImage('room-images/wb-015.jpeg')
                 ],
                 floor: '0',
                 capacity: '2',
@@ -1898,7 +1905,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-112',
                 images: [
-                    require('../assets/images/rooms/wb-112.jpeg')
+                    firebaseImage('room-images/wb-112.jpeg')
                 ],
                 floor: '1',
                 capacity: '160',
@@ -1908,7 +1915,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-116',
                 images: [
-                    require('../assets/images/rooms/wb-116.jpeg')
+                    firebaseImage('room-images/wb-116.jpeg')
                 ],
                 floor: '1',
                 capacity: '68',
@@ -1918,7 +1925,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-118',
                 images: [
-                    require('../assets/images/rooms/wb-118.jpeg')
+                    firebaseImage('room-images/wb-118.jpeg')
                 ],
                 floor: '1',
                 capacity: '52',
@@ -1928,7 +1935,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-204',
                 images: [
-                    require('../assets/images/rooms/wb-204.jpeg')
+                    firebaseImage('room-images/wb-204.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -1938,7 +1945,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-205',
                 images: [
-                    require('../assets/images/rooms/wb-205.jpeg')
+                    firebaseImage('room-images/wb-205.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -1948,7 +1955,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wb-210',
                 images: [
-                    require('../assets/images/rooms/wb-210.jpeg')
+                    firebaseImage('room-images/wb-210.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -1960,12 +1967,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilm',
         name: 'Gilmore Hall',
-        images: [require('../assets/images/buildings/gilm.jpeg')],
+        images: [firebaseImage('building-images/gilm.jpeg')],
         rooms: [
             {
                 id: 'gilm-206',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -1975,7 +1982,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilm-234',
                 images: [
-                    require('../assets/images/rooms/gilm-234.jpeg')
+                    firebaseImage('room-images/gilm-234.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -1987,12 +1994,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gman',
         name: 'Gilmore Annex',
-        images: [require('../assets/images/buildings/gman.jpeg')],
+        images: [firebaseImage('building-images/gman.jpeg')],
         rooms: [
             {
                 id: 'gman-101',
                 images: [
-                    require('../assets/images/rooms/gman-101.jpeg')
+                    firebaseImage('room-images/gman-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '18',
@@ -2004,12 +2011,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'aust',
         name: 'Austin Hall',
-        images: [require('../assets/images/buildings/aust.jpeg')],
+        images: [firebaseImage('building-images/aust.jpeg')],
         rooms: [
             {
                 id: 'aust-100',
                 images: [
-                    require('../assets/images/rooms/aust-100.jpeg')
+                    firebaseImage('room-images/aust-100.jpeg')
                 ],
                 floor: '1',
                 capacity: '80',
@@ -2019,7 +2026,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-126',
                 images: [
-                    require('../assets/images/rooms/aust-126.jpeg')
+                    firebaseImage('room-images/aust-126.jpeg')
                 ],
                 floor: '1',
                 capacity: '38',
@@ -2029,7 +2036,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-183',
                 images: [
-                    require('../assets/images/rooms/aust-183.jpeg')
+                    firebaseImage('room-images/aust-183.jpeg')
                 ],
                 floor: '1',
                 capacity: '250',
@@ -2039,7 +2046,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-200',
                 images: [
-                    require('../assets/images/rooms/aust-200.jpeg')
+                    firebaseImage('room-images/aust-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '55',
@@ -2049,7 +2056,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-216',
                 images: [
-                    require('../assets/images/rooms/aust-216.jpeg')
+                    firebaseImage('room-images/aust-216.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2059,7 +2066,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-222',
                 images: [
-                    require('../assets/images/rooms/aust-222.jpeg')
+                    firebaseImage('room-images/aust-222.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2069,7 +2076,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-226',
                 images: [
-                    require('../assets/images/rooms/aust-222.jpeg')
+                    firebaseImage('room-images/aust-222.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2079,7 +2086,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-260',
                 images: [
-                    require('../assets/images/rooms/aust-260.jpeg')
+                    firebaseImage('room-images/aust-260.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2089,7 +2096,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-270',
                 images: [
-                    require('../assets/images/rooms/aust-222.jpeg')
+                    firebaseImage('room-images/aust-222.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2099,7 +2106,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-274',
                 images: [
-                    require('../assets/images/rooms/aust-274.jpeg')
+                    firebaseImage('room-images/aust-274.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2109,7 +2116,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-388',
                 images: [
-                    require('../assets/images/rooms/aust-388.jpeg')
+                    firebaseImage('room-images/aust-388.jpeg')
                 ],
                 floor: '3',
                 capacity: '48',
@@ -2119,7 +2126,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-390',
                 images: [
-                    require('../assets/images/rooms/aust-388.jpeg')
+                    firebaseImage('room-images/aust-388.jpeg')
                 ],
                 floor: '3',
                 capacity: '48',
@@ -2129,7 +2136,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'aust-440',
                 images: [
-                    require('../assets/images/rooms/aust-440.jpeg')
+                    firebaseImage('room-images/aust-440.jpeg')
                 ],
                 floor: '4',
                 capacity: '32',
@@ -2141,12 +2148,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bale',
         name: 'Ballard Extension Hall',
-        images: [require('../assets/images/buildings/bale.jpeg')],
+        images: [firebaseImage('building-images/bale.jpeg')],
         rooms: [
             {
                 id: 'bale-200C',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '18',
@@ -2156,7 +2163,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bale-219',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '28',
@@ -2166,7 +2173,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bale-310',
                 images: [
-                    require('../assets/images/rooms/bale-310.jpeg')
+                    firebaseImage('room-images/bale-310.jpeg')
                 ],
                 floor: '3',
                 capacity: '21',
@@ -2178,12 +2185,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bat',
         name: 'Batcheller Hall',
-        images: [require('../assets/images/buildings/bat.jpeg')],
+        images: [firebaseImage('building-images/bat.jpeg')],
         rooms: [
             {
                 id: 'bat-045',
                 images: [
-                    require('../assets/images/rooms/bat-045.jpeg')
+                    firebaseImage('room-images/bat-045.jpeg')
                 ],
                 floor: '0',
                 capacity: '32',
@@ -2193,7 +2200,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bat-050',
                 images: [
-                    require('../assets/images/rooms/bat-050.jpeg')
+                    firebaseImage('room-images/bat-050.jpeg')
                 ],
                 floor: '0',
                 capacity: '10',
@@ -2203,7 +2210,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bat-144',
                 images: [
-                    require('../assets/images/rooms/bat-144.jpeg')
+                    firebaseImage('room-images/bat-144.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -2213,7 +2220,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bat-150',
                 images: [
-                    require('../assets/images/rooms/bat-150.jpeg')
+                    firebaseImage('room-images/bat-150.jpeg')
                 ],
                 floor: '1',
                 capacity: '48',
@@ -2223,7 +2230,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bat-244',
                 images: [
-                    require('../assets/images/rooms/bat-244.jpeg')
+                    firebaseImage('room-images/bat-244.jpeg')
                 ],
                 floor: '2',
                 capacity: '20',
@@ -2233,7 +2240,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'bat-250',
                 images: [
-                    require('../assets/images/rooms/bat-250.jpeg')
+                    firebaseImage('room-images/bat-250.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2245,12 +2252,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'brc',
         name: 'Beth Ray Center for Academic Support',
-        images: [require('../assets/images/buildings/brc.jpeg')],
+        images: [firebaseImage('building-images/brc.jpeg')],
         rooms: [
             {
                 id: 'brc-133',
                 images: [
-                    require('../assets/images/rooms/brc-133.jpeg')
+                    firebaseImage('room-images/brc-133.jpeg')
                 ],
                 floor: '1',
                 capacity: '44',
@@ -2260,7 +2267,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'brc-136',
                 images: [
-                    require('../assets/images/rooms/brc-136.jpeg')
+                    firebaseImage('room-images/brc-136.jpeg')
                 ],
                 floor: '1',
                 capacity: '28',
@@ -2270,7 +2277,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'brc-138',
                 images: [
-                    require('../assets/images/rooms/brc-138.jpeg')
+                    firebaseImage('room-images/brc-138.jpeg')
                 ],
                 floor: '1',
                 capacity: '28',
@@ -2280,7 +2287,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'brc-161',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -2292,12 +2299,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'burt',
         name: 'Burt Hall',
-        images: [require('../assets/images/buildings/burt.jpeg')],
+        images: [firebaseImage('building-images/burt.jpeg')],
         rooms: [
             {
                 id: 'burt-128',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '35',
@@ -2307,7 +2314,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'burt-166',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '17',
@@ -2317,7 +2324,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'burt-193',
                 images: [
-                    require('../assets/images/rooms/burt-193.jpeg')
+                    firebaseImage('room-images/burt-193.jpeg')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -2327,7 +2334,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'burt-326A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '7',
@@ -2339,12 +2346,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'bates',
         name: 'Bates Hall',
-        images: [require('../assets/images/buildings/bates.jpeg')],
+        images: [firebaseImage('building-images/bates.jpeg')],
         rooms: [
             {
                 id: 'bates-129',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -2356,12 +2363,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'buxton',
         name: 'Buxton Hall',
-        images: [require('../assets/images/buildings/buxton.jpeg')],
+        images: [firebaseImage('building-images/buxton.jpeg')],
         rooms: [
             {
                 id: 'buxton-169',
                 images: [
-                    require('../assets/images/rooms/buxton-169.jpeg')
+                    firebaseImage('room-images/buxton-169.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -2373,12 +2380,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'call',
         name: 'Callahan Hall',
-        images: [require('../assets/images/buildings/call.jpeg')],
+        images: [firebaseImage('building-images/call.jpeg')],
         rooms: [
             {
                 id: 'call-125',
                 images: [
-                    require('../assets/images/rooms/call-125.jpeg')
+                    firebaseImage('room-images/call-125.jpeg')
                 ],
                 floor: '1',
                 capacity: '29',
@@ -2390,12 +2397,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'clkl',
         name: 'Clark Laboratory',
-        images: [require('../assets/images/buildings/clkl.jpeg')],
+        images: [firebaseImage('building-images/clkl.jpeg')],
         rooms: [
             {
                 id: 'clkl-104',
                 images: [
-                    require('../assets/images/rooms/clkl-104.jpeg')
+                    firebaseImage('room-images/clkl-104.jpeg')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -2405,7 +2412,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'clkl-104B',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '29',
@@ -2415,7 +2422,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'clkl-106',
                 images: [
-                    require('../assets/images/rooms/clkl-106.jpeg')
+                    firebaseImage('room-images/clkl-106.jpeg')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -2427,12 +2434,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'coar',
         name: 'Coast Range Building',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'coar-2123',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -2442,7 +2449,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'coar-2196',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -2454,12 +2461,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'comh',
         name: 'Community Hall',
-        images: [require('../assets/images/buildings/comh.jpeg')],
+        images: [firebaseImage('building-images/comh.jpeg')],
         rooms: [
             {
                 id: 'comh-102',
                 images: [
-                    require('../assets/images/rooms/comh-102.jpeg')
+                    firebaseImage('room-images/comh-102.jpeg')
                 ],
                 floor: '1',
                 capacity: '48',
@@ -2469,7 +2476,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-104',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -2479,7 +2486,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-106',
                 images: [
-                    require('../assets/images/rooms/comh-106.jpeg')
+                    firebaseImage('room-images/comh-106.jpeg')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -2489,7 +2496,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-202',
                 images: [
-                    require('../assets/images/rooms/comh-202.jpeg')
+                    firebaseImage('room-images/comh-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '100',
@@ -2499,7 +2506,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-203',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -2509,7 +2516,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-204',
                 images: [
-                    require('../assets/images/rooms/comh-204.jpeg')
+                    firebaseImage('room-images/comh-204.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -2519,7 +2526,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-300',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '5',
@@ -2529,7 +2536,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-300A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '7',
@@ -2539,7 +2546,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-303',
                 images: [
-                    require('../assets/images/rooms/comh-303.jpeg')
+                    firebaseImage('room-images/comh-303.jpeg')
                 ],
                 floor: '3',
                 capacity: '80',
@@ -2549,7 +2556,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'comh-305A',
                 images: [
-                    require('../assets/images/rooms/comh-305A.jpeg')
+                    firebaseImage('room-images/comh-305A.jpeg')
                 ],
                 floor: '3',
                 capacity: '32',
@@ -2561,12 +2568,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'covl',
         name: 'Covell Hall',
-        images: [require('../assets/images/buildings/covl.jpeg')],
+        images: [firebaseImage('building-images/covl.jpeg')],
         rooms: [
             {
                 id: 'covl-001',
                 images: [
-                    require('../assets/images/rooms/covl-001.jpeg')
+                    firebaseImage('room-images/covl-001.jpeg')
                 ],
                 floor: '0',
                 capacity: '20',
@@ -2576,7 +2583,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-006',
                 images: [
-                    require('../assets/images/rooms/covl-006.jpeg')
+                    firebaseImage('room-images/covl-006.jpeg')
                 ],
                 floor: '0',
                 capacity: '17',
@@ -2586,7 +2593,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-017',
                 images: [
-                    require('../assets/images/rooms/covl-017.jpeg')
+                    firebaseImage('room-images/covl-017.jpeg')
                 ],
                 floor: '0',
                 capacity: '3',
@@ -2596,7 +2603,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-020',
                 images: [
-                    require('../assets/images/rooms/covl-020.jpeg')
+                    firebaseImage('room-images/covl-020.jpeg')
                 ],
                 floor: '0',
                 capacity: '34',
@@ -2606,7 +2613,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-021',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '20',
@@ -2616,7 +2623,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-022',
                 images: [
-                    require('../assets/images/rooms/covl-022.jpeg')
+                    firebaseImage('room-images/covl-022.jpeg')
                 ],
                 floor: '0',
                 capacity: '20',
@@ -2626,7 +2633,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-216',
                 images: [
-                    require('../assets/images/rooms/covl-216.jpeg')
+                    firebaseImage('room-images/covl-216.jpeg')
                 ],
                 floor: '2',
                 capacity: '151',
@@ -2636,7 +2643,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-218',
                 images: [
-                    require('../assets/images/rooms/covl-218.jpeg')
+                    firebaseImage('room-images/covl-218.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -2646,7 +2653,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'covl-221',
                 images: [
-                    require('../assets/images/rooms/covl-221.jpeg')
+                    firebaseImage('room-images/covl-221.jpeg')
                 ],
                 floor: '2',
                 capacity: '75',
@@ -2658,12 +2665,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'crps',
         name: 'Crop Science Building',
-        images: [require('../assets/images/buildings/crps.jpeg')],
+        images: [firebaseImage('building-images/crps.jpeg')],
         rooms: [
             {
                 id: 'crps-119',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -2673,7 +2680,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'crps-122',
                 images: [
-                    require('../assets/images/rooms/crps-122.jpeg')
+                    firebaseImage('room-images/crps-122.jpeg')
                 ],
                 floor: '1',
                 capacity: '68',
@@ -2683,7 +2690,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'crps-138',
                 images: [
-                    require('../assets/images/rooms/crps-138.jpeg')
+                    firebaseImage('room-images/crps-138.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -2693,7 +2700,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'crps-150',
                 images: [
-                    require('../assets/images/rooms/crps-150.jpeg')
+                    firebaseImage('room-images/crps-150.jpeg')
                 ],
                 floor: '1',
                 capacity: '26',
@@ -2703,7 +2710,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'crps-232',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '9',
@@ -2715,12 +2722,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dear',
         name: 'Dearborn Hall',
-        images: [require('../assets/images/buildings/dear.jpeg')],
+        images: [firebaseImage('building-images/dear.jpeg')],
         rooms: [
             {
                 id: 'dear-001E',
                 images: [
-                    require('../assets/images/rooms/dear-001E.jpeg')
+                    firebaseImage('room-images/dear-001E.jpeg')
                 ],
                 floor: '0',
                 capacity: '25',
@@ -2730,7 +2737,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-001G',
                 images: [
-                    require('../assets/images/rooms/dear-001G.jpeg')
+                    firebaseImage('room-images/dear-001G.jpeg')
                 ],
                 floor: '0',
                 capacity: '12',
@@ -2740,7 +2747,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-002',
                 images: [
-                    require('../assets/images/rooms/dear-002.jpeg')
+                    firebaseImage('room-images/dear-002.jpeg')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -2750,7 +2757,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-004',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: 'Unknown',
@@ -2760,7 +2767,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-005',
                 images: [
-                    require('../assets/images/rooms/dear-005.jpeg')
+                    firebaseImage('room-images/dear-005.jpeg')
                 ],
                 floor: '0',
                 capacity: '12',
@@ -2770,7 +2777,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-009',
                 images: [
-                    require('../assets/images/rooms/dear-009.jpeg')
+                    firebaseImage('room-images/dear-009.jpeg')
                 ],
                 floor: '0',
                 capacity: '12',
@@ -2780,7 +2787,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-115',
                 images: [
-                    require('../assets/images/rooms/dear-115.jpeg')
+                    firebaseImage('room-images/dear-115.jpeg')
                 ],
                 floor: '1',
                 capacity: '61',
@@ -2790,7 +2797,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-118',
                 images: [
-                    require('../assets/images/rooms/dear-118.jpeg')
+                    firebaseImage('room-images/dear-118.jpeg')
                 ],
                 floor: '1',
                 capacity: '168',
@@ -2800,7 +2807,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-120',
                 images: [
-                    require('../assets/images/rooms/dear-120.jpeg')
+                    firebaseImage('room-images/dear-120.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -2810,7 +2817,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-201',
                 images: [
-                    require('../assets/images/rooms/dear-201.jpeg')
+                    firebaseImage('room-images/dear-201.jpeg')
                 ],
                 floor: '2',
                 capacity: '90',
@@ -2820,7 +2827,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-203',
                 images: [
-                    require('../assets/images/rooms/dear-203.jpeg')
+                    firebaseImage('room-images/dear-203.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -2830,7 +2837,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-206',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -2840,7 +2847,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-208',
                 images: [
-                    require('../assets/images/rooms/dear-208.jpeg')
+                    firebaseImage('room-images/dear-208.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -2850,7 +2857,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-211',
                 images: [
-                    require('../assets/images/rooms/dear-211.jpeg')
+                    firebaseImage('room-images/dear-211.jpeg')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -2860,7 +2867,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-222',
                 images: [
-                    require('../assets/images/rooms/dear-222.jpeg')
+                    firebaseImage('room-images/dear-222.jpeg')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -2870,7 +2877,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-300',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -2880,7 +2887,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-302A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -2890,7 +2897,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-303',
                 images: [
-                    require('../assets/images/rooms/dear-303.jpeg')
+                    firebaseImage('room-images/dear-303.jpeg')
                 ],
                 floor: '3',
                 capacity: '22',
@@ -2900,7 +2907,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dear-312',
                 images: [
-                    require('../assets/images/rooms/dear-312.jpeg')
+                    firebaseImage('room-images/dear-312.jpeg')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -2912,12 +2919,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dryd',
         name: 'Dryden Hall',
-        images: [require('../assets/images/buildings/dryd.jpeg')],
+        images: [firebaseImage('building-images/dryd.jpeg')],
         rooms: [
             {
                 id: 'dryd-104',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '35',
@@ -2927,7 +2934,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dryd-212B',
                 images: [
-                    require('../assets/images/rooms/dryd-212B.jpeg')
+                    firebaseImage('room-images/dryd-212B.jpeg')
                 ],
                 floor: '2',
                 capacity: '20',
@@ -2939,12 +2946,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dxrc',
         name: 'Dixon Recreation Center',
-        images: [require('../assets/images/buildings/dxrc.jpeg')],
+        images: [firebaseImage('building-images/dxrc.jpeg')],
         rooms: [
             {
                 id: 'dxrc-126',
                 images: [
-                    require('../assets/images/rooms/dxrc-126.jpeg')
+                    firebaseImage('room-images/dxrc-126.jpeg')
                 ],
                 floor: '1',
                 capacity: '60',
@@ -2954,7 +2961,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-140J',
                 images: [
-                    require('../assets/images/rooms/dxrc-140J.jpeg')
+                    firebaseImage('room-images/dxrc-140J.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -2964,7 +2971,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-201',
                 images: [
-                    require('../assets/images/rooms/dxrc-201.jpeg')
+                    firebaseImage('room-images/dxrc-201.jpeg')
                 ],
                 floor: '2',
                 capacity: '46',
@@ -2974,7 +2981,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-207',
                 images: [
-                    require('../assets/images/rooms/dxrc-207.jpeg')
+                    firebaseImage('room-images/dxrc-207.jpeg')
                 ],
                 floor: '2',
                 capacity: '34',
@@ -2984,7 +2991,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-209',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -2994,7 +3001,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-260',
                 images: [
-                    require('../assets/images/rooms/dxrc-260.jpeg')
+                    firebaseImage('room-images/dxrc-260.jpeg')
                 ],
                 floor: '2',
                 capacity: '100',
@@ -3004,7 +3011,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-Indoor-Climbing-Center',
                 images: [
-                    require('../assets/images/rooms/dxrc-ICC.jpeg')
+                    firebaseImage('room-images/dxrc-ICC.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -3014,7 +3021,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'dxrc-Pool',
                 images: [
-                    require('../assets/images/rooms/dxrc-Pool.jpeg')
+                    firebaseImage('room-images/dxrc-Pool.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3026,12 +3033,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'dybn',
         name: 'DC Dairy Barn',
-        images: [require('../assets/images/buildings/dybn.jpeg')],
+        images: [firebaseImage('building-images/dybn.jpeg')],
         rooms: [
             {
                 id: 'dybn-101',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -3043,12 +3050,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'egrn',
         name: 'East Greenhouse 16',
-        images: [require('../assets/images/buildings/egrn.jpeg')],
+        images: [firebaseImage('building-images/egrn.jpeg')],
         rooms: [
             {
                 id: 'egrn-16',
                 images: [
-                    require('../assets/images/rooms/egrn-16.jpeg')
+                    firebaseImage('room-images/egrn-16.jpeg')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -3060,12 +3067,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'emac',
         name: 'Entomology Machine Storage',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'emac-130',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -3077,12 +3084,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'fair',
         name: 'Fairbanks Hall',
-        images: [require('../assets/images/buildings/fair.jpeg')],
+        images: [firebaseImage('building-images/fair.jpeg')],
         rooms: [
             {
                 id: 'fair-104',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '18',
@@ -3092,7 +3099,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-127',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '26',
@@ -3102,7 +3109,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-204',
                 images: [
-                    require('../assets/images/rooms/fair-204.jpeg')
+                    firebaseImage('room-images/fair-204.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -3112,7 +3119,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-207',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -3122,7 +3129,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-215',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3132,7 +3139,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-227',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3142,7 +3149,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-304',
                 images: [
-                    require('../assets/images/rooms/fair-304.jpeg')
+                    firebaseImage('room-images/fair-304.jpeg')
                 ],
                 floor: '3',
                 capacity: '22',
@@ -3152,7 +3159,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-327',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3162,7 +3169,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-404',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '25',
@@ -3172,7 +3179,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-415',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '19',
@@ -3182,7 +3189,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'fair-427',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '29',
@@ -3194,12 +3201,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'furm',
         name: 'Joyce Collin Furman Hall',
-        images: [require('../assets/images/buildings/furm.jpeg')],
+        images: [firebaseImage('building-images/furm.jpeg')],
         rooms: [
             {
                 id: 'furm-100',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -3209,7 +3216,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-101',
                 images: [
-                    require('../assets/images/rooms/furm-101.jpeg')
+                    firebaseImage('room-images/furm-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '68',
@@ -3219,7 +3226,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-102',
                 images: [
-                    require('../assets/images/rooms/furm-102.jpeg')
+                    firebaseImage('room-images/furm-102.jpeg')
                 ],
                 floor: '1',
                 capacity: '96',
@@ -3229,7 +3236,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-105',
                 images: [
-                    require('../assets/images/rooms/furm-105.jpeg')
+                    firebaseImage('room-images/furm-105.jpeg')
                 ],
                 floor: '1',
                 capacity: '48',
@@ -3239,7 +3246,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-200',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '14',
@@ -3249,7 +3256,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-201G',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '6',
@@ -3259,7 +3266,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-202',
                 images: [
-                    require('../assets/images/rooms/furm-202.jpeg')
+                    firebaseImage('room-images/furm-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '68',
@@ -3269,7 +3276,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-300',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '14',
@@ -3279,7 +3286,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-303',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -3289,7 +3296,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-404',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '49',
@@ -3299,7 +3306,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-405',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '28',
@@ -3309,7 +3316,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'furm-411',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '15',
@@ -3321,12 +3328,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gilk',
         name: 'Gilkey Hall',
-        images: [require('../assets/images/buildings/gilk.jpeg')],
+        images: [firebaseImage('building-images/gilk.jpeg')],
         rooms: [
             {
                 id: 'gilk-100',
                 images: [
-                    require('../assets/images/rooms/gilk-100.jpeg')
+                    firebaseImage('room-images/gilk-100.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3336,7 +3343,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilk-104',
                 images: [
-                    require('../assets/images/rooms/gilk-104.jpeg')
+                    firebaseImage('room-images/gilk-104.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -3346,7 +3353,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilk-108',
                 images: [
-                    require('../assets/images/rooms/gilk-108.jpeg')
+                    firebaseImage('room-images/gilk-108.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3356,7 +3363,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilk-113',
                 images: [
-                    require('../assets/images/rooms/gilk-113.jpeg')
+                    firebaseImage('room-images/gilk-113.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -3366,7 +3373,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gilk-115',
                 images: [
-                    require('../assets/images/rooms/gilk-115.jpeg')
+                    firebaseImage('room-images/gilk-115.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3378,12 +3385,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'glsn',
         name: 'Gleeson Hall',
-        images: [require('../assets/images/buildings/glsn.jpeg')],
+        images: [firebaseImage('building-images/glsn.jpeg')],
         rooms: [
             {
                 id: 'glsn-003',
                 images: [
-                    require('../assets/images/rooms/glsn-003.jpeg')
+                    firebaseImage('room-images/glsn-003.jpeg')
                 ],
                 floor: '0',
                 capacity: '28',
@@ -3393,7 +3400,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'glsn-009',
                 images: [
-                    require('../assets/images/rooms/glsn-009.jpeg')
+                    firebaseImage('room-images/glsn-009.jpeg')
                 ],
                 floor: '0',
                 capacity: '63',
@@ -3403,7 +3410,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'glsn-100',
                 images: [
-                    require('../assets/images/rooms/glsn-100.jpeg')
+                    firebaseImage('room-images/glsn-100.jpeg')
                 ],
                 floor: '1',
                 capacity: '48',
@@ -3413,7 +3420,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'glsn-200',
                 images: [
-                    require('../assets/images/rooms/glsn-200.jpeg')
+                    firebaseImage('room-images/glsn-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '88',
@@ -3423,7 +3430,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'glsn-306',
                 images: [
-                    require('../assets/images/rooms/glsn-306.jpeg')
+                    firebaseImage('room-images/glsn-306.jpeg')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -3433,7 +3440,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'glsn-308',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '27',
@@ -3445,12 +3452,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'graf',
         name: 'Graf Hall',
-        images: [require('../assets/images/buildings/graf.jpeg')],
+        images: [firebaseImage('building-images/graf.jpeg')],
         rooms: [
             {
                 id: 'graf-106',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '39',
@@ -3460,7 +3467,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'graf-107',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -3472,12 +3479,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'gvgc',
         name: 'Gladys Valley Gymnastics Center',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'gvgc-106',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '27',
@@ -3487,7 +3494,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gvgc-107',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '23',
@@ -3497,7 +3504,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'gvgc-109',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '32',
@@ -3509,12 +3516,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'indp',
         name: 'Merritt Truax Indoor Center',
-        images: [require('../assets/images/buildings/indp.jpeg')],
+        images: [firebaseImage('building-images/indp.jpeg')],
         rooms: [
             {
                 id: 'indp-101',
                 images: [
-                    require('../assets/images/rooms/indp-101.jpeg')
+                    firebaseImage('room-images/indp-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '500',
@@ -3526,12 +3533,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'haml',
         name: 'Hogg Animal Metabolism Lab',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'haml-0100',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3543,12 +3550,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hfc',
         name: 'Hallie E. Ford Center',
-        images: [require('../assets/images/buildings/hfc.jpeg')],
+        images: [firebaseImage('building-images/hfc.jpeg')],
         rooms: [
             {
                 id: 'hfc-115',
                 images: [
-                    require('../assets/images/rooms/hfc-115.jpeg')
+                    firebaseImage('room-images/hfc-115.jpeg')
                 ],
                 floor: '1',
                 capacity: '56',
@@ -3560,12 +3567,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hkrt',
         name: 'Heckart Lodge',
-        images: [require('../assets/images/buildings/hkrt.jpeg')],
+        images: [firebaseImage('building-images/hkrt.jpeg')],
         rooms: [
             {
                 id: 'hkrt-110',
                 images: [
-                    require('../assets/images/rooms/hkrt-110.jpeg')
+                    firebaseImage('room-images/hkrt-110.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -3577,12 +3584,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hov',
         name: 'Hovland Hall',
-        images: [require('../assets/images/buildings/hov.jpeg')],
+        images: [firebaseImage('building-images/hov.jpeg')],
         rooms: [
             {
                 id: 'hov-100',
                 images: [
-                    require('../assets/images/rooms/hov-100.jpeg')
+                    firebaseImage('room-images/hov-100.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -3592,7 +3599,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'hov-104',
                 images: [
-                    require('../assets/images/rooms/hov-104.jpeg')
+                    firebaseImage('room-images/hov-104.jpeg')
                 ],
                 floor: '1',
                 capacity: '17',
@@ -3602,7 +3609,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'hov-202',
                 images: [
-                    require('../assets/images/rooms/hov-202.jpeg')
+                    firebaseImage('room-images/hov-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '37',
@@ -3614,12 +3621,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hsbn',
         name: 'Horse Barn',
-        images: [require('../assets/images/buildings/hsbn.jpeg')],
+        images: [firebaseImage('building-images/hsbn.jpeg')],
         rooms: [
             {
                 id: 'hsbn-100',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '68',
@@ -3631,12 +3638,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'hwrl',
         name: 'Hindsdale Wave Research Lab',
-        images: [require('../assets/images/buildings/hwrl.jpeg')],
+        images: [firebaseImage('building-images/hwrl.jpeg')],
         rooms: [
             {
                 id: 'hwrl-M0201',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -3648,12 +3655,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'illc',
         name: 'International Learning-Living Center (ILLC)',
-        images: [require('../assets/images/buildings/illc.jpeg')],
+        images: [firebaseImage('building-images/illc.jpeg')],
         rooms: [
             {
                 id: 'illc-134',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '22',
@@ -3663,7 +3670,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-136',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -3673,7 +3680,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-144',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -3683,7 +3690,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-155',
                 images: [
-                    require('../assets/images/rooms/illc-155.jpeg')
+                    firebaseImage('room-images/illc-155.jpeg')
                 ],
                 floor: '1',
                 capacity: '105',
@@ -3693,7 +3700,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-242',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3703,7 +3710,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-244',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -3713,7 +3720,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-250',
                 images: [
-                    require('../assets/images/rooms/illc-250.jpeg')
+                    firebaseImage('room-images/illc-250.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -3723,7 +3730,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-252',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3733,7 +3740,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-253',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3743,7 +3750,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-255',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -3753,7 +3760,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-342',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3763,7 +3770,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-344',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3773,7 +3780,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-345',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3783,7 +3790,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-345-347',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '50',
@@ -3793,7 +3800,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-347',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3803,7 +3810,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-350',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3813,7 +3820,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-350-352',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '50',
@@ -3823,7 +3830,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-352',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3833,7 +3840,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-353',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3843,7 +3850,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-355',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -3853,7 +3860,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-442',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '24',
@@ -3863,7 +3870,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-444',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '25',
@@ -3873,7 +3880,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-450',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '23',
@@ -3883,7 +3890,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-450-452',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '46',
@@ -3893,7 +3900,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-452',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '23',
@@ -3903,7 +3910,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-453',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '23',
@@ -3913,7 +3920,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-455',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '23',
@@ -3923,7 +3930,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-542',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -3933,7 +3940,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-544',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -3943,7 +3950,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-545',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -3953,7 +3960,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-545-547',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '46',
@@ -3963,7 +3970,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-547',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -3973,7 +3980,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-550',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -3983,7 +3990,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-550-552',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '46',
@@ -3993,7 +4000,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-552',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -4003,7 +4010,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-553',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -4013,7 +4020,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'illc-555',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '23',
@@ -4025,12 +4032,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'john',
         name: 'Johnson Hall',
-        images: [require('../assets/images/buildings/john.jpeg')],
+        images: [firebaseImage('building-images/john.jpeg')],
         rooms: [
             {
                 id: 'john-102',
                 images: [
-                    require('../assets/images/rooms/john-102.jpeg')
+                    firebaseImage('room-images/john-102.jpeg')
                 ],
                 floor: '1',
                 capacity: '118',
@@ -4040,7 +4047,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'john-214',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '32',
@@ -4050,7 +4057,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'john-214B',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '15',
@@ -4060,7 +4067,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'john-221',
                 images: [
-                    require('../assets/images/rooms/john-221.jpeg')
+                    firebaseImage('room-images/john-221.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -4070,7 +4077,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'john-300',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '26',
@@ -4080,7 +4087,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'john-316A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '10',
@@ -4092,12 +4099,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kear',
         name: 'Kearney Hall',
-        images: [require('../assets/images/buildings/kear.jpeg')],
+        images: [firebaseImage('building-images/kear.jpeg')],
         rooms: [
             {
                 id: 'kear-112',
                 images: [
-                    require('../assets/images/rooms/kear-112.jpeg')
+                    firebaseImage('room-images/kear-112.jpeg')
                 ],
                 floor: '1',
                 capacity: '106',
@@ -4107,7 +4114,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-124',
                 images: [
-                    require('../assets/images/rooms/kear-124.jpeg')
+                    firebaseImage('room-images/kear-124.jpeg')
                 ],
                 floor: '1',
                 capacity: '34',
@@ -4117,7 +4124,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-202',
                 images: [
-                    require('../assets/images/rooms/kear-202.jpeg')
+                    firebaseImage('room-images/kear-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -4127,7 +4134,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-205',
                 images: [
-                    require('../assets/images/rooms/kear-205.jpeg')
+                    firebaseImage('room-images/kear-205.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -4137,7 +4144,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-212',
                 images: [
-                    require('../assets/images/rooms/kear-212.jpeg')
+                    firebaseImage('room-images/kear-212.jpeg')
                 ],
                 floor: '2',
                 capacity: '83',
@@ -4147,7 +4154,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-302',
                 images: [
-                    require('../assets/images/rooms/kear-302.jpeg')
+                    firebaseImage('room-images/kear-302.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -4157,7 +4164,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-305',
                 images: [
-                    require('../assets/images/rooms/kear-305.jpeg')
+                    firebaseImage('room-images/kear-305.jpeg')
                 ],
                 floor: '3',
                 capacity: '63',
@@ -4167,7 +4174,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kear-312',
                 images: [
-                    require('../assets/images/rooms/kear-312.jpeg')
+                    firebaseImage('room-images/kear-312.jpeg')
                 ],
                 floor: '3',
                 capacity: '84',
@@ -4179,12 +4186,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kec',
         name: 'Kelley Engineering Center',
-        images: [require('../assets/images/buildings/kec.jpeg')],
+        images: [firebaseImage('building-images/kec.jpeg')],
         rooms: [
             {
                 id: 'kec-1001',
                 images: [
-                    require('../assets/images/rooms/kec-1001.jpeg')
+                    firebaseImage('room-images/kec-1001.jpeg')
                 ],
                 floor: '1',
                 capacity: '70',
@@ -4194,7 +4201,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kec-1003',
                 images: [
-                    require('../assets/images/rooms/kec-1003.jpeg')
+                    firebaseImage('room-images/kec-1003.jpeg')
                 ],
                 floor: '1',
                 capacity: '66',
@@ -4204,7 +4211,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kec-1005',
                 images: [
-                    require('../assets/images/rooms/kec-1005.jpeg')
+                    firebaseImage('room-images/kec-1005.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -4214,7 +4221,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kec-1007',
                 images: [
-                    require('../assets/images/rooms/kec-1007.jpeg')
+                    firebaseImage('room-images/kec-1007.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -4226,12 +4233,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'kidd',
         name: 'Kidder Hall',
-        images: [require('../assets/images/buildings/kidd.jpeg')],
+        images: [firebaseImage('building-images/kidd.jpeg')],
         rooms: [
             {
                 id: 'kidd-022',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '0 (No one can be in it as if you enter you will disappear for ever)',
@@ -4241,7 +4248,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-028',
                 images: [
-                    require('../assets/images/rooms/kidd-028.jpeg')
+                    firebaseImage('room-images/kidd-028.jpeg')
                 ],
                 floor: '0',
                 capacity: '34',
@@ -4251,7 +4258,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-033',
                 images: [
-                    require('../assets/images/rooms/kidd-033.jpeg')
+                    firebaseImage('room-images/kidd-033.jpeg')
                 ],
                 floor: '0',
                 capacity: '26',
@@ -4261,7 +4268,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-070',
                 images: [
-                    require('../assets/images/rooms/kidd-070.jpeg')
+                    firebaseImage('room-images/kidd-070.jpeg')
                 ],
                 floor: '0',
                 capacity: '21',
@@ -4271,7 +4278,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-108',
                 images: [
-                    require('../assets/images/rooms/kidd-108.jpeg')
+                    firebaseImage('room-images/kidd-108.jpeg')
                 ],
                 floor: '1',
                 capacity: '50',
@@ -4281,7 +4288,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-108G',
                 images: [
-                    require('../assets/images/rooms/kidd-108G.jpeg')
+                    firebaseImage('room-images/kidd-108G.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -4291,7 +4298,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-108H',
                 images: [
-                    require('../assets/images/rooms/kidd-108H.jpeg')
+                    firebaseImage('room-images/kidd-108H.jpeg')
                 ],
                 floor: '1',
                 capacity: '62',
@@ -4301,7 +4308,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-108J',
                 images: [
-                    require('../assets/images/rooms/kidd-108J.jpeg')
+                    firebaseImage('room-images/kidd-108J.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -4311,7 +4318,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-128',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -4321,7 +4328,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-128B',
                 images: [
-                    require('../assets/images/rooms/kidd-128B.jpeg')
+                    firebaseImage('room-images/kidd-128B.jpeg')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -4331,7 +4338,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-200',
                 images: [
-                    require('../assets/images/rooms/kidd-200.jpeg')
+                    firebaseImage('room-images/kidd-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '15',
@@ -4341,7 +4348,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-202',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -4351,7 +4358,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-228',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '3 (A very small class I guess)',
@@ -4361,7 +4368,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-236',
                 images: [
-                    require('../assets/images/rooms/kidd-236.jpeg')
+                    firebaseImage('room-images/kidd-236.jpeg')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -4371,7 +4378,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-237',
                 images: [
-                    require('../assets/images/rooms/kidd-237.jpeg')
+                    firebaseImage('room-images/kidd-237.jpeg')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -4381,7 +4388,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-238',
                 images: [
-                    require('../assets/images/rooms/kidd-238.jpeg')
+                    firebaseImage('room-images/kidd-238.jpeg')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -4391,7 +4398,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-274',
                 images: [
-                    require('../assets/images/rooms/kidd-274.jpeg')
+                    firebaseImage('room-images/kidd-274.jpeg')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -4401,7 +4408,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-278',
                 images: [
-                    require('../assets/images/rooms/kidd-278.jpeg')
+                    firebaseImage('room-images/kidd-278.jpeg')
                 ],
                 floor: '2',
                 capacity: '44',
@@ -4411,7 +4418,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-280',
                 images: [
-                    require('../assets/images/rooms/kidd-280.jpeg')
+                    firebaseImage('room-images/kidd-280.jpeg')
                 ],
                 floor: '2',
                 capacity: '37',
@@ -4421,7 +4428,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-350',
                 images: [
-                    require('../assets/images/rooms/kidd-350.jpeg')
+                    firebaseImage('room-images/kidd-350.jpeg')
                 ],
                 floor: '3',
                 capacity: '109',
@@ -4431,7 +4438,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-356',
                 images: [
-                    require('../assets/images/rooms/kidd-356.jpeg')
+                    firebaseImage('room-images/kidd-356.jpeg')
                 ],
                 floor: '3',
                 capacity: '16',
@@ -4441,7 +4448,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-358',
                 images: [
-                    require('../assets/images/rooms/kidd-358.jpeg')
+                    firebaseImage('room-images/kidd-358.jpeg')
                 ],
                 floor: '3',
                 capacity: '12',
@@ -4451,7 +4458,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'kidd-364',
                 images: [
-                    require('../assets/images/rooms/kidd-364.jpeg')
+                    firebaseImage('room-images/kidd-364.jpeg')
                 ],
                 floor: '3',
                 capacity: '109',
@@ -4463,12 +4470,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'lang',
         name: 'Langton Hall',
-        images: [require('../assets/images/buildings/lang.jpeg')],
+        images: [firebaseImage('building-images/lang.jpeg')],
         rooms: [
             {
                 id: 'lang-006',
                 images: [
-                    require('../assets/images/rooms/lang-006.jpeg')
+                    firebaseImage('room-images/lang-006.jpeg')
                 ],
                 floor: '0',
                 capacity: '49',
@@ -4478,7 +4485,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-013',
                 images: [
-                    require('../assets/images/rooms/lang-013.jpeg')
+                    firebaseImage('room-images/lang-013.jpeg')
                 ],
                 floor: '0',
                 capacity: '40',
@@ -4488,7 +4495,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-124',
                 images: [
-                    require('../assets/images/rooms/lang-124.jpeg')
+                    firebaseImage('room-images/lang-124.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -4498,7 +4505,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-126',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -4508,7 +4515,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-127',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -4518,7 +4525,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-129',
                 images: [
-                    require('../assets/images/rooms/lang-129.jpeg')
+                    firebaseImage('room-images/lang-129.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -4528,7 +4535,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-130',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -4538,7 +4545,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-134',
                 images: [
-                    require('../assets/images/rooms/lang-134.jpeg')
+                    firebaseImage('room-images/lang-134.jpeg')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -4548,7 +4555,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-200',
                 images: [
-                    require('../assets/images/rooms/lang-200.jpeg')
+                    firebaseImage('room-images/lang-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -4558,7 +4565,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-300',
                 images: [
-                    require('../assets/images/rooms/lang-300.jpeg')
+                    firebaseImage('room-images/lang-300.jpeg')
                 ],
                 floor: '3',
                 capacity: '307',
@@ -4568,7 +4575,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-301',
                 images: [
-                    require('../assets/images/rooms/lang-301.jpeg')
+                    firebaseImage('room-images/lang-301.jpeg')
                 ],
                 floor: '3',
                 capacity: '49',
@@ -4578,7 +4585,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-310',
                 images: [
-                    require('../assets/images/rooms/lang-310.jpeg')
+                    firebaseImage('room-images/lang-310.jpeg')
                 ],
                 floor: '3',
                 capacity: '114',
@@ -4588,7 +4595,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-arch',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: 'Nan',
                 capacity: '35',
@@ -4598,7 +4605,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lang-0018',
                 images: [
-                    require('../assets/images/rooms/lang-0018.jpeg')
+                    firebaseImage('room-images/lang-0018.jpeg')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -4610,12 +4617,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'lpsc',
         name: 'Linus Pauling Science Center',
-        images: [require('../assets/images/buildings/lpsc.jpeg')],
+        images: [firebaseImage('building-images/lpsc.jpeg')],
         rooms: [
             {
                 id: 'lpsc-125',
                 images: [
-                    require('../assets/images/rooms/lpsc-125.jpeg')
+                    firebaseImage('room-images/lpsc-125.jpeg')
                 ],
                 floor: '1',
                 capacity: '180',
@@ -4625,7 +4632,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-160',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '67',
@@ -4635,7 +4642,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-176',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '67',
@@ -4645,7 +4652,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-178',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '67',
@@ -4655,7 +4662,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-219',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '69',
@@ -4665,7 +4672,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-239',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '17',
@@ -4675,7 +4682,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-259',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '17',
@@ -4685,7 +4692,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'lpsc-402',
                 images: [
-                    require('../assets/images/rooms/lpsc-402.jpeg')
+                    firebaseImage('room-images/lpsc-402.jpeg')
                 ],
                 floor: '4',
                 capacity: '49',
@@ -4697,12 +4704,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'magr',
         name: 'Magruder Hall',
-        images: [require('../assets/images/buildings/magr.jpeg')],
+        images: [firebaseImage('building-images/magr.jpeg')],
         rooms: [
             {
                 id: 'magr-102',
                 images: [
-                    require('../assets/images/rooms/magr-102.jpeg')
+                    firebaseImage('room-images/magr-102.jpeg')
                 ],
                 floor: '1',
                 capacity: '100',
@@ -4712,7 +4719,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-113',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -4722,7 +4729,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-1152',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '98',
@@ -4732,7 +4739,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-118A',
                 images: [
-                    require('../assets/images/rooms/magr-118A.jpeg')
+                    firebaseImage('room-images/magr-118A.jpeg')
                 ],
                 floor: '1',
                 capacity: '58',
@@ -4742,7 +4749,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-202',
                 images: [
-                    require('../assets/images/rooms/magr-202.jpeg')
+                    firebaseImage('room-images/magr-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '75',
@@ -4752,7 +4759,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-202-205',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '143',
@@ -4762,7 +4769,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-205',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '82',
@@ -4772,7 +4779,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-208',
                 images: [
-                    require('../assets/images/rooms/magr-208.jpeg')
+                    firebaseImage('room-images/magr-208.jpeg')
                 ],
                 floor: '2',
                 capacity: '67',
@@ -4782,7 +4789,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-208-251',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '143',
@@ -4792,7 +4799,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-251',
                 images: [
-                    require('../assets/images/rooms/magr-251.jpeg')
+                    firebaseImage('room-images/magr-251.jpeg')
                 ],
                 floor: '2',
                 capacity: '76',
@@ -4802,7 +4809,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'magr-298',
                 images: [
-                    require('../assets/images/rooms/magr-298.jpeg')
+                    firebaseImage('room-images/magr-298.jpeg')
                 ],
                 floor: '2',
                 capacity: '62',
@@ -4814,12 +4821,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mlh',
         name: 'Magruder - Lecture Hall',
-        images: [require('../assets/images/buildings/mlh.jpeg')],
+        images: [firebaseImage('building-images/mlh.jpeg')],
         rooms: [
             {
                 id: 'mlh-1152',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '98',
@@ -4831,12 +4838,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mcaf',
         name: 'McAlexander Fieldhouse',
-        images: [require('../assets/images/buildings/mcaf.jpeg')],
+        images: [firebaseImage('building-images/mcaf.jpeg')],
         rooms: [
             {
                 id: 'mcaf-114',
                 images: [
-                    require('../assets/images/rooms/mcaf-114.jpeg')
+                    firebaseImage('room-images/mcaf-114.jpeg')
                 ],
                 floor: '1',
                 capacity: '1650',
@@ -4846,7 +4853,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mcaf-124',
                 images: [
-                    require('../assets/images/rooms/mcaf-124.jpeg')
+                    firebaseImage('room-images/mcaf-124.jpeg')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -4856,7 +4863,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mcaf-209',
                 images: [
-                    require('../assets/images/rooms/mcaf-209.jpeg')
+                    firebaseImage('room-images/mcaf-209.jpeg')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -4866,7 +4873,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mcaf-210',
                 images: [
-                    require('../assets/images/rooms/mcaf-210.jpeg')
+                    firebaseImage('room-images/mcaf-210.jpeg')
                 ],
                 floor: '2',
                 capacity: '28',
@@ -4876,7 +4883,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mcaf-306',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -4886,7 +4893,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mcaf-307',
                 images: [
-                    require('../assets/images/rooms/mcaf-307.jpeg')
+                    firebaseImage('room-images/mcaf-307.jpeg')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -4898,12 +4905,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mfd',
         name: 'Merryfield Hall',
-        images: [require('../assets/images/buildings/mfd.jpeg')],
+        images: [firebaseImage('building-images/mfd.jpeg')],
         rooms: [
             {
                 id: 'mfd-108',
                 images: [
-                    require('../assets/images/rooms/mfd-108.jpeg')
+                    firebaseImage('room-images/mfd-108.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -4913,7 +4920,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'mfd-112',
                 images: [
-                    require('../assets/images/rooms/mfd-112.jpeg')
+                    firebaseImage('room-images/mfd-112.jpeg')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -4925,12 +4932,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'more',
         name: 'Moreland Hall',
-        images: [require('../assets/images/buildings/more.jpeg')],
+        images: [firebaseImage('building-images/more.jpeg')],
         rooms: [
             {
                 id: 'more-126',
                 images: [
-                    require('../assets/images/rooms/more-126.jpeg')
+                    firebaseImage('room-images/more-126.jpeg')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -4940,7 +4947,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-130B',
                 images: [
-                    require('../assets/images/rooms/more-130B.jpeg')
+                    firebaseImage('room-images/more-130B.jpeg')
                 ],
                 floor: '1',
                 capacity: '27',
@@ -4950,7 +4957,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-204C',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '15',
@@ -4960,7 +4967,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-206',
                 images: [
-                    require('../assets/images/rooms/more-206.jpeg')
+                    firebaseImage('room-images/more-206.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -4970,7 +4977,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-214',
                 images: [
-                    require('../assets/images/rooms/more-214.jpeg')
+                    firebaseImage('room-images/more-214.jpeg')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -4980,7 +4987,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-330',
                 images: [
-                    require('../assets/images/rooms/more-330.jpeg')
+                    firebaseImage('room-images/more-330.jpeg')
                 ],
                 floor: '3',
                 capacity: '55',
@@ -4990,7 +4997,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-332',
                 images: [
-                    require('../assets/images/rooms/more-332.jpeg')
+                    firebaseImage('room-images/more-332.jpeg')
                 ],
                 floor: '3',
                 capacity: '49',
@@ -5000,7 +5007,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-334',
                 images: [
-                    require('../assets/images/rooms/more-334.jpeg')
+                    firebaseImage('room-images/more-334.jpeg')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -5010,7 +5017,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'more-362',
                 images: [
-                    require('../assets/images/rooms/more-362.jpeg')
+                    firebaseImage('room-images/more-362.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -5022,12 +5029,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'mu',
         name: 'Memorial Union',
-        images: [require('../assets/images/buildings/mu.jpeg')],
+        images: [firebaseImage('building-images/mu.jpeg')],
         rooms: [
             {
                 id: 'mu-lanes',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '32',
@@ -5039,12 +5046,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'nash',
         name: 'Nash Hall',
-        images: [require('../assets/images/buildings/nash.jpeg')],
+        images: [firebaseImage('building-images/nash.jpeg')],
         rooms: [
             {
                 id: 'nash-032',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '42',
@@ -5054,7 +5061,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-033',
                 images: [
-                    require('../assets/images/rooms/nash-033.jpeg')
+                    firebaseImage('room-images/nash-033.jpeg')
                 ],
                 floor: '0',
                 capacity: '42',
@@ -5064,7 +5071,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-104J',
                 images: [
-                    require('../assets/images/rooms/nash-104J.jpeg')
+                    firebaseImage('room-images/nash-104J.jpeg')
                 ],
                 floor: '1',
                 capacity: '16',
@@ -5074,7 +5081,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-164',
                 images: [
-                    require('../assets/images/rooms/nash-164.jpeg')
+                    firebaseImage('room-images/nash-164.jpeg')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -5084,7 +5091,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-204',
                 images: [
-                    require('../assets/images/rooms/nash-204.jpeg')
+                    firebaseImage('room-images/nash-204.jpeg')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -5094,7 +5101,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-206',
                 images: [
-                    require('../assets/images/rooms/nash-206.jpeg')
+                    firebaseImage('room-images/nash-206.jpeg')
                 ],
                 floor: '2',
                 capacity: '82',
@@ -5104,7 +5111,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-214',
                 images: [
-                    require('../assets/images/rooms/nash-214.jpeg')
+                    firebaseImage('room-images/nash-214.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -5114,7 +5121,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-218',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '22',
@@ -5124,7 +5131,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-234',
                 images: [
-                    require('../assets/images/rooms/nash-234.jpeg')
+                    firebaseImage('room-images/nash-234.jpeg')
                 ],
                 floor: '2',
                 capacity: '13',
@@ -5134,7 +5141,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-304',
                 images: [
-                    require('../assets/images/rooms/nash-304.jpeg')
+                    firebaseImage('room-images/nash-304.jpeg')
                 ],
                 floor: '3',
                 capacity: '72',
@@ -5144,7 +5151,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-316',
                 images: [
-                    require('../assets/images/rooms/nash-316.jpeg')
+                    firebaseImage('room-images/nash-316.jpeg')
                 ],
                 floor: '3',
                 capacity: '72',
@@ -5154,7 +5161,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-318',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '10',
@@ -5164,7 +5171,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'nash-404',
                 images: [
-                    require('../assets/images/rooms/nash-404.jpeg')
+                    firebaseImage('room-images/nash-404.jpeg')
                 ],
                 floor: '4',
                 capacity: '35',
@@ -5176,12 +5183,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'oao',
         name: 'Oceanography Administration Building',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'oao-106',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '26',
@@ -5193,12 +5200,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'oatf',
         name: 'James E. Oldfield Animal Teaching Facility',
-        images: [require('../assets/images/buildings/oatf.jpeg')],
+        images: [firebaseImage('building-images/oatf.jpeg')],
         rooms: [
             {
                 id: 'oatf-106',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -5208,7 +5215,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'oatf-108',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5218,7 +5225,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'oatf-109',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5228,7 +5235,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'oatf-112',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '65',
@@ -5240,12 +5247,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'pfsc',
         name: 'George W. Peavy Forest Science Center',
-        images: [require('../assets/images/buildings/pfsc.jpeg')],
+        images: [firebaseImage('building-images/pfsc.jpeg')],
         rooms: [
             {
                 id: 'pfsc-104',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5255,7 +5262,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-117',
                 images: [
-                    require('../assets/images/rooms/pfsc-117.jpeg')
+                    firebaseImage('room-images/pfsc-117.jpeg')
                 ],
                 floor: '1',
                 capacity: '118',
@@ -5265,7 +5272,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-125',
                 images: [
-                    require('../assets/images/rooms/pfsc-125.jpeg')
+                    firebaseImage('room-images/pfsc-125.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -5275,7 +5282,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-129',
                 images: [
-                    require('../assets/images/rooms/pfsc-129.jpeg')
+                    firebaseImage('room-images/pfsc-129.jpeg')
                 ],
                 floor: '1',
                 capacity: '70',
@@ -5285,7 +5292,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-177',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -5295,7 +5302,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-215',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -5305,7 +5312,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-217',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -5315,7 +5322,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-301',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '18',
@@ -5325,7 +5332,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-302',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '48',
@@ -5335,7 +5342,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'pfsc-315',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '48',
@@ -5347,12 +5354,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'pole',
         name: 'Pole Building',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'pole-Vet-Horse-Barn',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '58',
@@ -5364,12 +5371,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'poling',
         name: 'Poling Hall',
-        images: [require('../assets/images/buildings/poling.jpeg')],
+        images: [firebaseImage('building-images/poling.jpeg')],
         rooms: [
             {
                 id: 'poling-133',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '49',
@@ -5381,12 +5388,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'prax',
         name: 'Patricia Valian Reser Center for the Performing Arts',
-        images: [require('../assets/images/buildings/prax.jpeg')],
+        images: [firebaseImage('building-images/prax.jpeg')],
         rooms: [
             {
                 id: 'prax-107',
                 images: [
-                    require('../assets/images/rooms/prax-107.jpeg')
+                    firebaseImage('room-images/prax-107.jpeg')
                 ],
                 floor: '1',
                 capacity: '22',
@@ -5396,7 +5403,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'prax-120',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '351 (150)',
@@ -5406,7 +5413,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'prax-143',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '38 (24)',
@@ -5416,7 +5423,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'prax-150',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '596 (433)',
@@ -5426,7 +5433,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'prax-234',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '24 (12)',
@@ -5438,12 +5445,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rc',
         name: 'Radiation Center',
-        images: [require('../assets/images/buildings/rc.jpeg')],
+        images: [firebaseImage('building-images/rc.jpeg')],
         rooms: [
             {
                 id: 'rc-104C',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '44',
@@ -5453,7 +5460,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-104D',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5463,7 +5470,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-118C',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '42',
@@ -5473,7 +5480,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-120C',
                 images: [
-                    require('../assets/images/rooms/rc-120C.jpeg')
+                    firebaseImage('room-images/rc-120C.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -5483,7 +5490,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-124C',
                 images: [
-                    require('../assets/images/rooms/rc-124C.jpeg')
+                    firebaseImage('room-images/rc-124C.jpeg')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5493,7 +5500,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-136A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -5503,7 +5510,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rc-300D',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -5515,12 +5522,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rcb',
         name: 'Rehearsal Classroom Building',
-        images: [require('../assets/images/buildings/rcb.jpeg')],
+        images: [firebaseImage('building-images/rcb.jpeg')],
         rooms: [
             {
                 id: 'rcb-105',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '80',
@@ -5532,12 +5539,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'reed',
         name: 'Reed Lodge',
-        images: [require('../assets/images/buildings/reed.jpeg')],
+        images: [firebaseImage('building-images/reed.jpeg')],
         rooms: [
             {
                 id: 'reed-111',
                 images: [
-                    require('../assets/images/rooms/reed-111.jpeg')
+                    firebaseImage('room-images/reed-111.jpeg')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -5547,7 +5554,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'reed-219',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '15',
@@ -5557,7 +5564,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'reed-321',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '11',
@@ -5569,12 +5576,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'resr',
         name: 'Reser Stadium',
-        images: [require('../assets/images/buildings/resr.jpeg')],
+        images: [firebaseImage('building-images/resr.jpeg')],
         rooms: [
             {
                 id: 'resr-100',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '1000',
@@ -5584,7 +5591,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'resr-club',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: 'Club Floor',
                 capacity: '250',
@@ -5594,7 +5601,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'resr-loge',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: 'Loge Floor',
                 capacity: '120',
@@ -5606,12 +5613,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rich',
         name: 'Richardson Hall',
-        images: [require('../assets/images/buildings/rich.jpeg')],
+        images: [firebaseImage('building-images/rich.jpeg')],
         rooms: [
             {
                 id: 'rich-107',
                 images: [
-                    require('../assets/images/rooms/rich-107.jpeg')
+                    firebaseImage('room-images/rich-107.jpeg')
                 ],
                 floor: '1',
                 capacity: '56',
@@ -5621,7 +5628,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-115',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '47',
@@ -5631,7 +5638,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-123',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '30',
@@ -5641,7 +5648,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-203',
                 images: [
-                    require('../assets/images/rooms/rich-203.jpeg')
+                    firebaseImage('room-images/rich-203.jpeg')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -5651,7 +5658,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-243',
                 images: [
-                    require('../assets/images/rooms/rich-243.jpeg')
+                    firebaseImage('room-images/rich-243.jpeg')
                 ],
                 floor: '2',
                 capacity: '51',
@@ -5661,7 +5668,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-289',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '35',
@@ -5671,7 +5678,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rich-313',
                 images: [
-                    require('../assets/images/rooms/rich-313.jpeg')
+                    firebaseImage('room-images/rich-313.jpeg')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -5683,12 +5690,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'rog',
         name: 'Rogers Hall',
-        images: [require('../assets/images/buildings/rog.jpeg')],
+        images: [firebaseImage('building-images/rog.jpeg')],
         rooms: [
             {
                 id: 'rog-104',
                 images: [
-                    require('../assets/images/rooms/rog-104.jpeg')
+                    firebaseImage('room-images/rog-104.jpeg')
                 ],
                 floor: '1',
                 capacity: '17',
@@ -5698,7 +5705,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-118',
                 images: [
-                    require('../assets/images/rooms/rog-118.jpeg')
+                    firebaseImage('room-images/rog-118.jpeg')
                 ],
                 floor: '1',
                 capacity: '73',
@@ -5708,7 +5715,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-126',
                 images: [
-                    require('../assets/images/rooms/rog-126.jpeg')
+                    firebaseImage('room-images/rog-126.jpeg')
                 ],
                 floor: '1',
                 capacity: '42',
@@ -5718,7 +5725,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-222',
                 images: [
-                    require('../assets/images/rooms/rog-222.jpeg')
+                    firebaseImage('room-images/rog-222.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -5728,7 +5735,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-226',
                 images: [
-                    require('../assets/images/rooms/rog-226.jpeg')
+                    firebaseImage('room-images/rog-226.jpeg')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -5738,7 +5745,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-228',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -5748,7 +5755,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-230',
                 images: [
-                    require('../assets/images/rooms/rog-230.jpeg')
+                    firebaseImage('room-images/rog-230.jpeg')
                 ],
                 floor: '2',
                 capacity: '74',
@@ -5758,7 +5765,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-304',
                 images: [
-                    require('../assets/images/rooms/rog-304.jpeg')
+                    firebaseImage('room-images/rog-304.jpeg')
                 ],
                 floor: '3',
                 capacity: '16',
@@ -5768,7 +5775,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-330',
                 images: [
-                    require('../assets/images/rooms/rog-330.jpeg')
+                    firebaseImage('room-images/rog-330.jpeg')
                 ],
                 floor: '3',
                 capacity: '30',
@@ -5778,7 +5785,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-332',
                 images: [
-                    require('../assets/images/rooms/rog-332.jpeg')
+                    firebaseImage('room-images/rog-332.jpeg')
                 ],
                 floor: '3',
                 capacity: '28',
@@ -5788,7 +5795,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-334',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '14',
@@ -5798,7 +5805,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-342',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '31',
@@ -5808,7 +5815,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'rog-440',
                 images: [
-                    require('../assets/images/rooms/rog-440.jpeg')
+                    firebaseImage('room-images/rog-440.jpeg')
                 ],
                 floor: '3',
                 capacity: '32',
@@ -5820,12 +5827,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'sec',
         name: 'Student Experience Center',
-        images: [require('../assets/images/buildings/sec.jpeg')],
+        images: [firebaseImage('building-images/sec.jpeg')],
         rooms: [
             {
                 id: 'sec-354',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '40',
@@ -5835,7 +5842,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'sec-421',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '25',
@@ -5845,7 +5852,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'sec-plaza',
                 images: [
-                    require('../assets/images/rooms/sec-plaza.jpeg')
+                    firebaseImage('room-images/sec-plaza.jpeg')
                 ],
                 floor: '1',
                 capacity: '1000',
@@ -5857,12 +5864,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'shep',
         name: 'Shepherd Hall',
-        images: [require('../assets/images/buildings/shep.jpeg')],
+        images: [firebaseImage('building-images/shep.jpeg')],
         rooms: [
             {
                 id: 'shep-101',
                 images: [
-                    require('../assets/images/rooms/shep-101.jpeg')
+                    firebaseImage('room-images/shep-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '32',
@@ -5872,7 +5879,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'shep-105',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -5882,7 +5889,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'shep-106',
                 images: [
-                    require('../assets/images/rooms/shep-106.jpeg')
+                    firebaseImage('room-images/shep-106.jpeg')
                 ],
                 floor: '1',
                 capacity: '36',
@@ -5892,7 +5899,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'shep-202',
                 images: [
-                    require('../assets/images/rooms/shep-202.jpeg')
+                    firebaseImage('room-images/shep-202.jpeg')
                 ],
                 floor: '2',
                 capacity: '28',
@@ -5904,13 +5911,13 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'slp',
         name: 'Student Legacy Park',
-        images: [require('../assets/images/buildings/slp.jpeg')],
+        images: [firebaseImage('building-images/slp.jpeg')],
         rooms: [
             {
                 id: 'slp-east-fields',
                 images: [
-                    require('../assets/images/rooms/slp-east-fields.jpeg'),
-                    require('../assets/images/rooms/slp-east-fields2.jpeg'),
+                    firebaseImage('room-images/slp-east-fields.jpeg'),
+                    firebaseImage('room-images/slp-east-fields2.jpeg'),
                 ],
                 floor: 'N/A',
                 capacity: '100',
@@ -5920,7 +5927,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'slp-west-fields',
                 images: [
-                    require('../assets/images/rooms/slp-west-fields.jpeg'),
+                    firebaseImage('room-images/slp-west-fields.jpeg'),
                 ],
                 floor: 'N/A',
                 capacity: '50',
@@ -5932,12 +5939,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'snell',
         name: 'Snell Hall',
-        images: [require('../assets/images/buildings/snell.jpeg')],
+        images: [firebaseImage('building-images/snell.jpeg')],
         rooms: [
             {
                 id: 'snel-0003',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '32',
@@ -5947,7 +5954,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-003',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '32',
@@ -5957,7 +5964,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0054',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '24',
@@ -5967,7 +5974,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0056',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '20',
@@ -5977,7 +5984,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0066',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -5987,7 +5994,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0071',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '25',
@@ -5997,7 +6004,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0073',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '25',
@@ -6007,7 +6014,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0074',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -6017,7 +6024,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-0085',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '0',
                 capacity: '55',
@@ -6027,7 +6034,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-100A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '24',
@@ -6037,7 +6044,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-100G',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -6047,7 +6054,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-200B',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '18',
@@ -6057,7 +6064,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-204',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -6067,7 +6074,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'snel-448',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '15',
@@ -6079,12 +6086,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'spav',
         name: 'Stock Judging Pavilion',
-        images: [require('../assets/images/placeholder.png')],
+        images: [firebaseImage('placeholder.png')],
         rooms: [
             {
                 id: 'spav-101',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '25',
@@ -6096,12 +6103,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'tens',
         name: 'Tennis Courts (Indoor)',
-        images: [require('../assets/images/buildings/tens.jpeg')],
+        images: [firebaseImage('building-images/tens.jpeg')],
         rooms: [
             {
                 id: 'tens-101',
                 images: [
-                    require('../assets/images/rooms/tens-101.jpeg')
+                    firebaseImage('room-images/tens-101.jpeg')
                 ],
                 floor: '1',
                 capacity: '100',
@@ -6113,12 +6120,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'tens-crts',
         name: 'Tennis Courts (Outdoor)',
-        images: [require('../assets/images/buildings/tens-crts.jpeg')],
+        images: [firebaseImage('building-images/tens-crts.jpeg')],
         rooms: [
             {
                 id: 'tens-crts-1',
                 images: [
-                    require('../assets/images/rooms/tens-crts.jpeg')
+                    firebaseImage('room-images/tens-crts.jpeg')
                 ],
                 floor: 'N/A',
                 capacity: '35',
@@ -6130,12 +6137,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'vlib',
         name: 'Valley Library',
-        images: [require('../assets/images/buildings/vlib.jpeg')],
+        images: [firebaseImage('building-images/vlib.jpeg')],
         rooms: [
             {
                 id: 'vlib-2024',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '49',
@@ -6145,7 +6152,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'vlib-2082',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '80',
@@ -6155,7 +6162,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'vlib-3622',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '25',
@@ -6165,7 +6172,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'vlib-5420',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '5',
                 capacity: '15',
@@ -6177,12 +6184,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wald',
         name: 'Waldo Hall',
-        images: [require('../assets/images/buildings/wald.jpeg')],
+        images: [firebaseImage('building-images/wald.jpeg')],
         rooms: [
             {
                 id: 'wald-120',
                 images: [
-                    require('../assets/images/rooms/wald-120.jpeg')
+                    firebaseImage('room-images/wald-120.jpeg')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -6192,7 +6199,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-132',
                 images: [
-                    require('../assets/images/rooms/wald-132.jpeg')
+                    firebaseImage('room-images/wald-132.jpeg')
                 ],
                 floor: '1',
                 capacity: '23',
@@ -6202,7 +6209,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-200',
                 images: [
-                    require('../assets/images/rooms/wald-200.jpeg')
+                    firebaseImage('room-images/wald-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '20',
@@ -6212,7 +6219,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-201',
                 images: [
-                    require('../assets/images/rooms/wald-201.jpeg')
+                    firebaseImage('room-images/wald-201.jpeg')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -6222,7 +6229,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-201A',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '37',
@@ -6232,7 +6239,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-240',
                 images: [
-                    require('../assets/images/rooms/wald-240.jpeg')
+                    firebaseImage('room-images/wald-240.jpeg')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -6243,7 +6250,7 @@ export const BUILDINGS_DATA: Building[] = [
 
                 id: 'wald-244',
                 images: [
-                    require('../assets/images/rooms/wald-244.jpeg')
+                    firebaseImage('room-images/wald-244.jpeg')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -6253,7 +6260,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wald-252',
                 images: [
-                    require('../assets/images/rooms/wald-252.jpeg')
+                    firebaseImage('room-images/wald-252.jpeg')
                 ],
                 floor: '2',
                 capacity: '10',
@@ -6264,7 +6271,7 @@ export const BUILDINGS_DATA: Building[] = [
 
                 id: 'wald-329',
                 images: [
-                    require('../assets/images/rooms/wald-329.jpeg')
+                    firebaseImage('room-images/wald-329.jpeg')
                 ],
                 floor: '3',
                 capacity: '21',
@@ -6275,7 +6282,7 @@ export const BUILDINGS_DATA: Building[] = [
 
                 id: 'wald-421',
                 images: [
-                    require('../assets/images/rooms/wald-421.jpeg')
+                    firebaseImage('room-images/wald-421.jpeg')
                 ],
                 floor: '4',
                 capacity: '34',
@@ -6286,7 +6293,7 @@ export const BUILDINGS_DATA: Building[] = [
 
                 id: 'wald-432',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '14',
@@ -6297,7 +6304,7 @@ export const BUILDINGS_DATA: Building[] = [
 
                 id: 'wald-456',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '33',
@@ -6309,12 +6316,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wfd',
         name: 'Weatherford Hall',
-        images: [require('../assets/images/buildings/wfd.jpeg')],
+        images: [firebaseImage('building-images/wfd.jpeg')],
         rooms: [
             {
                 id: 'wfd-EG01',
                 images: [
-                    require('../assets/images/rooms/wfd-eg01.jpeg')
+                    firebaseImage('room-images/wfd-eg01.jpeg')
                 ],
                 floor: '1',
                 capacity: '41',
@@ -6326,12 +6333,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'with',
         name: 'Withycombe Hall',
-        images: [require('../assets/images/buildings/with.jpeg')],
+        images: [firebaseImage('building-images/with.jpeg')],
         rooms: [
             {
                 id: 'with-062',
                 images: [
-                    require('../assets/images/rooms/with-062.jpeg')
+                    firebaseImage('room-images/with-062.jpeg')
                 ],
                 floor: '0',
                 capacity: '16',
@@ -6341,7 +6348,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-064',
                 images: [
-                    require('../assets/images/rooms/with-064.jpeg')
+                    firebaseImage('room-images/with-064.jpeg')
                 ],
                 floor: '0',
                 capacity: '50',
@@ -6351,7 +6358,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-074',
                 images: [
-                    require('../assets/images/rooms/with-074.jpeg')
+                    firebaseImage('room-images/with-074.jpeg')
                 ],
                 floor: '0',
                 capacity: '24',
@@ -6361,7 +6368,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-153',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '362',
@@ -6371,7 +6378,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-155',
                 images: [
-                    require('../assets/images/rooms/with-155.jpeg')
+                    firebaseImage('room-images/with-155.jpeg')
                 ],
                 floor: '1',
                 capacity: '217',
@@ -6381,7 +6388,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-159',
                 images: [
-                    require('../assets/images/rooms/with-159.jpeg')
+                    firebaseImage('room-images/with-159.jpeg')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -6391,7 +6398,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-159C',
                 images: [
-                    require('../assets/images/rooms/with-159C.jpeg')
+                    firebaseImage('room-images/with-159C.jpeg')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -6401,7 +6408,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-161C',
                 images: [
-                    require('../assets/images/rooms/with-161C.jpeg')
+                    firebaseImage('room-images/with-161C.jpeg')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -6411,7 +6418,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-165',
                 images: [
-                    require('../assets/images/rooms/with-165.jpeg')
+                    firebaseImage('room-images/with-165.jpeg')
                 ],
                 floor: '1',
                 capacity: '27',
@@ -6421,7 +6428,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-167',
                 images: [
-                    require('../assets/images/rooms/with-167.jpeg')
+                    firebaseImage('room-images/with-167.jpeg')
                 ],
                 floor: '1',
                 capacity: '15',
@@ -6431,7 +6438,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-199',
                 images: [
-                    require('../assets/images/rooms/with-199.jpeg')
+                    firebaseImage('room-images/with-199.jpeg')
                 ],
                 floor: '1',
                 capacity: '120',
@@ -6441,7 +6448,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-201',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '23',
@@ -6451,7 +6458,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'with-203',
                 images: [
-                    require('../assets/images/rooms/with-203.jpeg')
+                    firebaseImage('room-images/with-203.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -6463,12 +6470,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wlkn',
         name: 'Wilkinson Hall',
-        images: [require('../assets/images/buildings/wlkn.jpeg')],
+        images: [firebaseImage('building-images/wlkn.jpeg')],
         rooms: [
             {
                 id: 'wlkn-004',
                 images: [
-                    require('../assets/images/rooms/wlkn-004.jpeg')
+                    firebaseImage('room-images/wlkn-004.jpeg')
                 ],
                 floor: '0',
                 capacity: '25',
@@ -6478,7 +6485,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-010',
                 images: [
-                    require('../assets/images/rooms/wlkn-010.jpeg')
+                    firebaseImage('room-images/wlkn-010.jpeg')
                 ],
                 floor: '0',
                 capacity: '30',
@@ -6488,7 +6495,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-106',
                 images: [
-                    require('../assets/images/rooms/wlkn-106.jpeg')
+                    firebaseImage('room-images/wlkn-106.jpeg')
                 ],
                 floor: '1',
                 capacity: '18',
@@ -6498,7 +6505,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-108',
                 images: [
-                    require('../assets/images/rooms/wlkn-108.jpeg')
+                    firebaseImage('room-images/wlkn-108.jpeg')
                 ],
                 floor: '1',
                 capacity: '65',
@@ -6508,7 +6515,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-110',
                 images: [
-                    require('../assets/images/rooms/wlkn-110.jpeg')
+                    firebaseImage('room-images/wlkn-110.jpeg')
                 ],
                 floor: '1',
                 capacity: '299',
@@ -6518,7 +6525,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-127',
                 images: [
-                    require('../assets/images/rooms/wlkn-127.jpeg')
+                    firebaseImage('room-images/wlkn-127.jpeg')
                 ],
                 floor: '1',
                 capacity: '20',
@@ -6528,7 +6535,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-129',
                 images: [
-                    require('../assets/images/rooms/wlkn-129.jpeg')
+                    firebaseImage('room-images/wlkn-129.jpeg')
                 ],
                 floor: '1',
                 capacity: '32',
@@ -6538,7 +6545,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-203',
                 images: [
-                    require('../assets/images/rooms/wlkn-203.jpeg')
+                    firebaseImage('room-images/wlkn-203.jpeg')
                 ],
                 floor: '2',
                 capacity: '25',
@@ -6548,7 +6555,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-207',
                 images: [
-                    require('../assets/images/rooms/wlkn-207.jpeg')
+                    firebaseImage('room-images/wlkn-207.jpeg')
                 ],
                 floor: '2',
                 capacity: '36',
@@ -6558,7 +6565,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-210',
                 images: [
-                    require('../assets/images/rooms/wlkn-210.jpeg')
+                    firebaseImage('room-images/wlkn-210.jpeg')
                 ],
                 floor: '2',
                 capacity: '27',
@@ -6568,7 +6575,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wlkn-235',
                 images: [
-                    require('../assets/images/rooms/wlkn-235.jpeg')
+                    firebaseImage('room-images/wlkn-235.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -6580,12 +6587,12 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'wngr',
         name: 'Weniger Hall',
-        images: [require('../assets/images/buildings/wngr.jpeg')],
+        images: [firebaseImage('building-images/wngr.jpeg')],
         rooms: [
             {
                 id: 'wngr-112',
                 images: [
-                    require('../assets/images/rooms/wngr-112.jpeg')
+                    firebaseImage('room-images/wngr-112.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -6595,7 +6602,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-116',
                 images: [
-                    require('../assets/images/rooms/wngr-116.jpeg')
+                    firebaseImage('room-images/wngr-116.jpeg')
                 ],
                 floor: '1',
                 capacity: '100',
@@ -6605,7 +6612,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-127',
                 images: [
-                    require('../assets/images/rooms/wngr-127.jpeg')
+                    firebaseImage('room-images/wngr-127.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -6615,7 +6622,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-129',
                 images: [
-                    require('../assets/images/rooms/wngr-129.jpeg')
+                    firebaseImage('room-images/wngr-129.jpeg')
                 ],
                 floor: '1',
                 capacity: '40',
@@ -6625,7 +6632,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-145',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '1',
                 capacity: '12',
@@ -6635,7 +6642,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-149',
                 images: [
-                    require('../assets/images/rooms/wngr-149.jpeg')
+                    firebaseImage('room-images/wngr-149.jpeg')
                 ],
                 floor: '1',
                 capacity: '78',
@@ -6645,7 +6652,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-151',
                 images: [
-                    require('../assets/images/rooms/wngr-151.jpeg')
+                    firebaseImage('room-images/wngr-151.jpeg')
                 ],
                 floor: '1',
                 capacity: '201',
@@ -6655,7 +6662,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-153',
                 images: [
-                    require('../assets/images/rooms/wngr-153.jpeg')
+                    firebaseImage('room-images/wngr-153.jpeg')
                 ],
                 floor: '1',
                 capacity: '128',
@@ -6665,7 +6672,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-200',
                 images: [
-                    require('../assets/images/rooms/wngr-200.jpeg')
+                    firebaseImage('room-images/wngr-200.jpeg')
                 ],
                 floor: '2',
                 capacity: '35',
@@ -6675,7 +6682,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-201',
                 images: [
-                    require('../assets/images/rooms/wngr-201.jpeg')
+                    firebaseImage('room-images/wngr-201.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -6685,7 +6692,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-204',
                 images: [
-                    require('../assets/images/rooms/wngr-204.jpeg')
+                    firebaseImage('room-images/wngr-204.jpeg')
                 ],
                 floor: '2',
                 capacity: '35 (30)',
@@ -6695,7 +6702,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-206',
                 images: [
-                    require('../assets/images/rooms/wngr-206.jpeg')
+                    firebaseImage('room-images/wngr-206.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -6705,7 +6712,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-212',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '94',
@@ -6715,7 +6722,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-222',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '34',
@@ -6725,7 +6732,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-226',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '2',
                 capacity: '40',
@@ -6735,7 +6742,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-228',
                 images: [
-                    require('../assets/images/rooms/wngr-228.jpeg')
+                    firebaseImage('room-images/wngr-228.jpeg')
                 ],
                 floor: '2',
                 capacity: '48',
@@ -6745,7 +6752,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-232',
                 images: [
-                    require('../assets/images/rooms/wngr-232.jpeg')
+                    firebaseImage('room-images/wngr-232.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -6755,7 +6762,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-234',
                 images: [
-                    require('../assets/images/rooms/wngr-234.jpeg')
+                    firebaseImage('room-images/wngr-234.jpeg')
                 ],
                 floor: '2',
                 capacity: '35',
@@ -6765,7 +6772,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-238',
                 images: [
-                    require('../assets/images/rooms/wngr-238.jpeg')
+                    firebaseImage('room-images/wngr-238.jpeg')
                 ],
                 floor: '2',
                 capacity: '35',
@@ -6775,7 +6782,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-245',
                 images: [
-                    require('../assets/images/rooms/wngr-245.jpeg')
+                    firebaseImage('room-images/wngr-245.jpeg')
                 ],
                 floor: '2',
                 capacity: '34',
@@ -6785,7 +6792,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-247',
                 images: [
-                    require('../assets/images/rooms/wngr-247.jpeg')
+                    firebaseImage('room-images/wngr-247.jpeg')
                 ],
                 floor: '2',
                 capacity: '45',
@@ -6795,7 +6802,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-275',
                 images: [
-                    require('../assets/images/rooms/wngr-275.jpeg')
+                    firebaseImage('room-images/wngr-275.jpeg')
                 ],
                 floor: '2',
                 capacity: '32',
@@ -6805,7 +6812,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-285',
                 images: [
-                    require('../assets/images/rooms/wngr-285.jpeg')
+                    firebaseImage('room-images/wngr-285.jpeg')
                 ],
                 floor: '2',
                 capacity: '24',
@@ -6815,7 +6822,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-287',
                 images: [
-                    require('../assets/images/rooms/wngr-287.jpeg')
+                    firebaseImage('room-images/wngr-287.jpeg')
                 ],
                 floor: '2',
                 capacity: '30',
@@ -6825,7 +6832,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-300',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -6835,7 +6842,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-302',
                 images: [
-                    require('../assets/images/rooms/wngr-302.jpeg')
+                    firebaseImage('room-images/wngr-302.jpeg')
                 ],
                 floor: '3',
                 capacity: '24',
@@ -6845,7 +6852,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-304',
                 images: [
-                    require('../assets/images/rooms/wngr-304.jpeg')
+                    firebaseImage('room-images/wngr-304.jpeg')
                 ],
                 floor: '3',
                 capacity: '36',
@@ -6855,7 +6862,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-304F',
                 images: [
-                    require('../assets/images/rooms/wngr-304F.jpeg')
+                    firebaseImage('room-images/wngr-304F.jpeg')
                 ],
                 floor: '3',
                 capacity: '49',
@@ -6865,7 +6872,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-305',
                 images: [
-                    require('../assets/images/rooms/wngr-305.jpeg')
+                    firebaseImage('room-images/wngr-305.jpeg')
                 ],
                 floor: '3',
                 capacity: '16',
@@ -6875,7 +6882,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-328',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '80',
@@ -6885,7 +6892,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-334',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '3',
                 capacity: '20',
@@ -6895,7 +6902,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-345',
                 images: [
-                    require('../assets/images/rooms/wngr-345.jpeg')
+                    firebaseImage('room-images/wngr-345.jpeg')
                 ],
                 floor: '3',
                 capacity: '23',
@@ -6905,7 +6912,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-377',
                 images: [
-                    require('../assets/images/rooms/wngr-377.jpeg')
+                    firebaseImage('room-images/wngr-377.jpeg')
                 ],
                 floor: '3',
                 capacity: '21',
@@ -6915,7 +6922,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-412',
                 images: [
-                    require('../assets/images/placeholder.png')
+                    firebaseImage('placeholder.png')
                 ],
                 floor: '4',
                 capacity: '30',
@@ -6925,7 +6932,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'wngr-426',
                 images: [
-                    require('../assets/images/rooms/wngr-426.jpeg')
+                    firebaseImage('room-images/wngr-426.jpeg')
                 ],
                 floor: '4',
                 capacity: '18',
@@ -6937,30 +6944,30 @@ export const BUILDINGS_DATA: Building[] = [
     {
         id: 'backrooms',
         name: 'The Backrooms',
-        images: [require('../assets/images/buildings/backrooms.jpeg')],
+        images: [firebaseImage('building-images/backrooms.jpeg')],
         rooms: [
             {
                 id: 'the-backrooms',
                 images: [
-                    require('../assets/images/rooms/the-backrooms-1.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-2.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-3.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-4.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-5.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-6.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-7.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-8.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-9.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-10.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-11.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-12.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-13.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-14.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-15.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-16.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-17.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-18.jpeg'),
-                    require('../assets/images/rooms/the-backrooms-19.jpeg'),
+                    firebaseImage('room-images/the-backrooms-1.jpeg'),
+                    firebaseImage('room-images/the-backrooms-2.jpeg'),
+                    firebaseImage('room-images/the-backrooms-3.jpeg'),
+                    firebaseImage('room-images/the-backrooms-4.jpeg'),
+                    firebaseImage('room-images/the-backrooms-5.jpeg'),
+                    firebaseImage('room-images/the-backrooms-6.jpeg'),
+                    firebaseImage('room-images/the-backrooms-7.jpeg'),
+                    firebaseImage('room-images/the-backrooms-8.jpeg'),
+                    firebaseImage('room-images/the-backrooms-9.jpeg'),
+                    firebaseImage('room-images/the-backrooms-10.jpeg'),
+                    firebaseImage('room-images/the-backrooms-11.jpeg'),
+                    firebaseImage('room-images/the-backrooms-12.jpeg'),
+                    firebaseImage('room-images/the-backrooms-13.jpeg'),
+                    firebaseImage('room-images/the-backrooms-14.jpeg'),
+                    firebaseImage('room-images/the-backrooms-15.jpeg'),
+                    firebaseImage('room-images/the-backrooms-16.jpeg'),
+                    firebaseImage('room-images/the-backrooms-17.jpeg'),
+                    firebaseImage('room-images/the-backrooms-18.jpeg'),
+                    firebaseImage('room-images/the-backrooms-19.jpeg'),
                 ],
                 floor: '-1',
                 capacity: 'Infinite',

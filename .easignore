@@ -1,0 +1,32 @@
+# Build outputs
+dist
+dist/
+build/
+.expo/
+.expo-shared/
+
+# Dependencies (will be reinstalled)
+node_modules/
+
+# Development files
+.git/
+.github/
+.vscode/
+
+# Large unnecessary files
+*.log
+*.map
+.DS_Store
+
+# Web build artifacts
+web-build/
+
+# iOS/Android build folders if they exist
+ios/build/
+android/build/
+android/.gradle/
+
+# Cache folders
+.cache/
+tmp/
+temp/

@@ -50,15 +50,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "5a1f109f-0604-4fef-9c16-29555e19d5a8"
+        "projectId": "b7efa194-6b33-404b-9ea3-82a733cd5f36"
       }
     },
-    "owner": "bobjoerules",
-    "updates": {
-      "url": "https://u.expo.dev/5a1f109f-0604-4fef-9c16-29555e19d5a8"
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    }
+    "owner": "bobjoerules"
   }
 }
