@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import {
@@ -215,7 +216,7 @@ export default function Account() {
       } else if (code === "auth/weak-password") {
         setPasswordError("Password is too weak (min 6 characters).");
       } else {
-        setMessage(`${context} failed${code ? ` (${code})` : ""}: ${friendly}`);
+        setMessage(`${context} failed${code ? ` (${code})` : ""}: ${friendly} `);
       }
     } finally {
       setLoading(false);
@@ -231,7 +232,7 @@ export default function Account() {
       const code = (err as { code?: string })?.code;
       const friendly =
         err instanceof Error ? err.message : "Something went wrong.";
-      setMessage(`Sign out failed${code ? ` (${code})` : ""}: ${friendly}`);
+      setMessage(`Sign out failed${code ? ` (${code})` : ""}: ${friendly} `);
     }
   }
 
@@ -244,8 +245,9 @@ export default function Account() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
         style={{ flex: 1, width: '100%' }}
-        contentContainerStyle={[styles.scrollContent, !userEmail && styles.scrollContentCentered]}
+        contentContainerStyle={[styles.scrollContent, (Platform.OS !== 'web' || !userEmail) && styles.scrollContentCentered]}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={Platform.OS === 'web' || !userEmail}
       >
         <View style={styles.header}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -492,11 +494,12 @@ function createStyles(theme: Theme) {
       flexGrow: 1,
       alignItems: "center",
       paddingHorizontal: 16,
-      paddingTop: Platform.OS === 'web' ? 75 : 20,
+      paddingTop: Platform.OS === 'web' ? 75 : 0,
       paddingBottom: 40,
     },
     scrollContentCentered: {
       justifyContent: "center",
+      paddingTop: 0,
     },
     containerCentered: {
       justifyContent: "center",
