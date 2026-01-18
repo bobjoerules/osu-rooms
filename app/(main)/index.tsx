@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +8,7 @@ import Accordion from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { BUILDINGS_DATA } from '../../data/rooms';
-import { useSettings } from '../../lib/SettingsContext';
+import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
 
 const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
@@ -16,13 +17,22 @@ const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
 };
 
 export default function Index() {
+  const router = useRouter();
   const theme = useTheme();
   const { showPlaceholders, showBuildingImages } = useSettings();
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+  const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
+
+  const handleBuildingPress = (id: string) => {
+    triggerHaptic();
+    if (isDesktopWeb) {
+      router.push(`/building/${id}`);
+    }
+  };
 
   const accordionItems = useMemo(() => {
     const isSearching = searchQuery.trim().length > 0;
@@ -67,7 +77,7 @@ export default function Index() {
     return filtered.map(building => {
       const buildingImage = building.images?.[0];
       const hasValidImage = buildingImage && !isPlaceholderImage(buildingImage);
-      
+
       return {
         id: building.id,
         title: (
@@ -76,9 +86,10 @@ export default function Index() {
             <BuildingRating roomIds={building.rooms.map(r => r.id)} />
           </View>
         ),
-        content: <RoomList rooms={building.rooms} />,
+        content: isDesktopWeb ? null : <RoomList rooms={building.rooms} />,
         image: buildingImage,
         showImage: showBuildingImages && hasValidImage,
+        onPress: () => handleBuildingPress(building.id),
       };
     });
   }, [searchQuery, styles.title, theme.text, showPlaceholders, showBuildingImages]);

@@ -2,8 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Image, LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View, useWindowDimensions } from 'react-native';
-import { useTheme } from '../theme';
 import { useHapticFeedback } from '../lib/SettingsContext';
+import { useTheme } from '../theme';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -13,7 +13,7 @@ interface AccordionItemProps {
   title: React.ReactNode;
   children: React.ReactNode;
   isExpanded: boolean;
-  onPress: () => void;
+  onPress: () => boolean; // Return true to prevent default toggle
   image?: string | number;
   showImage?: boolean;
   containerStyle?: any;
@@ -25,9 +25,11 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpand
 
   const handlePress = () => {
     triggerHaptic();
-    // Use simpler, faster animation
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-    onPress();
+    const preventDefault = onPress();
+    if (!preventDefault) {
+      // Use simpler, faster animation
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+    }
   };
 
   return (
@@ -84,6 +86,7 @@ interface AccordionProps {
     content: React.ReactNode;
     image?: string | number;
     showImage?: boolean;
+    onPress?: () => void;
   }[];
   forceExpandAll?: boolean;
 }
@@ -93,13 +96,18 @@ export default function Accordion({ items, forceExpandAll = false }: AccordionPr
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
-  const toggleItem = (id: string) => {
+  const toggleItem = (id: string, customOnPress?: () => void) => {
+    if (customOnPress) {
+      customOnPress();
+      if (isDesktopWeb) return true; // Prevent expansion on desktop
+    }
     setExpandedId(expandedId === id ? null : id);
+    return false;
   };
 
   const itemContainerStyle = [
     styles.itemContainer,
-    { 
+    {
       marginVertical: isDesktopWeb ? 0 : 8,
     },
   ];
@@ -132,7 +140,7 @@ export default function Accordion({ items, forceExpandAll = false }: AccordionPr
               <AccordionItem
                 title={item.title}
                 isExpanded={isExpanded}
-                onPress={() => toggleItem(item.id)}
+                onPress={() => toggleItem(item.id, item.onPress)}
                 image={item.image}
                 showImage={item.showImage}
                 containerStyle={itemContainerStyle}

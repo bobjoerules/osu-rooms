@@ -2,10 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
-import { useHapticFeedback } from '../lib/SettingsContext';
 
 import { Room } from '../data/rooms';
 
@@ -18,6 +18,9 @@ export default function RoomList({ rooms }: RoomListProps) {
   const router = useRouter();
   const triggerHaptic = useHapticFeedback();
 
+  const { width } = useWindowDimensions();
+  const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+
   const handleRoomPress = (roomId: string) => {
     triggerHaptic();
     router.push(`/room/${roomId}`);
@@ -27,18 +30,20 @@ export default function RoomList({ rooms }: RoomListProps) {
     const roomName = item.id.split('-').pop() || '???';
     return (
       <TouchableOpacity
-        style={styles.roomCard}
+        style={[styles.roomCard, isDesktopWeb && styles.roomCardGrid]}
         onPress={() => handleRoomPress(item.id)}
         activeOpacity={0.7}
       >
-        {item.images && item.images.length > 0 && (
-          <Image source={item.images[0]} style={styles.roomImage} />
-        )}
+        <View style={isDesktopWeb ? styles.roomImageGridContainer : undefined}>
+          {item.images && item.images.length > 0 && (
+            <Image source={item.images[0]} style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage} />
+          )}
+        </View>
         <View style={styles.roomContent}>
           <Text style={[styles.roomName, { color: theme.text }]}>Room {roomName}</Text>
           <RatingDisplay itemId={item.id} size={16} align="flex-start" />
         </View>
-        <Ionicons name="chevron-forward" size={20} color={theme.subtext} />
+        {!isDesktopWeb && <Ionicons name="chevron-forward" size={20} color={theme.subtext} />}
       </TouchableOpacity>
     );
   };
@@ -49,6 +54,9 @@ export default function RoomList({ rooms }: RoomListProps) {
       renderItem={renderRoomItem}
       keyExtractor={(item) => item.id}
       scrollEnabled={false}
+      numColumns={isDesktopWeb ? 3 : 1}
+      key={isDesktopWeb ? 'grid-3' : 'list-1'}
+      columnWrapperStyle={isDesktopWeb ? styles.columnWrapper : undefined}
     />
   );
 }
@@ -75,4 +83,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
   },
+  roomCardGrid: {
+    flex: 1,
+    maxWidth: '31%',
+    flexDirection: 'column',
+    marginHorizontal: '1%',
+    marginVertical: 12,
+    padding: 0,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  roomImageGridContainer: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  roomImageGrid: {
+    width: '100%',
+    height: '100%',
+  },
+  columnWrapper: {
+    justifyContent: 'flex-start',
+  }
 });
