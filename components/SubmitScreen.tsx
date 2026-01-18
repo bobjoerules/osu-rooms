@@ -129,16 +129,14 @@ export default function SubmitScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top']}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
                 <ScrollView 
                     contentContainerStyle={styles.scrollContent}
-                    bounces={false}
-                    alwaysBounceVertical={false}
-                    overScrollMode="never"
+                    showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.header}>
                         {(initialBuilding || initialRoomNumber) ? (
@@ -298,6 +296,7 @@ function createStyles(theme: Theme) {
             backgroundColor: theme.background,
         },
         scrollContent: {
+            flexGrow: 1,
             paddingHorizontal: 20,
             paddingBottom: 20,
             ...(Platform.OS === 'web' && { paddingTop: 75 }),

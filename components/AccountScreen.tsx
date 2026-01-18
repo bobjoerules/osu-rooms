@@ -23,6 +23,7 @@ import {
   ActivityIndicator,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -217,29 +218,34 @@ export default function Account() {
     : !email.trim() || !password.trim();
 
   return (
-    <SafeAreaView style={[styles.container, !userEmail && styles.containerCentered]}>
-      <View style={styles.header}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={styles.headerTitle}>
-            {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView
+        style={{ flex: 1, width: '100%' }}
+        contentContainerStyle={[styles.scrollContent, !userEmail && styles.scrollContentCentered]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={styles.headerTitle}>
+              {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
+            </Text>
+            {isAdmin && (
+              <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
+                <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
+                  {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
+                </Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.headerSubtitle}>
+            {userEmail
+              ? "Signed in with email"
+              : isSignup
+                ? "Create an account to continue"
+                : "Welcome back"}
           </Text>
-          {isAdmin && (
-            <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
-              <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
-                {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
-              </Text>
-            </View>
-          )}
         </View>
-        <Text style={styles.headerSubtitle}>
-          {userEmail
-            ? "Signed in with email"
-            : isSignup
-              ? "Create an account to continue"
-              : "Welcome back"}
-        </Text>
-      </View>
-      <View style={styles.card}>
+        <View style={styles.card}>
         {userEmail ? (
           <View style={styles.section}>
             <View style={styles.infoRow}>
@@ -421,6 +427,7 @@ export default function Account() {
           {userCount !== null ? `Users: ${userCount} • ` : ""}Rooms: {totalRooms} • Version {version}
         </Text>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -430,14 +437,19 @@ function createStyles(theme: Theme) {
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      justifyContent: "flex-start",
+    },
+    scrollContent: {
+      flexGrow: 1,
       alignItems: "center",
       paddingHorizontal: 16,
       paddingTop: Platform.OS === 'web' ? 75 : 20,
+      paddingBottom: 40,
+    },
+    scrollContentCentered: {
+      justifyContent: "center",
     },
     containerCentered: {
       justifyContent: "center",
-      paddingTop: 0,
     },
     header: {
       marginBottom: 16,
