@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { db } from '../firebaseConfig';
@@ -15,20 +15,34 @@ export default function BuildingRating({ roomIds, size = 14 }: BuildingRatingPro
     const [roomRatings, setRoomRatings] = useState<Record<string, { avg: number; count: number }>>({});
 
     useEffect(() => {
-        const unsubs = roomIds.map(id => {
-            const itemRef = doc(db, 'ratings', id);
-            return onSnapshot(itemRef, (snap) => {
-                const data = snap.data() as { avg?: number; count?: number } | undefined;
-                if (data) {
-                    setRoomRatings(prev => ({
-                        ...prev,
-                        [id]: { avg: data.avg ?? 0, count: data.count ?? 0 }
-                    }));
-                }
-            });
-        });
+        let isMounted = true;
+        const fetchRatings = async () => {
+            const ratings: Record<string, { avg: number; count: number }> = {};
 
-        return () => unsubs.forEach(unsub => unsub());
+            // Batch these fetches to avoid massive waterfall
+            const chunks = [];
+            for (let i = 0; i < roomIds.length; i += 10) {
+                chunks.push(roomIds.slice(i, i + 10));
+            }
+
+            for (const chunk of chunks) {
+                await Promise.all(chunk.map(async (id) => {
+                    const itemRef = doc(db, 'ratings', id);
+                    const snap = await getDoc(itemRef);
+                    const data = snap.data() as { avg?: number; count?: number } | undefined;
+                    if (data && isMounted) {
+                        ratings[id] = { avg: data.avg ?? 0, count: data.count ?? 0 };
+                    }
+                }));
+            }
+
+            if (isMounted) {
+                setRoomRatings(ratings);
+            }
+        };
+
+        fetchRatings();
+        return () => { isMounted = false; };
     }, [roomIds]);
 
     const { avg, count } = useMemo(() => {

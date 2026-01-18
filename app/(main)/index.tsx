@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { FlatList, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import Accordion from '../../components/Accordion';
+import { AccordionItem } from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { BUILDINGS_DATA } from '../../data/rooms';
@@ -25,14 +25,18 @@ export default function Index() {
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
 
-  const handleBuildingPress = (id: string) => {
+  const handleBuildingPress = useCallback((id: string) => {
     triggerHaptic();
     if (isDesktopWeb) {
       router.push(`/building/${id}`);
+      return true;
     }
-  };
+    setExpandedId(prev => prev === id ? null : id);
+    return false;
+  }, [isDesktopWeb, router, triggerHaptic]);
 
   const accordionItems = useMemo(() => {
     const isSearching = searchQuery.trim().length > 0;
@@ -89,10 +93,29 @@ export default function Index() {
         content: isDesktopWeb ? null : <RoomList rooms={building.rooms} />,
         image: buildingImage,
         showImage: showBuildingImages && hasValidImage,
-        onPress: () => handleBuildingPress(building.id),
       };
     });
-  }, [searchQuery, styles.title, theme.text, showPlaceholders, showBuildingImages]);
+  }, [searchQuery, styles.title, theme.text, showPlaceholders, showBuildingImages, isDesktopWeb]);
+
+  const renderItem = useCallback(({ item }: { item: any }) => {
+    return (
+      <View style={isDesktopWeb ? styles.gridItem : undefined}>
+        <AccordionItem
+          title={item.title}
+          isExpanded={searchQuery.trim().length > 0 || expandedId === item.id}
+          onPress={() => handleBuildingPress(item.id)}
+          image={item.image}
+          showImage={item.showImage}
+          containerStyle={[
+            styles.itemContainer,
+            { marginVertical: isDesktopWeb ? 0 : 8 }
+          ]}
+        >
+          {item.content}
+        </AccordionItem>
+      </View>
+    );
+  }, [isDesktopWeb, searchQuery, expandedId, handleBuildingPress, styles.gridItem, styles.itemContainer]);
 
 
   const insets = useSafeAreaInsets();
@@ -119,18 +142,23 @@ export default function Index() {
           `}
         </style>
       )}
-      <ScrollView
+      <FlatList
+        data={accordionItems}
+        keyExtractor={(item) => item.id}
+        numColumns={isDesktopWeb ? 3 : 1}
+        key={isDesktopWeb ? 'web-grid' : 'mobile-list'}
+        columnWrapperStyle={isDesktopWeb ? styles.columnWrapper : undefined}
+        renderItem={renderItem}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS === 'android'}
+        initialNumToRender={10}
         style={{ flex: 1 }}
         contentContainerStyle={[
           styles.scrollContent,
           { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 : insets.top + headerHeight) }
         ]}
-      >
-        <Accordion
-          items={accordionItems}
-          forceExpandAll={searchQuery.trim().length > 0}
-        />
-      </ScrollView>
+      />
 
       <View style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: 0, height: insets.top + headerHeight }]}>
         {Platform.OS === 'web' && (
@@ -204,6 +232,20 @@ function createStyles(theme: Theme) {
     scrollContent: {
       paddingHorizontal: 16,
       paddingBottom: 80,
+    },
+    columnWrapper: {
+      gap: 16,
+      paddingHorizontal: 16,
+    },
+    gridItem: {
+      flex: 1,
+      maxWidth: '31%',
+      marginVertical: 8,
+    },
+    itemContainer: {
+      borderRadius: 12,
+      borderWidth: 1,
+      overflow: 'hidden',
     },
   });
 }

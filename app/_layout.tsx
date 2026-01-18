@@ -15,6 +15,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [localLoaded, setLocalLoaded] = useState(false);
   const prevIsLoggedIn = useRef<boolean | null>(null);
   const router = useRouter();
 
@@ -25,6 +26,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded || error) {
+      setLocalLoaded(true);
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
@@ -43,7 +45,7 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  if (isLoggedIn === null || (!loaded && !error)) {
+  if (isLoggedIn === null || !localLoaded) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />

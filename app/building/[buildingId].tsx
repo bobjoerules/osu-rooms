@@ -6,13 +6,19 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { BUILDINGS_DATA } from '../../data/rooms';
-import { useHapticFeedback } from '../../lib/SettingsContext';
+import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
+
+const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
+    if (!imageUrl) return false;
+    return imageUrl.includes('placeholder.png');
+};
 
 export default function BuildingDetail() {
     const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
     const router = useRouter();
     const theme = useTheme();
+    const { showPlaceholders } = useSettings();
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
@@ -22,6 +28,14 @@ export default function BuildingDetail() {
     const building = useMemo(() =>
         BUILDINGS_DATA.find(b => b.id === buildingId),
         [buildingId]);
+
+    const filteredRooms = useMemo(() => {
+        if (!building) return [];
+        return building.rooms.filter(room => {
+            const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
+            return showPlaceholders || hasPhotos;
+        });
+    }, [building, showPlaceholders]);
 
     if (!building) {
         return (
@@ -64,7 +78,7 @@ export default function BuildingDetail() {
                 ]}
             >
                 <View style={[isDesktopWeb ? styles.gridWrapper : undefined]}>
-                    <RoomList rooms={building.rooms} />
+                    <RoomList rooms={filteredRooms} />
                 </View>
             </ScrollView>
         </View>

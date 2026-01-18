@@ -9,6 +9,17 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+const snapAnimation = {
+  duration: 200,
+  create: {
+    type: LayoutAnimation.Types.linear,
+    property: LayoutAnimation.Properties.opacity,
+  },
+  update: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+  },
+};
+
 interface AccordionItemProps {
   title: React.ReactNode;
   children: React.ReactNode;
@@ -19,7 +30,7 @@ interface AccordionItemProps {
   containerStyle?: any;
 }
 
-const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpanded, onPress, image, showImage, containerStyle }) => {
+export const AccordionItem = React.memo<AccordionItemProps>(({ title, children, isExpanded, onPress, image, showImage, containerStyle }) => {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
 
@@ -27,8 +38,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpand
     triggerHaptic();
     const preventDefault = onPress();
     if (!preventDefault) {
-      // Use simpler, faster animation
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+      // Use custom faster animation (200ms instead of default ~300-400ms)
+      LayoutAnimation.configureNext(snapAnimation);
     }
   };
 
@@ -77,7 +88,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, isExpand
       )}
     </View>
   );
-};
+});
 
 interface AccordionProps {
   items: {
