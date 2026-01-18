@@ -19,7 +19,7 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -126,7 +126,21 @@ export default function Account() {
     return unsub;
   }, []);
 
-
+  // Reload user data when page comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        // Reload the user to get fresh email verification status
+        currentUser.reload().then(() => {
+          setUserEmail(currentUser.email);
+          setUserName(currentUser.displayName);
+        }).catch((error) => {
+          console.error("Error reloading user:", error);
+        });
+      }
+    }, [])
+  );
 
   async function handleSubmit() {
     if (!email || !password) {

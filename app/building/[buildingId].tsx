@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
@@ -80,13 +80,24 @@ export default function BuildingDetail() {
                 {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
             >
                 <SafeAreaView edges={['top']}>
-                    <View style={[styles.header, isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
-                        <TouchableOpacity
-                            onPress={() => { triggerHaptic(); router.back(); }}
+                    <View style={[
+                        styles.header,
+                        isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+                        { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
+                    ]}>
+                        <Pressable
+                            onPress={() => {
+                                triggerHaptic();
+                                if (router.canGoBack()) {
+                                    router.back();
+                                } else {
+                                    router.push('/');
+                                }
+                            }}
                             style={styles.backButton}
                         >
                             <Ionicons name="chevron-back" size={28} color={theme.text} />
-                        </TouchableOpacity>
+                        </Pressable>
                         <View style={styles.headerTitleContainer}>
                             <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
                                 {building.name}
@@ -123,8 +134,6 @@ function createStyles(theme: Theme) {
             position: 'absolute',
             zIndex: 10,
             backgroundColor: theme.background,
-            borderBottomWidth: 1,
-            borderBottomColor: theme.border,
         },
         header: {
             flexDirection: 'row',

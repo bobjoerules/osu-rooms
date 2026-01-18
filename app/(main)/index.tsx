@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
@@ -222,25 +221,27 @@ export default function Index() {
         style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 : insets.top + headerHeight) }
+          { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 + 36 : insets.top + headerHeight) }
         ]}
       />
 
       <View
-        style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: 0, height: insets.top + headerHeight }]}
-        {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
+        style={[
+          styles.headerContainer,
+          {
+            top: Platform.OS === 'web' ? 75 : 0,
+            left: 0,
+            right: 0,
+            height: insets.top + headerHeight + (Platform.OS === 'web' ? 16 : 0),
+            backgroundColor: theme.background, // Fallback for mobile web
+            paddingTop: Platform.OS === 'web' ? 16 : 0,
+          }
+        ]}
+        {...(Platform.OS === 'web' ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         {Platform.OS === 'web' && (
           <View style={{ position: 'absolute', top: -75, left: 0, right: 0, height: 75, backgroundColor: theme.background }} />
         )}
-        <View style={StyleSheet.absoluteFill}>
-          <LinearGradient
-            colors={[theme.background, theme.background, theme.background + '00']}
-            locations={Platform.OS === 'web' ? [0, 0.5, 1] : [0, 0.92, 1]}
-            style={[StyleSheet.absoluteFill, { right: isDesktopWeb ? 20 : 8 }]}
-            pointerEvents="none"
-          />
-        </View>
         <SafeAreaView edges={['top']}>
           <View style={[styles.header, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}>
             <View

@@ -287,10 +287,14 @@ export default function RoomDetail() {
         {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         <SafeAreaView edges={['top']}>
-          <View style={[styles.header, {
-            marginTop: Platform.OS === 'web' ? 75 : insets.top,
-            marginBottom: 10
-          }]}>
+          <View style={[
+            styles.header,
+            isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+            {
+              marginTop: Platform.OS === 'web' && isDesktopWeb ? 16 : 0,
+              marginBottom: 10
+            }
+          ]}>
             <Pressable
               onPress={() => {
                 triggerHaptic();
@@ -323,6 +327,7 @@ function createStyles(theme: Theme) {
     headerFloatingContainer: {
       position: 'absolute',
       zIndex: 10,
+      backgroundColor: theme.background, // Ensure background is set
     },
     header: {
       flexDirection: 'row',
