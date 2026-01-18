@@ -1,18 +1,34 @@
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, useColorScheme, View } from 'react-native';
 import AccountScreen from '../components/AccountScreen';
 import { auth } from '../firebaseConfig';
-import { ThemeProvider, useTheme } from '../theme';
 import { SettingsProvider } from '../lib/SettingsContext';
+import { ThemeProvider, useTheme } from '../theme';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const prevIsLoggedIn = useRef<boolean | null>(null);
   const router = useRouter();
+
+  const [loaded, error] = useFonts({
+    ...Ionicons.font,
+    ...FontAwesome.font,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -28,7 +44,7 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  if (isLoggedIn === null) {
+  if (isLoggedIn === null || (!loaded && !error)) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
