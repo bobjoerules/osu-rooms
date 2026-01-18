@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import {
@@ -7,7 +8,6 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { Ionicons } from "@expo/vector-icons";
 import {
   collection,
   doc,
@@ -31,10 +31,10 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { auth, db } from "../firebaseConfig";
-import { Theme, useTheme } from "../theme";
-import { useSettings, useHapticFeedback } from "../lib/SettingsContext";
 import { BUILDINGS_DATA } from "../data/rooms";
+import { auth, db } from "../firebaseConfig";
+import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
+import { Theme, useTheme } from "../theme";
 
 export default function Account() {
   const theme = useTheme();
@@ -78,10 +78,10 @@ export default function Account() {
             if (userData.username) {
               setUserName(userData.username);
             }
-            
+
             const role = userData.role;
             setUserRole(role);
-            
+
             if (role === "admin" || role === "owner") {
               setIsAdmin(true);
 
@@ -246,187 +246,193 @@ export default function Account() {
           </Text>
         </View>
         <View style={styles.card}>
-        {userEmail ? (
-          <View style={styles.section}>
-            <View style={styles.infoRow}>
-              <View>
-                <Text style={styles.label}>Username</Text>
-                <Text style={styles.value}>{userName || "User"}</Text>
+          {userEmail ? (
+            <View style={styles.section}>
+              <View style={styles.infoRow}>
+                <View>
+                  <Text style={styles.label}>Username</Text>
+                  <Text style={styles.value}>{userName || "User"}</Text>
+                </View>
+                <Ionicons name="person-circle-outline" size={24} color={theme.subtext} />
               </View>
-              <Ionicons name="person-circle-outline" size={24} color={theme.subtext} />
-            </View>
-            <View style={styles.infoRow}>
-              <View>
-                <Text style={styles.label}>Email</Text>
-                <Text style={styles.value}>{userEmail}</Text>
+              <View style={styles.infoRow}>
+                <View>
+                  <Text style={styles.label}>Email</Text>
+                  <Text style={styles.value}>{userEmail}</Text>
+                </View>
+                <Ionicons name="mail-outline" size={24} color={theme.subtext} />
               </View>
-              <Ionicons name="mail-outline" size={24} color={theme.subtext} />
-            </View>
 
-            <Pressable style={[styles.buttonSecondary, { marginTop: 20 }]} onPress={handleSignOut}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
-            </Pressable>
+              <Pressable style={[styles.buttonSecondary, { marginTop: 20 }]} onPress={handleSignOut}>
+                <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
+              </Pressable>
 
-            {isAdmin && (
-              <View style={styles.adminContainer}>
-                <View style={styles.separator} />
-                <Text style={styles.adminTitle}>Admin Tools</Text>
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.adminCard,
-                    { backgroundColor: pressed ? theme.border + '44' : theme.background + '88' }
-                  ]}
-                  onPress={() => {
-                    router.push("/admin" as any);
-                  }}
-                >
-                  <View style={styles.adminCardContent}>
-                    <View style={styles.adminIconContainer}>
-                      <Ionicons name="documents-outline" size={22} color="#34C759" />
+              {isAdmin && (
+                <View style={styles.adminContainer}>
+                  <View style={styles.separator} />
+                  <Text style={styles.adminTitle}>Admin Tools</Text>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.adminCard,
+                      { backgroundColor: pressed ? theme.border + '44' : theme.background + '88' }
+                    ]}
+                    onPress={() => {
+                      router.push("/admin" as any);
+                    }}
+                  >
+                    <View style={styles.adminCardContent}>
+                      <View style={styles.adminIconContainer}>
+                        <Ionicons name="documents-outline" size={22} color="#34C759" />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.adminCardTitle, { color: theme.text }]}>Review Submissions</Text>
+                        <Text style={[styles.adminCardSubtitle, { color: theme.subtext }]}>
+                          {pendingCount !== null ? `${pendingCount} pending reviews` : 'Manage room updates'}
+                        </Text>
+                      </View>
+                      <Ionicons name="chevron-forward" size={20} color={theme.subtext} />
                     </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.adminCardTitle, { color: theme.text }]}>Review Submissions</Text>
-                      <Text style={[styles.adminCardSubtitle, { color: theme.subtext }]}>
-                        {pendingCount !== null ? `${pendingCount} pending reviews` : 'Manage room updates'}
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color={theme.subtext} />
-                  </View>
-                </Pressable>
-              </View>
-            )}
-
-            <View style={styles.settingsContainer}>
-              <View style={styles.separator} />
-              <Text style={styles.settingsTitle}>Settings</Text>
-              <View style={styles.settingRow}>
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
-                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images (these rooms have a higher chance of being inaccurate)</Text>
+                  </Pressable>
                 </View>
-                <Switch
-                  value={showPlaceholders}
-                  onValueChange={(val) => {
-                    triggerHaptic();
-                    setShowPlaceholders(val);
-                  }}
-                  trackColor={{ false: theme.border, true: theme.primary }}
-                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
-                  activeThumbColor="#fff"
-                  activeTrackColor={theme.primary}
-                />
-              </View>
-
-              <View style={styles.settingRow}>
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
-                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
-                </View>
-                <Switch
-                  value={useHaptics}
-                  onValueChange={(val) => {
-                    triggerHaptic();
-                    setUseHaptics(val);
-                  }}
-                  trackColor={{ false: theme.border, true: theme.primary }}
-                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
-                  activeThumbColor="#fff"
-                  activeTrackColor={theme.primary}
-                />
-              </View>
-
-              <View style={styles.settingRow}>
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
-                  <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers{Platform.OS === 'web' ? ' (images may look bad due to screen size)' : ''}</Text>
-                </View>
-                <Switch
-                  value={showBuildingImages}
-                  onValueChange={(val) => {
-                    triggerHaptic();
-                    setShowBuildingImages(val);
-                  }}
-                  trackColor={{ false: theme.border, true: theme.primary }}
-                  thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
-                  activeThumbColor="#fff"
-                  activeTrackColor={theme.primary}
-                />
-              </View>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.section}>
-            <TextInput
-              autoCapitalize="none"
-              keyboardType="email-address"
-              placeholder="Email"
-              placeholderTextColor={theme.placeholder}
-              style={[styles.input, emailError && styles.inputError]}
-              value={email}
-              onChangeText={setEmail}
-            />
-            {emailError && <Text style={styles.errorText}>{emailError}</Text>}
-            <TextInput
-              secureTextEntry
-              placeholder="Password"
-              placeholderTextColor={theme.placeholder}
-              style={[styles.input, passwordError && styles.inputError]}
-              value={password}
-              onChangeText={setPassword}
-            />
-            {passwordError && (
-              <Text style={styles.errorText}>{passwordError}</Text>
-            )}
-            {isSignup && (
-              <TextInput
-                placeholder="Username"
-                placeholderTextColor={theme.placeholder}
-                style={styles.input}
-                value={username}
-                onChangeText={setUsername}
-              />
-            )}
-
-            <Pressable
-              style={[styles.button, isDisabled && styles.buttonDisabled]}
-              onPress={isDisabled ? undefined : handleSubmit}
-              disabled={isDisabled}
-            >
-              {loading ? (
-                <ActivityIndicator color={theme.buttonText} />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {isSignup ? "Create account" : "Sign in"}
-                </Text>
               )}
-            </Pressable>
 
-            <Pressable
-              style={styles.linkButton}
-              onPress={() => {
-                setMode(isSignup ? "login" : "signup");
-                setMessage(null);
-                setEmailError(null);
-                setPasswordError(null);
-              }}
-            >
-              <Text style={styles.linkText}>
-                {isSignup
-                  ? "Have an account? Sign in"
-                  : "Need an account? Sign up"}
-              </Text>
-            </Pressable>
-          </View>
-        )}
+              <View style={styles.settingsContainer}>
+                <View style={styles.separator} />
+                <Text style={styles.settingsTitle}>Settings</Text>
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images (these rooms have a higher chance of being inaccurate)</Text>
+                  </View>
+                  <Switch
+                    value={showPlaceholders}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowPlaceholders(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                    activeThumbColor="#fff"
+                    activeTrackColor={theme.primary}
+                  />
+                </View>
 
-        {message && <Text style={styles.message}>{message}</Text>}
-      </View>
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
+                  </View>
+                  <Switch
+                    value={useHaptics}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setUseHaptics(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                    activeThumbColor="#fff"
+                    activeTrackColor={theme.primary}
+                  />
+                </View>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          {userCount !== null ? `Users: ${userCount} • ` : ""}Rooms: {totalRooms} • Version {version}
-        </Text>
-      </View>
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers{Platform.OS === 'web' ? ' (images may look bad due to screen size)' : ''}</Text>
+                  </View>
+                  <Switch
+                    value={showBuildingImages}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowBuildingImages(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                    activeThumbColor="#fff"
+                    activeTrackColor={theme.primary}
+                  />
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.section}>
+              <TextInput
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="Email"
+                placeholderTextColor={theme.placeholder}
+                style={[styles.input, emailError && styles.inputError]}
+                value={email}
+                onChangeText={setEmail}
+                onSubmitEditing={handleSubmit}
+                returnKeyType="next"
+              />
+              {emailError && <Text style={styles.errorText}>{emailError}</Text>}
+              <TextInput
+                secureTextEntry
+                placeholder="Password"
+                placeholderTextColor={theme.placeholder}
+                style={[styles.input, passwordError && styles.inputError]}
+                value={password}
+                onChangeText={setPassword}
+                onSubmitEditing={handleSubmit}
+                returnKeyType={isSignup ? "next" : "go"}
+              />
+              {passwordError && (
+                <Text style={styles.errorText}>{passwordError}</Text>
+              )}
+              {isSignup && (
+                <TextInput
+                  placeholder="Username"
+                  placeholderTextColor={theme.placeholder}
+                  style={styles.input}
+                  value={username}
+                  onChangeText={setUsername}
+                  onSubmitEditing={handleSubmit}
+                  returnKeyType="go"
+                />
+              )}
+
+              <Pressable
+                style={[styles.button, isDisabled && styles.buttonDisabled]}
+                onPress={isDisabled ? undefined : handleSubmit}
+                disabled={isDisabled}
+              >
+                {loading ? (
+                  <ActivityIndicator color={theme.buttonText} />
+                ) : (
+                  <Text style={styles.buttonText}>
+                    {isSignup ? "Create account" : "Sign in"}
+                  </Text>
+                )}
+              </Pressable>
+
+              <Pressable
+                style={styles.linkButton}
+                onPress={() => {
+                  setMode(isSignup ? "login" : "signup");
+                  setMessage(null);
+                  setEmailError(null);
+                  setPasswordError(null);
+                }}
+              >
+                <Text style={styles.linkText}>
+                  {isSignup
+                    ? "Have an account? Sign in"
+                    : "Need an account? Sign up"}
+                </Text>
+              </Pressable>
+            </View>
+          )}
+
+          {message && <Text style={styles.message}>{message}</Text>}
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            {userCount !== null ? `Users: ${userCount} • ` : ""}Rooms: {totalRooms} • Version {version}
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

@@ -30,13 +30,14 @@ export default function Index() {
 
   const handleBuildingPress = useCallback((id: string) => {
     triggerHaptic();
-    if (isDesktopWeb) {
+    const isSearching = searchQuery.trim().length > 0;
+    if (isDesktopWeb && !isSearching) {
       router.push(`/building/${id}`);
       return true;
     }
     setExpandedId(prev => prev === id ? null : id);
     return false;
-  }, [isDesktopWeb, router, triggerHaptic]);
+  }, [isDesktopWeb, router, triggerHaptic, searchQuery]);
 
   const accordionItems = useMemo(() => {
     const isSearching = searchQuery.trim().length > 0;
@@ -65,8 +66,14 @@ export default function Index() {
         return showPlaceholders || hasPhotos;
       });
 
-      if (isSearching && buildingNameMatch) {
-        return { ...building };
+      if (isSearching) {
+        if (matchingRooms.length > 0) {
+          return { ...building, rooms: matchingRooms };
+        }
+        if (buildingNameMatch) {
+          return { ...building };
+        }
+        return null;
       }
 
       if (matchingRooms.length > 0) {
@@ -82,6 +89,7 @@ export default function Index() {
       const buildingImage = building.images?.[0];
       const hasValidImage = buildingImage && !isPlaceholderImage(buildingImage);
 
+      const isSearching = searchQuery.trim().length > 0;
       return {
         id: building.id,
         title: (
@@ -90,7 +98,7 @@ export default function Index() {
             <BuildingRating roomIds={building.rooms.map(r => r.id)} />
           </View>
         ),
-        content: isDesktopWeb ? null : <RoomList rooms={building.rooms} />,
+        content: (isDesktopWeb && !isSearching) ? null : <RoomList rooms={building.rooms} />,
         image: buildingImage,
         showImage: showBuildingImages && hasValidImage,
       };
