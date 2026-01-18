@@ -47,9 +47,11 @@ export default function RootLayout() {
 
   if (isLoggedIn === null || !localLoaded) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </View>
+      <SettingsProvider>
+        <ThemeProvider>
+          <LoadingScreen />
+        </ThemeProvider>
+      </SettingsProvider>
     );
   }
 
@@ -69,6 +71,15 @@ export default function RootLayout() {
         <AuthenticatedStack />
       </ThemeProvider>
     </SettingsProvider>
+  );
+}
+
+function LoadingScreen() {
+  const theme = useTheme();
+  return (
+    <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+      <ActivityIndicator size="large" color={theme.subtext} />
+    </View>
   );
 }
 
