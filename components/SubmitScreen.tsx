@@ -15,19 +15,22 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    View,
+    useWindowDimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BUILDINGS_DATA } from '../data/rooms';
 import { auth, db, storage } from '../firebaseConfig';
-import { Theme, useTheme } from '../theme';
 import { useHapticFeedback } from '../lib/SettingsContext';
+import { Theme, useTheme } from '../theme';
 
 export default function SubmitScreen() {
     const theme = useTheme();
     const router = useRouter();
     const triggerHaptic = useHapticFeedback();
-    const styles = useMemo(() => createStyles(theme), [theme]);
+    const { width } = useWindowDimensions();
+    const isDesktop = Platform.OS === 'web' && width > 768;
+    const styles = useMemo(() => createStyles(theme, isDesktop), [theme, isDesktop]);
 
     const { initialBuilding, initialRoomNumber } = useLocalSearchParams<{ initialBuilding?: string, initialRoomNumber?: string }>();
 
@@ -62,6 +65,14 @@ export default function SubmitScreen() {
         triggerHaptic();
         if (!auth.currentUser) {
             Alert.alert('Error', 'You must be signed in to submit room info.');
+            return;
+        }
+
+        if (!auth.currentUser.emailVerified) {
+            Alert.alert(
+                'Verification Required',
+                'Please verify your email address to submit room info. Check your account settings to resend the verification email.'
+            );
             return;
         }
 
@@ -134,7 +145,7 @@ export default function SubmitScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView 
+                <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
                 >
@@ -257,8 +268,8 @@ export default function SubmitScreen() {
                                 )}
                             </Pressable>
                             {image && (
-                                <Pressable 
-                                    style={styles.removeImageButton} 
+                                <Pressable
+                                    style={styles.removeImageButton}
                                     onPress={() => setImage(null)}
                                 >
                                     <View style={styles.removeImageBackground}>
@@ -289,7 +300,7 @@ export default function SubmitScreen() {
     );
 }
 
-function createStyles(theme: Theme) {
+function createStyles(theme: Theme, isDesktop: boolean = false) {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -300,6 +311,9 @@ function createStyles(theme: Theme) {
             paddingHorizontal: 20,
             paddingBottom: 20,
             ...(Platform.OS === 'web' && { paddingTop: 75 }),
+            maxWidth: 600,
+            width: '100%',
+            alignSelf: 'center',
         },
         header: {
             flexDirection: 'row',

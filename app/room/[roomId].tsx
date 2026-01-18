@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, writeBatch } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import { getRoomById } from '../../data/rooms';
@@ -152,7 +152,7 @@ export default function RoomDetail() {
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}>
           {roomData.images.length > 1 ? (
             <>
               <FlatList
@@ -175,7 +175,7 @@ export default function RoomDetail() {
                     style={[
                       styles.headerImage,
                       {
-                        width: isDesktopWeb ? 1200 : IMAGE_WIDTH,
+                        width: isDesktopWeb ? '100%' : IMAGE_WIDTH,
                         marginRight: index === roomData.images.length - 1 ? 0 : (isDesktopWeb ? 0 : GAP),
                         borderRadius: isDesktopWeb ? 24 : 16,
                       }
@@ -203,7 +203,7 @@ export default function RoomDetail() {
               style={[
                 styles.headerImage,
                 {
-                  width: isDesktopWeb ? 1200 : SCREEN_WIDTH - 32,
+                  width: isDesktopWeb ? '100%' : SCREEN_WIDTH - 32,
                   marginHorizontal: isDesktopWeb ? 0 : 16,
                   borderRadius: isDesktopWeb ? 24 : 16,
                 }
@@ -287,13 +287,23 @@ export default function RoomDetail() {
         {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         <SafeAreaView edges={['top']}>
-          <View style={[styles.header, isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
-            <TouchableOpacity
-              onPress={() => { triggerHaptic(); router.back(); }}
+          <View style={[styles.header, {
+            marginTop: Platform.OS === 'web' ? 75 : insets.top,
+            marginBottom: 10
+          }]}>
+            <Pressable
+              onPress={() => {
+                triggerHaptic();
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.push('/');
+                }
+              }}
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={28} color={theme.text} />
-            </TouchableOpacity>
+            </Pressable>
             <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
               Room {roomData.name} - {roomData.building}
             </Text>

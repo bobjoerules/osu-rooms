@@ -30,7 +30,7 @@ export default function CustomTabBar() {
         }}
       >
         <Ionicons
-          name={isSubmit ? 'plus-circle' : 'plus-circle-outline'}
+          name={isSubmit ? 'add-circle' : 'add-circle-outline'}
           size={24}
           color={isSubmit ? '#D73F09' : theme.subtext}
         />

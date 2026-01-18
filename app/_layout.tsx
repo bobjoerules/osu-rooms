@@ -105,7 +105,6 @@ function AuthenticatedStack() {
             .EFtDwW_navigationMenuRoot {
               background-color: ${theme.card} !important;
               border-bottom: 1px solid ${theme.border}44 !important;
-              right: 12px !important;
             }
             .EFtDwW_navigationMenuTrigger[data-state='active'] {
               background-color: ${theme.primary} !important;
@@ -150,6 +149,34 @@ function AuthenticatedStack() {
             }}
           />
         </Stack>
+        {Platform.OS === 'web' && (
+          <style dangerouslySetInnerHTML={{
+            __html: `
+            html, body {
+              overflow: hidden;
+              height: 100%;
+              width: 100%;
+            }
+            #root {
+              display: flex;
+              flex-direction: column;
+              height: 100%;
+            }
+            /* Target the main scroll view or content container */
+            [data-testid="scroll-view"], .css-view-175oi2r[style*="overflow-y: auto"] {
+              padding-bottom: 50px; /* Space for tab bar */
+            }
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            ::-webkit-scrollbar {
+              display: none;
+            }
+            /* Hide scrollbar for IE, Edge and Firefox */
+            html, body, [data-testid="scroll-view"] {
+              -ms-overflow-style: none;  /* IE and Edge */
+              scrollbar-width: none;  /* Firefox */
+            }
+          `}} />
+        )}
       </NavThemeProvider>
     </View>
   );

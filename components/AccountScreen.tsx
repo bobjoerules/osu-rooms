@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -21,6 +22,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -173,7 +175,14 @@ export default function Account() {
         });
         await batch.commit();
 
-        setMessage("Account created and signed in.");
+        try {
+          await sendEmailVerification(result.user);
+          setMessage("Account created! Please check your email to verify.");
+        } catch (verifyErr: any) {
+          console.error("Verification email failed", verifyErr);
+          Alert.alert("Verification Error", "Failed to send verification email: " + verifyErr.message);
+          setMessage("Account created, but failed to send verification email. Please use the Resend button.");
+        }
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
@@ -259,6 +268,25 @@ export default function Account() {
                 <View>
                   <Text style={styles.label}>Email</Text>
                   <Text style={styles.value}>{userEmail}</Text>
+                  {auth.currentUser && !auth.currentUser.emailVerified && (
+                    <View style={{ marginTop: 4 }}>
+                      <Text style={[styles.errorText, { marginBottom: 2 }]}>Email not verified</Text>
+                      <Pressable
+                        onPress={async () => {
+                          try {
+                            if (auth.currentUser) {
+                              await sendEmailVerification(auth.currentUser);
+                              Alert.alert('Sent', 'Verification email sent!');
+                            }
+                          } catch (e) {
+                            Alert.alert('Error', 'Failed to send verification email.');
+                          }
+                        }}
+                      >
+                        <Text style={[styles.linkText, { fontSize: 13 }]}>Resend Verification Email</Text>
+                      </Pressable>
+                    </View>
+                  )}
                 </View>
                 <Ionicons name="mail-outline" size={24} color={theme.subtext} />
               </View>

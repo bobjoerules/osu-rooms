@@ -8,8 +8,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../firebaseConfig';
-import { Theme, useTheme } from '../theme';
 import { useHapticFeedback } from '../lib/SettingsContext';
+import { Theme, useTheme } from '../theme';
 
 export type StarRatingProps = {
   itemId: string;
@@ -70,6 +70,11 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
     const user = auth.currentUser;
     if (!user) {
       setError('Sign in to rate.');
+      return;
+    }
+
+    if (!user.emailVerified) {
+      setError('Please verify your email to rate rooms.');
       return;
     }
 
