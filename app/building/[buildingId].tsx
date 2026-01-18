@@ -76,7 +76,7 @@ export default function BuildingDetail() {
                 </style>
             )}
             <View
-                style={[styles.headerFloatingContainer, { top: 0, left: 0, right: 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+                style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
                 {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
             >
                 <SafeAreaView edges={['top']}>

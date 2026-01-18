@@ -134,6 +134,12 @@ export default function RoomDetail() {
                 -webkit-backdrop-filter: blur(12px) !important;
                 background-color: ${theme.background}cc !important;
                 border-bottom: 1px solid ${theme.border}44 !important;
+                right: 12px !important;
+              }
+              .EFtDwW_navigationMenuRoot {
+                background-color: ${theme.card} !important;
+                border-bottom: 1px solid ${theme.border}44 !important;
+                right: 12px !important;
               }
             }
           `}
@@ -277,7 +283,7 @@ export default function RoomDetail() {
       </ScrollView>
 
       <View
-        style={[styles.headerFloatingContainer, { top: 0, left: 0, right: 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+        style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
         {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         <SafeAreaView edges={['top']}>

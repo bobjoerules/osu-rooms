@@ -317,23 +317,25 @@ export default function Account() {
                   />
                 </View>
 
-                <View style={styles.settingRow}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
+                {Platform.OS !== 'web' && (
+                  <View style={styles.settingRow}>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
+                      <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
+                    </View>
+                    <Switch
+                      value={useHaptics}
+                      onValueChange={(val) => {
+                        triggerHaptic();
+                        setUseHaptics(val);
+                      }}
+                      trackColor={{ false: theme.border, true: theme.primary }}
+                      thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                      activeThumbColor="#fff"
+                      activeTrackColor={theme.primary}
+                    />
                   </View>
-                  <Switch
-                    value={useHaptics}
-                    onValueChange={(val) => {
-                      triggerHaptic();
-                      setUseHaptics(val);
-                    }}
-                    trackColor={{ false: theme.border, true: theme.primary }}
-                    thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
-                    activeThumbColor="#fff"
-                    activeTrackColor={theme.primary}
-                  />
-                </View>
+                )}
 
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>

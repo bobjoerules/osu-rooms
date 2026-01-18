@@ -105,6 +105,7 @@ function AuthenticatedStack() {
             .EFtDwW_navigationMenuRoot {
               background-color: ${theme.card} !important;
               border-bottom: 1px solid ${theme.border}44 !important;
+              right: 12px !important;
             }
             .EFtDwW_navigationMenuTrigger[data-state='active'] {
               background-color: ${theme.primary} !important;

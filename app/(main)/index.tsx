@@ -227,7 +227,7 @@ export default function Index() {
       />
 
       <View
-        style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: 0, height: insets.top + headerHeight }]}
+        style={[styles.headerContainer, { top: Platform.OS === 'web' ? 75 : 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + headerHeight }]}
         {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         {Platform.OS === 'web' && (
