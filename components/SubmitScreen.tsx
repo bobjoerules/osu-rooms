@@ -64,15 +64,26 @@ export default function SubmitScreen() {
     const handleSubmit = async () => {
         triggerHaptic();
         if (!auth.currentUser) {
-            Alert.alert('Error', 'You must be signed in to submit room info.');
+            if (Platform.OS === 'web') {
+                window.alert('Error: You must be signed in to submit room info.');
+            } else {
+                Alert.alert('Error', 'You must be signed in to submit room info.');
+            }
             return;
         }
 
+        // Reload user to get latest verification status
+        await auth.currentUser.reload();
+
         if (!auth.currentUser.emailVerified) {
-            Alert.alert(
-                'Verification Required',
-                'Please verify your email address to submit room info. Check your account settings to resend the verification email.'
-            );
+            if (Platform.OS === 'web') {
+                window.alert('Verification Required: Please verify your email address to submit room info. Check your account settings to resend the verification email.');
+            } else {
+                Alert.alert(
+                    'Verification Required',
+                    'Please verify your email address to submit room info. Check your account settings to resend the verification email.'
+                );
+            }
             return;
         }
 

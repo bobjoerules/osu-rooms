@@ -222,7 +222,36 @@ export default function RoomDetail() {
 
             <TouchableOpacity
               style={[styles.rateButton, { backgroundColor: theme.primary, marginTop: 16, flexDirection: 'row', gap: 8 }]}
-              onPress={() => { triggerHaptic(); router.push(`/room/${finalRoomId}/rate`); }}
+              onPress={async () => {
+                triggerHaptic();
+                try {
+                  if (!auth.currentUser) {
+                    if (Platform.OS === 'web') {
+                      window.alert('Sign in required: Please sign in to rate this room.');
+                    } else {
+                      Alert.alert('Sign In Required', 'Please sign in to rate this room.');
+                    }
+                    return;
+                  }
+                  await auth.currentUser.reload();
+                  if (!auth.currentUser.emailVerified) {
+                    if (Platform.OS === 'web') {
+                      window.alert('Email verification required: Please verify your email address to rate rooms.');
+                    } else {
+                      Alert.alert('Email Verification Required', 'Please verify your email address to rate rooms.');
+                    }
+                    return;
+                  }
+                  router.push(`/room/${finalRoomId}/rate`);
+                } catch (error) {
+                  console.error('Rate button error:', error);
+                  if (Platform.OS === 'web') {
+                    window.alert('An error occurred. Please try again.');
+                  } else {
+                    Alert.alert('Error', 'An error occurred. Please try again.');
+                  }
+                }
+              }}
             >
               <Ionicons name="pencil" size={18} color="#fff" />
               <Text style={styles.rateButtonText}>Rate Room</Text>

@@ -104,9 +104,9 @@ export default function VerifyEmail() {
                         <Text style={styles.message}>Your email has been successfully verified. You can now rate rooms and submit updates.</Text>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => router.replace('/')}
+                            onPress={() => window.close()}
                         >
-                            <Text style={styles.buttonText}>Go to Home</Text>
+                            <Text style={styles.buttonText}>Close</Text>
                         </TouchableOpacity>
                     </>
                 )}

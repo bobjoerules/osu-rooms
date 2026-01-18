@@ -289,31 +289,32 @@ export default function Account() {
                 <View>
                   <Text style={styles.label}>Email</Text>
                   <Text style={styles.value}>{userEmail}</Text>
-                  {auth.currentUser && !auth.currentUser.emailVerified && (
-                    <View style={{ marginTop: 8 }}>
-                      <Text style={[styles.errorText, { marginBottom: 8 }]}>Email not verified</Text>
-                      <Pressable
-                        style={[styles.buttonSecondary, { borderColor: theme.primary, backgroundColor: theme.primary + '15' }]}
-                        onPress={async () => {
-                          try {
-                            if (auth.currentUser) {
-                              await sendEmailVerification(auth.currentUser);
-                              Alert.alert('Sent', 'Verification email sent!');
-                            }
-                          } catch (e) {
-                            Alert.alert('Error', 'Failed to send verification email.');
-                          }
-                        }}
-                      >
-                        <Text style={[styles.buttonText, { color: theme.primary }]}>Resend Verification Email</Text>
-                      </Pressable>
-                    </View>
-                  )}
                 </View>
                 <Ionicons name="mail-outline" size={24} color={theme.subtext} />
               </View>
 
-              <Pressable style={[styles.buttonSecondary, { marginTop: 20 }]} onPress={handleSignOut}>
+              {auth.currentUser && !auth.currentUser.emailVerified && (
+                <View style={{ marginTop: 8 }}>
+                  <Text style={[styles.errorText, { marginBottom: 8 }]}>Email not verified</Text>
+                  <Pressable
+                    style={[styles.buttonSecondary, { backgroundColor: theme.primary, borderColor: theme.primary, marginTop: 20, width: '100%' }]}
+                    onPress={async () => {
+                      try {
+                        if (auth.currentUser) {
+                          await sendEmailVerification(auth.currentUser);
+                          Alert.alert('Sent', 'Verification email sent!');
+                        }
+                      } catch (e) {
+                        Alert.alert('Error', 'Failed to send verification email.');
+                      }
+                    }}
+                  >
+                    <Text style={[styles.buttonText, { color: '#fff' }]}>Resend Verification Email</Text>
+                  </Pressable>
+                </View>
+              )}
+
+              <Pressable style={[styles.buttonSecondary, { marginTop: 20, width: '100%' }]} onPress={handleSignOut}>
                 <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
               </Pressable>
 
