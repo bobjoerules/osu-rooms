@@ -159,7 +159,7 @@ export default function SubmitScreen() {
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={isDesktop}
+                    scrollEnabled={Platform.OS === 'web'}
                 >
                     <View style={styles.header}>
                         {(initialBuilding || initialRoomNumber) ? (
