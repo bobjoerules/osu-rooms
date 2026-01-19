@@ -272,7 +272,7 @@ export default function RoomDetail() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={[
-          { paddingTop: insets.top + (isDesktopWeb ? 100 : 50) },
+          { paddingTop: insets.top + (isDesktopWeb ? 100 : 85) },
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >

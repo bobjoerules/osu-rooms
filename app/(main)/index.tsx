@@ -46,11 +46,14 @@ export default function Index() {
 
     if (isExpanding && !isDesktopWeb) {
       // Small delay to allow the layout animation to start/prepare
+      const headerOffset = Platform.OS === 'web'
+        ? insets.top + headerHeight + 75 + 16 // account for web search bar spacer
+        : insets.top + headerHeight;
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({
           index,
           viewPosition: 0,
-          viewOffset: insets.top + headerHeight,
+          viewOffset: headerOffset,
           animated: true,
         });
       }, 100);
@@ -126,11 +129,12 @@ export default function Index() {
   }, [searchQuery, styles.title, theme.text, showPlaceholders, showBuildingImages, isDesktopWeb]);
 
   const renderItem = useCallback(({ item, index }: { item: any, index: number }) => {
+    const isSearching = searchQuery.trim().length > 0;
     return (
-      <View style={isDesktopWeb ? styles.gridItem : undefined}>
+      <View style={isDesktopWeb ? (isSearching ? styles.listItemFullWidth : styles.gridItem) : undefined}>
         <AccordionItem
           title={item.title}
-          isExpanded={searchQuery.trim().length > 0 || !!expandedIds[item.id]}
+          isExpanded={isSearching || !!expandedIds[item.id]}
           onPress={() => handleBuildingPress(item.id, index)}
           image={item.image}
           showImage={item.showImage}
@@ -143,7 +147,7 @@ export default function Index() {
         </AccordionItem>
       </View>
     );
-  }, [isDesktopWeb, searchQuery, expandedIds, handleBuildingPress, styles.gridItem, styles.itemContainer]);
+  }, [isDesktopWeb, searchQuery, expandedIds, handleBuildingPress, styles.gridItem, styles.listItemFullWidth, styles.itemContainer]);
 
 
 
@@ -202,14 +206,15 @@ export default function Index() {
         ref={flatListRef}
         data={accordionItems}
         keyExtractor={(item) => item.id}
-        numColumns={isDesktopWeb ? 3 : 1}
-        key={isDesktopWeb ? 'web-grid' : 'mobile-list'}
-        columnWrapperStyle={isDesktopWeb ? styles.columnWrapper : undefined}
+        numColumns={isDesktopWeb && !(searchQuery.trim().length > 0) ? 3 : 1}
+        key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
+        columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
         renderItem={renderItem}
         maxToRenderPerBatch={10}
         windowSize={5}
         removeClippedSubviews={Platform.OS === 'android'}
         initialNumToRender={10}
+        extraData={searchQuery}
         onScrollToIndexFailed={(info) => {
           flatListRef.current?.scrollToOffset({
             offset: info.averageItemLength * info.index,
@@ -219,7 +224,7 @@ export default function Index() {
         style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 + 36 : insets.top + headerHeight) }
+          { paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 + 16 : insets.top + headerHeight) }
         ]}
       />
 
@@ -311,6 +316,11 @@ function createStyles(theme: Theme) {
     gridItem: {
       flex: 1,
       maxWidth: '31%',
+      marginVertical: 8,
+    },
+    listItemFullWidth: {
+      flex: 1,
+      maxWidth: '100%',
       marginVertical: 8,
     },
     itemContainer: {

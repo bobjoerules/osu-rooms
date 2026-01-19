@@ -1277,7 +1277,7 @@ export const BUILDINGS_DATA: Building[] = [
             {
                 id: 'als-0006',
                 images: [
-                    firebaseImage('placeholder.png')
+                    firebaseImage('room-images/als-0006.jpeg')
                 ],
                 floor: '0',
                 capacity: '43',
