@@ -25,6 +25,9 @@ export default function RateRoomModal() {
         }
     };
 
+    const STAR_SIZE = 40;
+    const starWidth = 5 * (STAR_SIZE + 8); // 5 stars, 8px horizontal padding per star
+
     return (
         <TouchableOpacity
             style={styles.container}
@@ -43,27 +46,27 @@ export default function RateRoomModal() {
                     <ScrollView contentContainerStyle={styles.content}>
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Overall Rating</Text>
-                            <StarRating itemId={finalRoomId as string} size={40} />
+                            <StarRating itemId={finalRoomId as string} size={STAR_SIZE} />
                         </View>
 
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Chairs</Text>
-                            <StarRating itemId={`${finalRoomId}_chairs`} size={40} />
+                            <StarRating itemId={`${finalRoomId}_chairs`} size={STAR_SIZE} />
                         </View>
 
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Lighting</Text>
-                            <StarRating itemId={`${finalRoomId}_lighting`} size={40} />
+                            <StarRating itemId={`${finalRoomId}_lighting`} size={STAR_SIZE} />
                         </View>
 
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Projector/Screen Visibility</Text>
-                            <StarRating itemId={`${finalRoomId}_projector`} size={40} />
+                            <StarRating itemId={`${finalRoomId}_projector`} size={STAR_SIZE} />
                         </View>
 
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Temperature</Text>
-                            <TemperatureRating itemId={`${finalRoomId}_temperature`} />
+                            <TemperatureRating itemId={`${finalRoomId}_temperature`} width={starWidth} />
                         </View>
 
                         <TouchableOpacity

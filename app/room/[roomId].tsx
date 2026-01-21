@@ -458,7 +458,14 @@ export default function RoomDetail() {
 
             <View style={[styles.detailRow, { alignItems: 'center' }]}> 
               <Text style={[styles.detailLabel, { color: theme.text }]}>Temperature</Text>
-              <TemperatureDisplay itemId={`${finalRoomId}_temperature`} />
+              {(() => {
+                const STAR_SIZE_DETAILED = 24;
+                const STAR_PAD = 4; // matches RatingDisplay starBtn paddingHorizontal
+                const starWidthDetailed = 5 * (STAR_SIZE_DETAILED + STAR_PAD * 2) - 10; // nudge to visually match
+                return (
+                  <TemperatureDisplay itemId={`${finalRoomId}_temperature`} width={starWidthDetailed} />
+                );
+              })()}
             </View>
 
           </View>

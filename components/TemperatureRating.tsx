@@ -7,8 +7,9 @@ import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
 type TemperatureValue = 1 | 2 | 3; // 1=cold, 2=just right, 3=hot
+type TemperatureRatingProps = { itemId: string; width?: number };
 
-export default function TemperatureRating({ itemId }: { itemId: string }) {
+export default function TemperatureRating({ itemId, width }: TemperatureRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -115,7 +116,10 @@ export default function TemperatureRating({ itemId }: { itemId: string }) {
         colors={["#3B82F6", "#10B981", "#EF4444"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={styles.gradient}
+        style={[
+          styles.gradient,
+          width ? { width, alignSelf: 'center' } : { width: '100%', alignSelf: 'stretch' },
+        ]}
       >
         <View style={styles.segmentRow}>
           {options.map((opt) => (
@@ -137,10 +141,9 @@ export default function TemperatureRating({ itemId }: { itemId: string }) {
 
 function createStyles(theme: Theme) {
   return StyleSheet.create({
-    wrapper: { alignItems: 'center', gap: 8, alignSelf: 'stretch' },
+    wrapper: { alignItems: 'center', gap: 8 },
     gradient: {
       width: '100%',
-      alignSelf: 'stretch',
       borderRadius: 12,
       padding: 2,
     },

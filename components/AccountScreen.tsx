@@ -24,8 +24,10 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Platform,
   Pressable,
+  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -243,6 +245,11 @@ export default function Account() {
   const isDisabled = isSignup
     ? !email.trim() || !password.trim() || !username.trim()
     : !email.trim() || !password.trim();
+
+  // Hidden for now; flip to true to reveal web store buttons
+  const SHOW_APP_LINKS_WEB = false;
+  const APP_STORE_URL = 'https://apps.apple.com/app/idXXXXXXXXX';
+  const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=XXXXXXXX';
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -478,6 +485,45 @@ export default function Account() {
                     : "Need an account? Sign up"}
                 </Text>
               </Pressable>
+
+              {Platform.OS === 'web' && !userEmail && (
+                <View style={[styles.storeLinks, !SHOW_APP_LINKS_WEB && { display: 'none' }]}>
+                  <Text style={[styles.storeHeader, { color: theme.subtext }]}>Get the app</Text>
+                  <View style={styles.storeRow}>
+                    <Pressable
+                      style={[styles.storeBtn, { backgroundColor: '#000' }]}
+                      onPress={() => Linking.openURL(APP_STORE_URL)}
+                    >
+                      <Ionicons name="logo-apple" size={18} color="#fff" />
+                      <Text style={styles.storeBtnText}>Download on the App Store</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.storeBtn, { backgroundColor: '#188038' }]}
+                      onPress={() => Linking.openURL(PLAY_STORE_URL)}
+                    >
+                      <Ionicons name="logo-google" size={18} color="#fff" />
+                      <Text style={styles.storeBtnText}>Get it on Google Play</Text>
+                    </Pressable>
+                  </View>
+                  <Text style={[styles.storeHeader, { color: theme.subtext }]}>Or scan a QR code</Text>
+                  <View style={styles.qrRow}>
+                    <Pressable onPress={() => Linking.openURL(APP_STORE_URL)} style={styles.qrItem}>
+                      <Image
+                        source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(APP_STORE_URL)}` }}
+                        style={styles.qrCode}
+                      />
+                      <Text style={[styles.qrCaption, { color: theme.subtext }]}>App Store</Text>
+                    </Pressable>
+                    <Pressable onPress={() => Linking.openURL(PLAY_STORE_URL)} style={styles.qrItem}>
+                      <Image
+                        source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(PLAY_STORE_URL)}` }}
+                        style={styles.qrCode}
+                      />
+                      <Text style={[styles.qrCaption, { color: theme.subtext }]}>Google Play</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
             </View>
           )}
 
@@ -725,6 +771,55 @@ function createStyles(theme: Theme) {
     settingDescription: {
       fontSize: 12,
       opacity: 0.8,
+    },
+    storeLinks: {
+      marginTop: 8,
+      gap: 8,
+    },
+    storeHeader: {
+      fontSize: 12,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+    },
+    storeRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    storeBtn: {
+      flex: 1,
+      borderRadius: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      gap: 8,
+    },
+    storeBtnText: {
+      color: '#fff',
+      fontWeight: '800',
+      fontSize: 13,
+    },
+    qrRow: {
+      flexDirection: 'row',
+      gap: 12,
+      marginTop: 4,
+    },
+    qrItem: {
+      flex: 1,
+      alignItems: 'center',
+      gap: 6,
+    },
+    qrCode: {
+      width: 140,
+      height: 140,
+      borderRadius: 12,
+      backgroundColor: '#fff',
+    },
+    qrCaption: {
+      fontSize: 12,
+      fontWeight: '600',
     },
   });
 }

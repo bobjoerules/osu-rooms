@@ -5,7 +5,9 @@ import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import { db } from '../firebaseConfig';
 import { Theme, useTheme } from '../theme';
 
-export default function TemperatureDisplay({ itemId }: { itemId: string }) {
+type TemperatureDisplayProps = { itemId: string; width?: number };
+
+export default function TemperatureDisplay({ itemId, width }: TemperatureDisplayProps) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [avg, setAvg] = useState<number>(0);
@@ -30,9 +32,11 @@ export default function TemperatureDisplay({ itemId }: { itemId: string }) {
   const posPct = Math.max(0, Math.min(1, (avg - 1) / 2));
   const markerLeft = barWidth * posPct - 6; // center marker (12px wide)
 
+  const computedWidthStyle = width ? { width } : undefined;
+
   return (
     <View style={styles.container}>
-      <View style={styles.barContainer} onLayout={onLayout}>
+      <View style={[styles.barContainer, computedWidthStyle]} onLayout={onLayout}>
         <LinearGradient
           colors={["#3B82F6", "#10B981", "#EF4444"]}
           start={{ x: 0, y: 0 }}
