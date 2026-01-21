@@ -50,6 +50,7 @@ export default function Account() {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+  const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
 
   const totalRooms = useMemo(() => {
     return BUILDINGS_DATA.reduce((acc, building) => acc + building.rooms.length, 0);
@@ -63,6 +64,7 @@ export default function Account() {
 
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -149,39 +151,52 @@ export default function Account() {
   );
 
   async function handleSubmit() {
-    if (!email || !password) {
-      setMessage("Email and password are required.");
-      return;
-    }
-    if (isSignup && !username.trim()) {
-      setMessage("Username is required.");
-      return;
-    }
-    setLoading(true);
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+    const trimmedUsername = username.trim();
+
     setMessage(null);
     setEmailError(null);
     setPasswordError(null);
+    setUsernameError(null);
+
+    let hasError = false;
+    if (!trimmedEmail) {
+      setEmailError('Email is required.');
+      hasError = true;
+    }
+    if (!trimmedPassword) {
+      setPasswordError('Password is required.');
+      hasError = true;
+    }
+    if (isSignup && !trimmedUsername) {
+      setUsernameError('Username is required.');
+      hasError = true;
+    }
+    if (hasError) return;
+
+    setLoading(true);
     try {
       if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
         setMessage("Signed in!");
       } else {
-        const trimmedName = username.trim();
+        const trimmedName = trimmedUsername;
         const lowerName = trimmedName.toLowerCase();
 
         const nameRef = doc(db, "usernames", lowerName);
         const nameSnap = await getDoc(nameRef);
 
         if (nameSnap.exists()) {
-          setMessage("Username is already taken.");
+          setUsernameError("Username is already taken.");
           setLoading(false);
           return;
         }
 
         const result = await createUserWithEmailAndPassword(
           auth,
-          email.trim(),
-          password
+          trimmedEmail,
+          trimmedPassword
         );
 
         await updateProfile(result.user, { displayName: trimmedName });
@@ -191,7 +206,7 @@ export default function Account() {
         batch.set(doc(db, "users", result.user.uid), {
           username: trimmedName,
           role: "user",
-          email: email.trim(),
+          email: trimmedEmail,
         });
         await batch.commit();
 
@@ -255,7 +270,10 @@ export default function Account() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
         style={{ flex: 1, width: '100%' }}
-        contentContainerStyle={[styles.scrollContent, isDesktopWeb && styles.scrollContentCentered]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          (isDesktopWeb || centerLoginMobile) && styles.scrollContentCentered,
+        ]}
         showsVerticalScrollIndicator={false}
         scrollEnabled={Platform.OS === 'web' || !userEmail}
       >
@@ -445,15 +463,20 @@ export default function Account() {
                 <Text style={styles.errorText}>{passwordError}</Text>
               )}
               {isSignup && (
-                <TextInput
-                  placeholder="Username"
-                  placeholderTextColor={theme.placeholder}
-                  style={styles.input}
-                  value={username}
-                  onChangeText={setUsername}
-                  onSubmitEditing={handleSubmit}
-                  returnKeyType="go"
-                />
+                <>
+                  <TextInput
+                    placeholder="Username"
+                    placeholderTextColor={theme.placeholder}
+                    style={[styles.input, usernameError && styles.inputError]}
+                    value={username}
+                    onChangeText={setUsername}
+                    onSubmitEditing={handleSubmit}
+                    returnKeyType="go"
+                  />
+                  {usernameError && (
+                    <Text style={styles.errorText}>{usernameError}</Text>
+                  )}
+                </>
               )}
 
               <Pressable
@@ -477,6 +500,7 @@ export default function Account() {
                   setMessage(null);
                   setEmailError(null);
                   setPasswordError(null);
+                  setUsernameError(null);
                 }}
               >
                 <Text style={styles.linkText}>
