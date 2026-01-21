@@ -2,11 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, writeBatch } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
+import TemperatureDisplay from '../../components/TemperatureDisplay';
 import { getRoomById } from '../../data/rooms';
 import { auth, db } from '../../firebaseConfig';
 import { useHapticFeedback } from '../../lib/SettingsContext';
@@ -73,15 +74,49 @@ export default function RoomDetail() {
             triggerHaptic();
             setResetLoading(true);
             try {
-              const batch = writeBatch(db);
+              const ratingKeys = [
+                finalRoomId as string,
+                `${finalRoomId}_chairs`,
+                `${finalRoomId}_lighting`,
+                `${finalRoomId}_projector`,
+                `${finalRoomId}_temperature`,
+              ];
 
-              batch.delete(doc(db, "ratings", finalRoomId as string));
+              const BATCH_LIMIT = 450; // stay under 500 operations
+              let batch = writeBatch(db);
+              let ops = 0;
 
-              batch.delete(doc(db, "ratings", `${finalRoomId}_chairs`));
-              batch.delete(doc(db, "ratings", `${finalRoomId}_lighting`));
-              batch.delete(doc(db, "ratings", `${finalRoomId}_projector`));
+              for (const key of ratingKeys) {
+                const usersCol = collection(db, 'ratings', key, 'userRatings');
+                const usersSnap = await getDocs(usersCol);
+                usersSnap.forEach((userDoc) => {
+                  batch.delete(doc(db, 'ratings', key, 'userRatings', userDoc.id));
+                  ops++;
+                  if (ops >= BATCH_LIMIT) {
+                    // commit and start a new batch
+                    // Note: awaiting inside forEach isn't allowed, but we only await after the loop using a flag.
+                  }
+                });
 
-              await batch.commit();
+                if (ops >= BATCH_LIMIT) {
+                  await batch.commit();
+                  batch = writeBatch(db);
+                  ops = 0;
+                }
+
+                // delete aggregate doc last
+                batch.delete(doc(db, 'ratings', key));
+                ops++;
+                if (ops >= BATCH_LIMIT) {
+                  await batch.commit();
+                  batch = writeBatch(db);
+                  ops = 0;
+                }
+              }
+
+              if (ops > 0) {
+                await batch.commit();
+              }
               Alert.alert("Success", "Room ratings have been reset.");
             } catch (err) {
               console.error("Reset failed:", err);
@@ -419,6 +454,11 @@ export default function RoomDetail() {
             <View style={styles.detailRow}>
               <Text style={[styles.detailLabel, { color: theme.text }]}>Projector Visibility</Text>
               <RatingDisplay itemId={`${finalRoomId}_projector`} size={24} showMetaText={false} />
+            </View>
+
+            <View style={[styles.detailRow, { alignItems: 'center' }]}> 
+              <Text style={[styles.detailLabel, { color: theme.text }]}>Temperature</Text>
+              <TemperatureDisplay itemId={`${finalRoomId}_temperature`} />
             </View>
 
           </View>

@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import StarRating from '../../../../components/StarRating';
+import TemperatureRating from '../../../../components/TemperatureRating';
 import { Theme, useTheme } from '../../../../theme';
 import { useHapticFeedback } from '../../../../lib/SettingsContext';
 
@@ -58,6 +59,11 @@ export default function RateRoomModal() {
                         <View style={styles.ratingGroup}>
                             <Text style={[styles.label, { color: theme.text }]}>Projector/Screen Visibility</Text>
                             <StarRating itemId={`${finalRoomId}_projector`} size={40} />
+                        </View>
+
+                        <View style={styles.ratingGroup}>
+                            <Text style={[styles.label, { color: theme.text }]}>Temperature</Text>
+                            <TemperatureRating itemId={`${finalRoomId}_temperature`} />
                         </View>
 
                         <TouchableOpacity
