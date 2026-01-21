@@ -289,6 +289,11 @@ export default function Account() {
                 </Text>
               </View>
             )}
+            {userRole === 'test' && (
+              <View style={styles.testBadge}>
+                <Text style={styles.testBadgeText}>TEST</Text>
+              </View>
+            )}
             {userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu') && (
               <View style={styles.osuBadge}>
                 <Text style={styles.osuBadgeText}>OSU</Text>
@@ -714,6 +719,20 @@ function createStyles(theme: Theme) {
     },
     osuBadgeText: {
       color: '#DC4405',
+      fontSize: 10,
+      fontWeight: '800',
+      letterSpacing: 0.5,
+    },
+    testBadge: {
+      backgroundColor: '#9333EA' + '22',
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: '#9333EA' + '44',
+    },
+    testBadgeText: {
+      color: '#9333EA',
       fontSize: 10,
       fontWeight: '800',
       letterSpacing: 0.5,

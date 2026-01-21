@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { doc, onSnapshot, runTransaction, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot, runTransaction, serverTimestamp, getDoc } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../firebaseConfig';
@@ -72,6 +72,23 @@ export default function TemperatureRating({ itemId, width }: TemperatureRatingPr
     }
     setAvg(newAvg);
     setCount(newCount);
+
+    // Check if user is test account
+    let isTestAccount = false;
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists() && userDoc.data().role === 'test') {
+        isTestAccount = true;
+      }
+    } catch (e) {
+      console.error('Error checking user role:', e);
+    }
+
+    // Skip Firebase write if test account
+    if (isTestAccount) {
+      triggerHaptic();
+      return;
+    }
 
     const itemRef = doc(db, 'ratings', itemId);
     const userRef = doc(db, 'ratings', itemId, 'userRatings', user.uid);
