@@ -72,6 +72,8 @@ export default function Account() {
   const [message, setMessage] = useState<string | null>(null);
   const [userCount, setUserCount] = useState<number | null>(null);
   const [pendingCount, setPendingCount] = useState<number | null>(null);
+  const [showAppStore, setShowAppStore] = useState(false);
+  const [showPlayStore, setShowPlayStore] = useState(false);
 
   const version = Constants.expoConfig?.version || "1.0.0";
 
@@ -290,8 +292,6 @@ export default function Account() {
     ? !email.trim() || !password.trim() || !username.trim()
     : !email.trim() || !password.trim();
 
-  // Hidden for now; flip to true to reveal web store buttons
-  const SHOW_APP_LINKS_WEB = false;
   const APP_STORE_URL = 'https://apps.apple.com/app/idXXXXXXXXX';
   const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=XXXXXXXX';
 
@@ -547,40 +547,48 @@ export default function Account() {
               {Platform.OS === 'web' && !userEmail && (
                 <View style={[styles.storeLinks, !SHOW_APP_LINKS_WEB && { display: 'none' }]}>
                   <Text style={[styles.storeHeader, { color: theme.subtext }]}>Get the app</Text>
+                  <View style={styles.storeRow}>(showAppStore || showPlayStore) && { display: 'none' }]}>
+                  <Text style={[styles.storeHeader, { color: theme.subtext }]}>Get the app</Text>
                   <View style={styles.storeRow}>
-                    <Pressable
-                      style={[styles.storeBtn, { backgroundColor: '#000' }]}
-                      onPress={() => Linking.openURL(APP_STORE_URL)}
-                    >
-                      <Ionicons name="logo-apple" size={18} color="#fff" />
-                      <Text style={styles.storeBtnText}>Download on the App Store</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.storeBtn, { backgroundColor: '#188038' }]}
-                      onPress={() => Linking.openURL(PLAY_STORE_URL)}
-                    >
-                      <Ionicons name="logo-google" size={18} color="#fff" />
-                      <Text style={styles.storeBtnText}>Get it on Google Play</Text>
-                    </Pressable>
+                    {showAppStore && (
+                      <Pressable
+                        style={[styles.storeBtn, { backgroundColor: '#000' }]}
+                        onPress={() => Linking.openURL(APP_STORE_URL)}
+                      >
+                        <Ionicons name="logo-apple" size={18} color="#fff" />
+                        <Text style={styles.storeBtnText}>Download on the App Store</Text>
+                      </Pressable>
+                    )}
+                    {showPlayStore && (
+                      <Pressable
+                        style={[styles.storeBtn, { backgroundColor: '#188038' }]}
+                        onPress={() => Linking.openURL(PLAY_STORE_URL)}
+                      >
+                        <Ionicons name="logo-google" size={18} color="#fff" />
+                        <Text style={styles.storeBtnText}>Get it on Google Play</Text>
+                      </Pressable>
+                    )}
                   </View>
                   <Text style={[styles.storeHeader, { color: theme.subtext }]}>Or scan a QR code</Text>
                   <View style={styles.qrRow}>
-                    <Pressable onPress={() => Linking.openURL(APP_STORE_URL)} style={styles.qrItem}>
-                      <Image
-                        source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(APP_STORE_URL)}` }}
-                        style={styles.qrCode}
-                      />
-                      <Text style={[styles.qrCaption, { color: theme.subtext }]}>App Store</Text>
-                    </Pressable>
-                    <Pressable onPress={() => Linking.openURL(PLAY_STORE_URL)} style={styles.qrItem}>
-                      <Image
-                        source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(PLAY_STORE_URL)}` }}
-                        style={styles.qrCode}
-                      />
-                      <Text style={[styles.qrCaption, { color: theme.subtext }]}>Google Play</Text>
-                    </Pressable>
-                  </View>
-                </View>
+                    {showAppStore && (
+                      <Pressable onPress={() => Linking.openURL(APP_STORE_URL)} style={styles.qrItem}>
+                        <Image
+                          source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(APP_STORE_URL)}` }}
+                          style={styles.qrCode}
+                        />
+                        <Text style={[styles.qrCaption, { color: theme.subtext }]}>App Store</Text>
+                      </Pressable>
+                    )}
+                    {showPlayStore && (
+                      <Pressable onPress={() => Linking.openURL(PLAY_STORE_URL)} style={styles.qrItem}>
+                        <Image
+                          source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(PLAY_STORE_URL)}` }}
+                          style={styles.qrCode}
+                        />
+                        <Text style={[styles.qrCaption, { color: theme.subtext }]}>Google Play</Text>
+                      </Pressable>
+                    )}
               )}
             </View>
           )}

@@ -62,7 +62,6 @@ export default function BuildingDetail() {
                             [data-grid-item]:hover {
                                 transform: translateY(-6px) scale(1.01) !important;
                                 box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 10px 10px rgba(0,0,0,0.06) !important;
-                                border-color: ${theme.primary}44 !important;
                                 z-index: 5;
                             }
                             [data-glass-header] {
