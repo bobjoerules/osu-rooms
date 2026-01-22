@@ -274,6 +274,9 @@ export default function Account() {
     setMessage(null);
     try {
       await signOut(auth);
+      if (Platform.OS === 'web') {
+        router.replace('/');
+      }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       const friendly =
