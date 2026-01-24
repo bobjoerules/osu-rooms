@@ -544,10 +544,8 @@ export default function Account() {
                 </Text>
               </Pressable>
 
-              {Platform.OS === 'web' && !userEmail && (
-                <View style={[styles.storeLinks, !SHOW_APP_LINKS_WEB && { display: 'none' }]}>
-                  <Text style={[styles.storeHeader, { color: theme.subtext }]}>Get the app</Text>
-                  <View style={styles.storeRow}>(showAppStore || showPlayStore) && { display: 'none' }]}>
+              {Platform.OS === 'web' && !userEmail && (showAppStore || showPlayStore) && (
+                <View style={styles.storeLinks}>
                   <Text style={[styles.storeHeader, { color: theme.subtext }]}>Get the app</Text>
                   <View style={styles.storeRow}>
                     {showAppStore && (
@@ -589,6 +587,8 @@ export default function Account() {
                         <Text style={[styles.qrCaption, { color: theme.subtext }]}>Google Play</Text>
                       </Pressable>
                     )}
+                  </View>
+                </View>
               )}
             </View>
           )}

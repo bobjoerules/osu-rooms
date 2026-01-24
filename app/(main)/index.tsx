@@ -45,9 +45,8 @@ export default function Index() {
     }));
 
     if (isExpanding && !isDesktopWeb) {
-      // Small delay to allow the layout animation to start/prepare
       const headerOffset = Platform.OS === 'web'
-        ? insets.top + headerHeight + 75 + 16 // account for web search bar spacer
+        ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16) // account for web search bar spacer
         : insets.top + headerHeight;
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({
@@ -60,7 +59,7 @@ export default function Index() {
     }
 
     return false;
-  }, [isDesktopWeb, router, triggerHaptic, searchQuery, expandedIds, insets.top, headerHeight]);
+  }, [isDesktopWeb, router, triggerHaptic, searchQuery, expandedIds, insets.top, headerHeight, width]);
 
   const accordionItems = useMemo(() => {
     const isSearching = searchQuery.trim().length > 0;
@@ -225,7 +224,11 @@ export default function Index() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: (Platform.OS === 'web' ? insets.top + headerHeight + 75 + 16 : insets.top + headerHeight),
+            paddingTop: (
+              Platform.OS === 'web'
+                ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
+                : insets.top + headerHeight
+            ),
             paddingBottom: insets.bottom + 16,
           }
         ]}
@@ -238,7 +241,7 @@ export default function Index() {
             top: 0,
             left: 0,
             right: 0,
-            height: Platform.OS === 'web' ? insets.top + headerHeight + 75 + 16 : insets.top + headerHeight,
+            height: Platform.OS === 'web' ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16) : insets.top + headerHeight,
             backgroundColor: theme.background, // Fallback for mobile web
             paddingTop: Platform.OS === 'web' ? 16 : 0,
           }
