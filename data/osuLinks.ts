@@ -1,8 +1,9 @@
 export interface OsuLink {
     title: string;
     url: string;
-    icon?: string; // Ionicon name
-    appScheme?: string; // Custom URL scheme to open installed app
+    androidUrl?: string;
+    icon?: string;
+    appScheme?: string;
     category: 'Apps' | 'Websites';
 }
 
@@ -10,6 +11,7 @@ export const OSU_LINKS: OsuLink[] = [
     {
         title: 'Canvas',
         url: 'https://apps.apple.com/us/app/canvas-by-instructure/id480883488',
+        androidUrl: 'https://play.google.com/store/apps/details?id=com.instructure.candroid',
         icon: 'school',
         appScheme: 'canvas-courses://',
         category: 'Apps',
@@ -17,13 +19,15 @@ export const OSU_LINKS: OsuLink[] = [
     {
         title: 'OSU Events App',
         url: 'https://apps.apple.com/us/app/oregon-state-events/id1641761931',
+        androidUrl: 'https://play.google.com/store/apps/details?id=com.osuhonorsapp',
         icon: 'calendar',
-        appScheme: 'localist://',
+        appScheme: 'osuhonorsapp://',
         category: 'Apps',
     },
     {
         title: 'Outlook',
         url: 'https://apps.apple.com/us/app/microsoft-outlook/id951937596',
+        androidUrl: 'https://play.google.com/store/apps/details?id=com.microsoft.office.outlook',
         icon: 'mail',
         appScheme: 'ms-outlook://',
         category: 'Apps',

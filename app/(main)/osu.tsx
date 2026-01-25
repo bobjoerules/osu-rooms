@@ -23,19 +23,28 @@ export default function OsuScreen() {
     const { width } = useWindowDimensions();
     const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
-    const handleOpenLink = async (url: string, appScheme?: string) => {
+    const handleOpenLink = async (item: typeof OSU_LINKS[0]) => {
         triggerHaptic();
 
-        if (appScheme && Platform.OS !== 'web') {
+        // 1. Try to open the app directly if a scheme exists
+        if (item.appScheme && Platform.OS !== 'web') {
             try {
-                await Linking.openURL(appScheme);
-                return;
+                const canOpen = await Linking.canOpenURL(item.appScheme);
+                if (canOpen) {
+                    await Linking.openURL(item.appScheme);
+                    return;
+                }
             } catch (e) {
             }
         }
 
+        // 2. Pick the correct store/web URL based on platform
+        const targetUrl = (Platform.OS === 'android' && item.androidUrl)
+            ? item.androidUrl
+            : item.url;
+
         try {
-            await Linking.openURL(url);
+            await Linking.openURL(targetUrl);
         } catch (e) {
             Alert.alert('Error', 'Could not open the link.');
         }
@@ -60,14 +69,16 @@ export default function OsuScreen() {
                             index !== data.length - 1 && { borderBottomWidth: 1, borderBottomColor: theme.border },
                             pressed && { backgroundColor: theme.border + '33' }
                         ]}
-                        onPress={() => handleOpenLink(item.url, item.appScheme)}
+                        onPress={() => handleOpenLink(item)}
                     >
                         <View style={[styles.iconBox, { backgroundColor: theme.primary + '15' }]}>
                             <Ionicons name={item.icon as any || 'link'} size={20} color={theme.primary} />
                         </View>
                         <View style={{ flex: 1 }}>
                             <Text style={[styles.linkLabel, { color: theme.text }]}>{item.title}</Text>
-                            <Text style={[styles.linkUrl, { color: theme.subtext }]} numberOfLines={1}>{item.url}</Text>
+                            <Text style={[styles.linkUrl, { color: theme.subtext }]} numberOfLines={1}>
+                                {(Platform.OS === 'android' && item.androidUrl) ? item.androidUrl : item.url}
+                            </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={18} color={theme.border} />
                     </Pressable>
@@ -93,7 +104,7 @@ export default function OsuScreen() {
                 style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
                 contentContainerStyle={[
                     styles.listContent,
-                    { paddingBottom: insets.bottom + 24 }
+                    { paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 24) }
                 ]}
                 ListHeaderComponent={
                     <View>

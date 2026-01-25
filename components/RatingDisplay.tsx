@@ -13,11 +13,14 @@ export type RatingDisplayProps = {
   align?: 'center' | 'flex-start' | 'flex-end';
 };
 
+// Global cache for room ratings
+const ratingCache: Record<string, { avg: number; count: number }> = {};
+
 export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showMetaText = true, align = 'center' }: RatingDisplayProps) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [avg, setAvg] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  const [avg, setAvg] = useState<number>(() => ratingCache[itemId]?.avg ?? 0);
+  const [count, setCount] = useState<number>(() => ratingCache[itemId]?.count ?? 0);
 
   if (!itemId) {
     return (
@@ -31,8 +34,12 @@ export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showM
     const itemRef = doc(db, 'ratings', itemId);
     const unsub = onSnapshot(itemRef, (snap) => {
       const data = snap.data() as { avg?: number; count?: number } | undefined;
-      setAvg(data?.avg ?? 0);
-      setCount(data?.count ?? 0);
+      const newAvg = data?.avg ?? 0;
+      const newCount = data?.count ?? 0;
+
+      ratingCache[itemId] = { avg: newAvg, count: newCount };
+      setAvg(newAvg);
+      setCount(newCount);
     });
     return unsub;
   }, [itemId]);

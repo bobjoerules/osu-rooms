@@ -8,27 +8,59 @@ import { useTheme } from '../theme';
 export type BuildingRatingProps = {
     roomIds: string[];
     size?: number;
+    priority?: boolean;
 };
 
-export default function BuildingRating({ roomIds, size = 14 }: BuildingRatingProps) {
+// Global cache to prevent redundant fetching across the app session
+const ratingCache: Record<string, { avg: number; count: number }> = {};
+const listeners: Record<string, number> = {};
+
+export default function BuildingRating({ roomIds, size = 14, priority = false }: BuildingRatingProps) {
     const theme = useTheme();
-    const [roomRatings, setRoomRatings] = useState<Record<string, { avg: number; count: number }>>({});
+    // Initialize state with cached values if they exist
+    const [roomRatings, setRoomRatings] = useState<Record<string, { avg: number; count: number }>>(() => {
+        const initial: Record<string, { avg: number; count: number }> = {};
+        roomIds.forEach(id => {
+            if (ratingCache[id]) initial[id] = ratingCache[id];
+        });
+        return initial;
+    });
 
     useEffect(() => {
-        setRoomRatings({});
-        const unsubs = roomIds.map((id) =>
-            onSnapshot(doc(db, 'ratings', id), (snap) => {
-                const data = snap.data() as { avg?: number; count?: number } | undefined;
-                setRoomRatings((prev) => ({
-                    ...prev,
-                    [id]: { avg: data?.avg ?? 0, count: data?.count ?? 0 },
-                }));
-            })
-        );
+        let isActive = true;
+        const unsubs: (() => void)[] = [];
+
+        const startListening = () => {
+            if (!isActive) return;
+
+            roomIds.forEach((id) => {
+                const unsub = onSnapshot(doc(db, 'ratings', id), (snap) => {
+                    if (!isActive) return;
+                    const data = snap.data() as { avg?: number; count?: number } | undefined;
+                    const rating = { avg: data?.avg ?? 0, count: data?.count ?? 0 };
+
+                    // Update cache
+                    ratingCache[id] = rating;
+
+                    setRoomRatings((prev) => ({
+                        ...prev,
+                        [id]: rating,
+                    }));
+                });
+                unsubs.push(unsub);
+            });
+        };
+
+        // If not priority, delay loading to allow user to scroll past
+        const timer = priority ? null : setTimeout(startListening, 400);
+        if (priority) startListening();
+
         return () => {
+            isActive = false;
+            if (timer) clearTimeout(timer);
             unsubs.forEach((u) => u());
         };
-    }, [roomIds]);
+    }, [roomIds, priority]);
 
     const { avg, count } = useMemo(() => {
         let totalScore = 0;

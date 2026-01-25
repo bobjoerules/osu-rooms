@@ -243,11 +243,11 @@ export default function Index() {
         key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
         columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
         renderItem={renderItem}
-        maxToRenderPerBatch={20}
-        windowSize={11}
+        maxToRenderPerBatch={100}
+        windowSize={100}
         updateCellsBatchingPeriod={50}
         removeClippedSubviews={Platform.OS === 'android'}
-        initialNumToRender={15}
+        initialNumToRender={100}
         extraData={searchQuery + Object.keys(expandedIds).length}
         onScrollToIndexFailed={(info) => {
           flatListRef.current?.scrollToOffset({
@@ -264,7 +264,7 @@ export default function Index() {
                 ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
                 : insets.top + headerHeight
             ),
-            paddingBottom: insets.bottom + 16,
+            paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 16),
           }
         ]}
       />
