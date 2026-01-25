@@ -347,7 +347,7 @@ export default function Account() {
           styles.scrollContent,
           (isDesktopWeb || centerLoginMobile) && styles.scrollContentCentered,
           {
-            paddingBottom: Math.max(insets.bottom, 20) + (Platform.OS === 'android' ? 80 : 20)
+            paddingBottom: Math.max(insets.bottom, 20) + (Platform.OS === 'android' ? 80 : 60)
           }
         ]}
         showsVerticalScrollIndicator={false}
@@ -504,7 +504,7 @@ export default function Account() {
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.settingLabel, { color: theme.text }]}>Add Room Tab</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the add room tab in the tab bar</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the add room tab in the menu bar</Text>
                   </View>
                   <Switch
                     value={showSubmitTab}
