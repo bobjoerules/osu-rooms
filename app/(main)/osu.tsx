@@ -26,19 +26,15 @@ export default function OsuScreen() {
     const handleOpenLink = async (item: typeof OSU_LINKS[0]) => {
         triggerHaptic();
 
-        // 1. Try to open the app directly if a scheme exists
         if (item.appScheme && Platform.OS !== 'web') {
             try {
-                const canOpen = await Linking.canOpenURL(item.appScheme);
-                if (canOpen) {
-                    await Linking.openURL(item.appScheme);
-                    return;
-                }
+                await Linking.openURL(item.appScheme);
+                return;
             } catch (e) {
+                console.log('Failed to open app scheme:', e);
             }
         }
 
-        // 2. Pick the correct store/web URL based on platform
         const targetUrl = (Platform.OS === 'android' && item.androidUrl)
             ? item.androidUrl
             : item.url;

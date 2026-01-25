@@ -11,7 +11,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bobjoerules.osurooms"
+      "bundleIdentifier": "com.bobjoerules.osurooms",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "canvas-courses",
+          "osuhonorsapp",
+          "ms-outlook"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
