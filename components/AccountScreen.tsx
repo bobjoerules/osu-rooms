@@ -46,7 +46,7 @@ const colours = { white: '#ffffff' };
 
 export default function Account() {
   const theme = useTheme();
-  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures } = useSettings();
+  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures, showSubmitTab, setShowSubmitTab } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -494,6 +494,23 @@ export default function Account() {
                     onValueChange={(val) => {
                       triggerHaptic();
                       setUseBetaFeatures(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                  />
+                </View>
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Add Room Tab</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the add room tab in the tab bar</Text>
+                  </View>
+                  <Switch
+                    value={showSubmitTab}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowSubmitTab(val);
                     }}
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}

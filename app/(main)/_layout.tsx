@@ -8,7 +8,7 @@ import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 export default function TabLayout() {
     const pathname = usePathname();
     const triggerHaptic = useHapticFeedback();
-    const { useBetaFeatures } = useSettings();
+    const { useBetaFeatures, showSubmitTab } = useSettings();
     const lastPathname = useRef<string | null>(null);
 
     useLayoutEffect(() => {
@@ -27,10 +27,12 @@ export default function TabLayout() {
                         <Label>Rooms</Label>
                         <Icon sf="square.grid.2x2.fill" drawable="ic_menu_home" />
                     </NativeTabs.Trigger>
-                    <NativeTabs.Trigger name="submit">
-                        <Label>Add Room</Label>
-                        <Icon sf="plus.circle.fill" drawable="ic_input_add" />
-                    </NativeTabs.Trigger>
+                    {showSubmitTab && (
+                        <NativeTabs.Trigger name="submit">
+                            <Label>Add Room</Label>
+                            <Icon sf="plus.circle.fill" drawable="ic_input_add" />
+                        </NativeTabs.Trigger>
+                    )}
                     <NativeTabs.Trigger name="osu">
                         <Label>OSU</Label>
                         <Icon sf="link" drawable="ic_menu_share" />
@@ -52,10 +54,12 @@ export default function TabLayout() {
                     <Label>Rooms</Label>
                     <Icon sf="square.grid.2x2.fill" drawable="ic_menu_home" />
                 </NativeTabs.Trigger>
-                <NativeTabs.Trigger name="submit">
-                    <Label>Add Room</Label>
-                    <Icon sf="plus.circle.fill" drawable="ic_input_add" />
-                </NativeTabs.Trigger>
+                {showSubmitTab && (
+                    <NativeTabs.Trigger name="submit">
+                        <Label>Add Room</Label>
+                        <Icon sf="plus.circle.fill" drawable="ic_input_add" />
+                    </NativeTabs.Trigger>
+                )}
                 <NativeTabs.Trigger name="account">
                     <Label>Account</Label>
                     <Icon sf="person.fill" drawable="ic_menu_allfriends" />
