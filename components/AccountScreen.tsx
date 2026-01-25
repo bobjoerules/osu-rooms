@@ -297,53 +297,61 @@ export default function Account() {
   const APP_STORE_URL = 'https://apps.apple.com/app/idXXXXXXXXX';
   const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=XXXXXXXX';
 
+  const renderHeader = (isSticky: boolean) => (
+    <View style={[
+      styles.header,
+      isSticky && { maxWidth: isDesktopWeb ? 1200 : '100%', paddingHorizontal: 20, alignSelf: 'center' },
+      !isSticky && { marginBottom: 12, alignSelf: 'center' },
+      Platform.OS === 'web' && { paddingTop: 75 + 16 }
+    ]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Text style={styles.headerTitle}>
+          {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
+        </Text>
+        {isAdmin && (
+          <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
+            <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
+              {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
+            </Text>
+          </View>
+        )}
+        {userRole === 'test' && (
+          <View style={styles.testBadge}>
+            <Text style={styles.testBadgeText}>TEST</Text>
+          </View>
+        )}
+        {userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu') && (
+          <View style={styles.osuBadge}>
+            <Text style={styles.osuBadgeText}>OSU</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.headerSubtitle}>
+        {userEmail
+          ? "Manage your account and preferences"
+          : isSignup
+            ? "Create an account to continue"
+            : "Welcome back"}
+      </Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={[styles.header, userEmail && { maxWidth: isDesktopWeb ? 1200 : '100%', paddingHorizontal: isDesktopWeb ? 20 : 20 }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={styles.headerTitle}>
-            {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
-          </Text>
-          {isAdmin && (
-            <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
-              <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
-                {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
-              </Text>
-            </View>
-          )}
-          {userRole === 'test' && (
-            <View style={styles.testBadge}>
-              <Text style={styles.testBadgeText}>TEST</Text>
-            </View>
-          )}
-          {userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu') && (
-            <View style={styles.osuBadge}>
-              <Text style={styles.osuBadgeText}>OSU</Text>
-            </View>
-          )}
-        </View>
-        <Text style={styles.headerSubtitle}>
-          {userEmail
-            ? "Manage your account and preferences"
-            : isSignup
-              ? "Create an account to continue"
-              : "Welcome back"}
-        </Text>
-      </View>
-
+      {userEmail && renderHeader(true)}
       <ScrollView
-        style={{ flex: 1, width: '100%' }}
+        style={[{ flex: 1, width: '100%' }, (isDesktopWeb && userEmail) && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
         contentContainerStyle={[
           styles.scrollContent,
           (isDesktopWeb || centerLoginMobile) && styles.scrollContentCentered,
           {
-            paddingTop: userEmail ? 0 : 20,
             paddingBottom: Math.max(insets.bottom, 20) + (Platform.OS === 'android' ? 80 : 20)
           }
         ]}
         showsVerticalScrollIndicator={false}
         scrollEnabled={true}
       >
+        {!userEmail && renderHeader(false)}
         <View style={styles.card}>
           {userEmail ? (
             <View style={styles.section}>

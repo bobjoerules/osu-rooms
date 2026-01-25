@@ -8,7 +8,8 @@ import {
     Pressable,
     StyleSheet,
     Text,
-    View
+    View,
+    useWindowDimensions
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OSU_LINKS } from '../../data/osuLinks';
@@ -19,6 +20,8 @@ export default function OsuScreen() {
     const theme = useTheme();
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
+    const { width } = useWindowDimensions();
+    const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
     const handleOpenLink = async (url: string, appScheme?: string) => {
         triggerHaptic();
@@ -75,7 +78,11 @@ export default function OsuScreen() {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
-            <View style={styles.header}>
+            <View style={[
+                styles.header,
+                Platform.OS === 'web' && { paddingTop: 75 + 16 },
+                isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
+            ]}>
                 <Text style={[styles.title, { color: theme.text }]}>OSU Resources</Text>
                 <Text style={[styles.subtitle, { color: theme.subtext }]}>Useful links/resources for students</Text>
             </View>
@@ -83,6 +90,7 @@ export default function OsuScreen() {
             <FlatList
                 data={[]}
                 renderItem={() => null}
+                style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
                 contentContainerStyle={[
                     styles.listContent,
                     { paddingBottom: insets.bottom + 24 }
