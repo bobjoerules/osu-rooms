@@ -18,7 +18,7 @@ import {
     View,
     useWindowDimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BUILDINGS_DATA } from '../data/rooms';
 import { auth, db, storage } from '../firebaseConfig';
 import { useHapticFeedback } from '../lib/SettingsContext';
@@ -29,6 +29,7 @@ export default function SubmitScreen() {
     const router = useRouter();
     const triggerHaptic = useHapticFeedback();
     const { width } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
     const isDesktop = Platform.OS === 'web' && width > 768;
     const styles = useMemo(() => createStyles(theme, isDesktop), [theme, isDesktop]);
 
@@ -157,9 +158,12 @@ export default function SubmitScreen() {
                 style={{ flex: 1 }}
             >
                 <ScrollView
-                    contentContainerStyle={styles.scrollContent}
+                    contentContainerStyle={[
+                        styles.scrollContent,
+                        { paddingBottom: Math.max(insets.bottom, 20) + (Platform.OS === 'android' ? 80 : 20) }
+                    ]}
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={Platform.OS === 'web'}
+                    scrollEnabled={true}
                 >
                     <View style={styles.header}>
                         {(initialBuilding || initialRoomNumber) ? (

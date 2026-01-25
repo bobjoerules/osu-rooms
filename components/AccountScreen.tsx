@@ -36,7 +36,7 @@ import {
   View,
   useWindowDimensions
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BUILDINGS_DATA } from "../data/rooms";
 import { auth, db } from "../firebaseConfig";
 import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
@@ -47,8 +47,10 @@ export default function Account() {
   const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
-  const styles = useMemo(() => createStyles(theme), [theme]);
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const isDesktopWeb = Platform.OS === 'web' && width >= 768; // Renamed from isDesktop to match original context
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -68,7 +70,6 @@ export default function Account() {
   const [showAppStore, setShowAppStore] = useState(false);
   const [showPlayStore, setShowPlayStore] = useState(false);
 
-  const isDesktopWeb = Platform.OS === 'web' && width >= 768;
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
 
   const totalRooms = useMemo(() => {
@@ -298,46 +299,51 @@ export default function Account() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={[styles.header, userEmail && { maxWidth: isDesktopWeb ? 1200 : '100%', paddingHorizontal: isDesktopWeb ? 20 : 20 }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Text style={styles.headerTitle}>
+            {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
+          </Text>
+          {isAdmin && (
+            <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
+              <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
+                {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
+              </Text>
+            </View>
+          )}
+          {userRole === 'test' && (
+            <View style={styles.testBadge}>
+              <Text style={styles.testBadgeText}>TEST</Text>
+            </View>
+          )}
+          {userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu') && (
+            <View style={styles.osuBadge}>
+              <Text style={styles.osuBadgeText}>OSU</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.headerSubtitle}>
+          {userEmail
+            ? "Manage your account and preferences"
+            : isSignup
+              ? "Create an account to continue"
+              : "Welcome back"}
+        </Text>
+      </View>
+
       <ScrollView
         style={{ flex: 1, width: '100%' }}
         contentContainerStyle={[
           styles.scrollContent,
           (isDesktopWeb || centerLoginMobile) && styles.scrollContentCentered,
+          {
+            paddingTop: userEmail ? 0 : 20,
+            paddingBottom: Math.max(insets.bottom, 20) + (Platform.OS === 'android' ? 80 : 20)
+          }
         ]}
         showsVerticalScrollIndicator={false}
-        scrollEnabled={Platform.OS === 'web' || !userEmail}
+        scrollEnabled={true}
       >
-        <View style={styles.header}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={styles.headerTitle}>
-              {userEmail ? "Account" : isSignup ? "Sign up" : "Sign in"}
-            </Text>
-            {isAdmin && (
-              <View style={[styles.adminBadge, userRole === 'owner' && { backgroundColor: '#FFD70022', borderColor: '#FFD70044' }]}>
-                <Text style={[styles.adminBadgeText, userRole === 'owner' && { color: '#B8860B' }]}>
-                  {userRole === 'owner' ? 'OWNER' : 'ADMIN'}
-                </Text>
-              </View>
-            )}
-            {userRole === 'test' && (
-              <View style={styles.testBadge}>
-                <Text style={styles.testBadgeText}>TEST</Text>
-              </View>
-            )}
-            {userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu') && (
-              <View style={styles.osuBadge}>
-                <Text style={styles.osuBadgeText}>OSU</Text>
-              </View>
-            )}
-          </View>
-          <Text style={styles.headerSubtitle}>
-            {userEmail
-              ? "Signed in with email"
-              : isSignup
-                ? "Create an account to continue"
-                : "Welcome back"}
-          </Text>
-        </View>
         <View style={styles.card}>
           {userEmail ? (
             <View style={styles.section}>
@@ -641,19 +647,19 @@ function createStyles(theme: Theme) {
       justifyContent: "center",
     },
     header: {
-      marginBottom: 16,
-      gap: 4,
+      paddingVertical: 16,
       width: "100%",
       maxWidth: 400,
     },
     headerTitle: {
       color: theme.text,
       fontSize: 28,
-      fontWeight: "700",
+      fontWeight: 'bold',
     },
     headerSubtitle: {
       color: theme.subtext,
-      fontSize: 16,
+      fontSize: 14,
+      marginTop: 4,
     },
     card: {
       backgroundColor: theme.card,
