@@ -30,7 +30,7 @@ export default function RoomList({ rooms }: RoomListProps) {
     const roomName = item.id.split('-').pop() || '???';
     return (
       <TouchableOpacity
-        style={[styles.roomCard, isDesktopWeb && styles.roomCardGrid, { backgroundColor: theme.card, borderColor: theme.border }]}
+        style={[styles.roomCard, isDesktopWeb && styles.roomCardGrid, { backgroundColor: theme.card }]}
         onPress={() => handleRoomPress(item.id)}
         activeOpacity={0.7}
         {...(isDesktopWeb ? { dataSet: { 'grid-item': 'true' } } : {})}
@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     padding: 0,
     borderRadius: 16,
-    borderWidth: 1,
     overflow: 'hidden',
   },
   roomImageGridContainer: {

@@ -56,7 +56,6 @@ export default function BuildingDetail() {
                         @media (min-width: 768px) {
                             [data-grid-item] {
                                 transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-                                border: 1px solid ${theme.border} !important;
                                 background-color: ${theme.card} !important;
                             }
                             [data-grid-item]:hover {
@@ -68,7 +67,6 @@ export default function BuildingDetail() {
                                 backdrop-filter: blur(12px) !important;
                                 -webkit-backdrop-filter: blur(12px) !important;
                                 background-color: ${theme.background}cc !important;
-                                border-bottom: 1px solid ${theme.border}44 !important;
                             }
                         }
                     `}
@@ -158,6 +156,9 @@ function createStyles(theme: Theme) {
         scrollContent: {
             paddingHorizontal: 16,
             paddingBottom: 40,
+        },
+        gridWrapper: {
+            width: '100%',
         },
     });
 }

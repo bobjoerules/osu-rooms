@@ -336,6 +336,7 @@ function createStyles(theme: Theme) {
       paddingVertical: 8,
       borderRadius: 12,
       borderWidth: 1,
+      borderColor: theme.border,
       gap: 8,
     },
     searchInput: {
@@ -366,7 +367,6 @@ function createStyles(theme: Theme) {
     },
     itemContainer: {
       borderRadius: 12,
-      borderWidth: 1,
       overflow: 'hidden',
     },
   });

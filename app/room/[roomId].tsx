@@ -690,7 +690,6 @@ function createStyles(theme: Theme) {
       gap: 8,
       paddingVertical: 14,
       borderRadius: 12,
-      borderWidth: 1,
       marginTop: 10,
       marginBottom: 30,
     },
@@ -705,9 +704,7 @@ function createStyles(theme: Theme) {
       gap: 8,
       paddingVertical: 12,
       borderRadius: 12,
-      borderWidth: 1,
       marginTop: 8,
-      borderStyle: 'dashed',
     },
     suggestButtonText: {
       fontSize: 14,

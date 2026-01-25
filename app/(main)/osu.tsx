@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
     },
     sectionBox: {
         borderRadius: 20,
-        borderWidth: 1,
         overflow: 'hidden',
     },
     linkItem: {
