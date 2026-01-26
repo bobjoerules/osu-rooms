@@ -15,7 +15,7 @@ import { Theme, useTheme } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const STORAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/osu-rooms.firebasestorage.app/o';
+const STORAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/osu-room-rates.firebasestorage.app/o';
 
 const firebaseImage = (path: string): string => {
   const encodedPath = encodeURIComponent(path);

@@ -7,9 +7,9 @@ import { Platform } from 'react-native';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAlQlj8YVo8lZftur7t7E00x6yTIYL9-TM',
-  authDomain: 'osu-rooms.firebaseapp.com',
-  projectId: 'osu-rooms',
-  storageBucket: 'osu-rooms.firebasestorage.app',
+  authDomain: 'osu-room-rates.firebaseapp.com',
+  projectId: 'osu-room-rates',
+  storageBucket: 'osu-room-rates.firebasestorage.app',
   messagingSenderId: '170430832418',
   appId: '1:170430832418:web:5fc59d1b8be3c3c6d5cf7b',
 };
