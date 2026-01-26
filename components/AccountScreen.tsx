@@ -4,21 +4,23 @@ import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   onAuthStateChanged,
   sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile,
+  updateProfile
 } from "firebase/auth";
 import {
   collection,
+  deleteDoc,
   doc,
   getCountFromServer,
   getDoc,
   onSnapshot,
   query,
   where,
-  writeBatch,
+  writeBatch
 } from "firebase/firestore";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -275,6 +277,87 @@ export default function Account() {
     }
   }
 
+  async function handleDeleteAccount() {
+    triggerHaptic();
+    const confirmDelete = () => {
+      return new Promise((resolve) => {
+        if (Platform.OS === 'web') {
+          resolve(window.confirm("Are you sure you want to delete your account? This action cannot be undone."));
+        } else {
+          Alert.alert(
+            "Delete Account",
+            "Are you sure you want to delete your account? This action cannot be undone.",
+            [
+              { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
+              { text: "Delete", style: "destructive", onPress: () => resolve(true) }
+            ]
+          );
+        }
+      });
+    };
+
+    if (!await confirmDelete()) return;
+
+    setLoading(true);
+    console.log("Starting account deletion process...");
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("No current user found during delete.");
+        return;
+      }
+
+      const uid = user.uid;
+      console.log("Deleting data for uid:", uid);
+
+      if (userName) {
+        try {
+          await deleteDoc(doc(db, "usernames", userName.toLowerCase()));
+          console.log("Username map deleted");
+        } catch (e) {
+          console.error("Failed to delete username map:", e);
+        }
+      }
+      try {
+        await deleteDoc(doc(db, "users", uid));
+        console.log("User doc deleted");
+      } catch (e) {
+        console.error("Failed to delete user doc:", e);
+      }
+
+      console.log("Deleting auth user...");
+      await deleteUser(user);
+      console.log("Auth user deleted");
+
+      setMessage("Account deleted.");
+      if (Platform.OS === 'web') {
+        window.alert("Account successfully deleted.");
+        router.replace('/');
+      } else {
+        Alert.alert("Success", "Account deleted.");
+      }
+    } catch (error: any) {
+      console.error("Delete account error:", error);
+      if (error.code === 'auth/requires-recent-login') {
+        const msg = "For security, please sign out and sign back in to delete your account.";
+        if (Platform.OS === 'web') {
+          window.alert(msg);
+        } else {
+          Alert.alert("Security Check", msg);
+        }
+      } else {
+        const msg = "Failed to delete account: " + (error.message || error.code);
+        if (Platform.OS === 'web') {
+          window.alert(msg);
+        } else {
+          Alert.alert("Error", msg);
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleSignOut() {
     triggerHaptic();
     setMessage(null);
@@ -396,6 +479,20 @@ export default function Account() {
 
               <Pressable style={[styles.buttonSecondary, { marginTop: 20, width: '100%' }]} onPress={handleSignOut}>
                 <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.buttonSecondary, { marginTop: 12, width: '100%', borderColor: theme.destructive + '44', backgroundColor: theme.destructive + '11' }]}
+                onPress={handleDeleteAccount}
+              >
+                <Text style={[styles.buttonText, { color: theme.destructive }]}>Delete Account</Text>
+              </Pressable>
+
+              <Pressable
+                style={{ marginTop: 16, alignSelf: 'center' }}
+                onPress={() => router.push('/privacy' as any)}
+              >
+                <Text style={{ color: theme.subtext, fontSize: 13, textDecorationLine: 'underline' }}>Privacy Policy</Text>
               </Pressable>
 
               {isAdmin && (
