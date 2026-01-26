@@ -34,7 +34,8 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "name": "OSU Rooms"
+      "name": "OSU Rooms",
+      "backgroundColor": "#000000"
     },
     "plugins": [
       "expo-router",
