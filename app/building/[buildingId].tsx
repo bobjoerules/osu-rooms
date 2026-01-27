@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
-import { BUILDINGS_DATA } from '../../data/rooms';
+import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
 
@@ -16,6 +16,7 @@ const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
 
 export default function BuildingDetail() {
     const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
+    const { buildings, loading } = useBuildings();
     const router = useRouter();
     const theme = useTheme();
     const { showPlaceholders } = useSettings();
@@ -26,8 +27,8 @@ export default function BuildingDetail() {
     const styles = useMemo(() => createStyles(theme), [theme]);
 
     const building = useMemo(() =>
-        BUILDINGS_DATA.find(b => b.id === buildingId),
-        [buildingId]);
+        buildings.find(b => b.id === buildingId),
+        [buildingId, buildings]);
 
     const filteredRooms = useMemo(() => {
         if (!building) return [];
@@ -36,6 +37,14 @@ export default function BuildingDetail() {
             return showPlaceholders || hasPhotos;
         });
     }, [building, showPlaceholders]);
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+        );
+    }
 
     if (!building) {
         return (

@@ -39,8 +39,8 @@ import {
   useWindowDimensions
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BUILDINGS_DATA } from "../data/rooms";
 import { auth, db } from "../firebaseConfig";
+import { useBuildings } from "../lib/DatabaseContext";
 import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
 import { Theme, useTheme } from "../theme";
 
@@ -76,9 +76,11 @@ export default function Account() {
 
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
 
+  const { buildings } = useBuildings();
+
   const totalRooms = useMemo(() => {
-    return BUILDINGS_DATA.reduce((acc, building) => acc + building.rooms.length, 0);
-  }, []);
+    return buildings.reduce((acc, building) => acc + (building.rooms?.length || 0), 0);
+  }, [buildings]);
 
   const version = Constants.expoConfig?.version || "1.0.0";
 
@@ -531,6 +533,7 @@ export default function Account() {
                       <Ionicons name="chevron-forward" size={20} color={theme.subtext} />
                     </View>
                   </Pressable>
+
                 </View>
               )}
 

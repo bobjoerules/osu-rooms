@@ -8,8 +8,8 @@ import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, Nati
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import TemperatureDisplay from '../../components/TemperatureDisplay';
-import { getRoomById } from '../../data/rooms';
 import { auth, db } from '../../firebaseConfig';
+import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
 
@@ -23,6 +23,7 @@ const firebaseImage = (path: string): string => {
 };
 
 export default function RoomDetail() {
+  const { getRoomById, loading: dbLoading } = useBuildings();
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
   const router = useRouter();
   const theme = useTheme();
@@ -130,7 +131,12 @@ export default function RoomDetail() {
     );
   };
 
-  const roomData = getRoomById(finalRoomId as string) || {
+  const roomInfo = getRoomById(finalRoomId as string);
+  const roomData = roomInfo ? {
+    ...roomInfo.room,
+    building: roomInfo.buildingName,
+    name: roomInfo.room.id.split('-').pop() || '???'
+  } : {
     id: 'unknown',
     name: '???',
     building: 'Unknown Building',
@@ -139,6 +145,8 @@ export default function RoomDetail() {
     capacity: 'Unknown',
     roomType: 'Unknown',
   };
+
+  const isRoomValid = !!roomInfo;
 
   const handleMouseDrag = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!mouseDown) return;
@@ -258,6 +266,14 @@ export default function RoomDetail() {
     handleMouseMove(e as any);
   };
 
+  if (dbLoading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {Platform.OS === 'web' && (
@@ -366,7 +382,7 @@ export default function RoomDetail() {
                 nestedScrollEnabled={true}
               />
               <View style={[styles.paginationDots, isDesktopWeb && { bottom: 20 }]}>
-                {roomData.images.map((_, index) => (
+                {(roomData.images as any[]).map((_: any, index: number) => (
                   <View
                     key={index}
                     style={[

@@ -19,14 +19,15 @@ import {
     useWindowDimensions
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BUILDINGS_DATA } from '../data/rooms';
 import { auth, db, storage } from '../firebaseConfig';
+import { useBuildings } from '../lib/DatabaseContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
 export default function SubmitScreen() {
     const theme = useTheme();
     const router = useRouter();
+    const { buildings, loading: dbLoading } = useBuildings();
     const triggerHaptic = useHapticFeedback();
     const { width } = useWindowDimensions();
     const insets = useSafeAreaInsets();
@@ -45,9 +46,9 @@ export default function SubmitScreen() {
     const [isOtherSelected, setIsOtherSelected] = useState(false);
 
     const buildingNames = useMemo(() => [
-        ...BUILDINGS_DATA.map(b => b.name).sort(),
+        ...buildings.map(b => b.name).sort(),
         "Other (Type manually)"
-    ], []);
+    ], [buildings]);
 
     const pickImage = async () => {
         triggerHaptic();

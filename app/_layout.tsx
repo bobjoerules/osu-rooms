@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, useColorScheme, View } from 'react-native';
 import AccountScreen from '../components/AccountScreen';
 import { auth } from '../firebaseConfig';
+import { DatabaseProvider } from '../lib/DatabaseContext';
 import { SettingsProvider } from '../lib/SettingsContext';
 import { ThemeProvider, useTheme } from '../theme';
 
@@ -50,10 +51,12 @@ export default function RootLayout() {
   if (isLoggedIn === null || !localLoaded) {
     return (
       <SettingsProvider>
-        <ThemeProvider>
-          <ThemeManager />
-          <LoadingScreen />
-        </ThemeProvider>
+        <DatabaseProvider>
+          <ThemeProvider>
+            <ThemeManager />
+            <LoadingScreen />
+          </ThemeProvider>
+        </DatabaseProvider>
       </SettingsProvider>
     );
   }
@@ -61,20 +64,24 @@ export default function RootLayout() {
   if (!isLoggedIn) {
     return (
       <SettingsProvider>
-        <ThemeProvider>
-          <ThemeManager />
-          <AccountScreen />
-        </ThemeProvider>
+        <DatabaseProvider>
+          <ThemeProvider>
+            <ThemeManager />
+            <AccountScreen />
+          </ThemeProvider>
+        </DatabaseProvider>
       </SettingsProvider>
     );
   }
 
   return (
     <SettingsProvider>
-      <ThemeProvider>
-        <ThemeManager />
-        <AuthenticatedStack />
-      </ThemeProvider>
+      <DatabaseProvider>
+        <ThemeProvider>
+          <ThemeManager />
+          <AuthenticatedStack />
+        </ThemeProvider>
+      </DatabaseProvider>
     </SettingsProvider>
   );
 }

@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -17,8 +17,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../firebaseConfig';
-import { useTheme } from '../theme';
 import { useHapticFeedback } from '../lib/SettingsContext';
+import { useTheme } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -79,10 +79,70 @@ export default function AdminScreen() {
     const handleAction = async (id: string, status: 'approved' | 'rejected') => {
         triggerHaptic();
         try {
+            if (status === 'approved') {
+                const subRef = doc(db, 'submissions', id);
+                const subSnap = await getDoc(subRef);
+                if (!subSnap.exists()) throw new Error("Submission not found");
+                const submission = subSnap.data() as Submission;
+
+                const buildingsRef = collection(db, 'buildings');
+                const q = query(buildingsRef, where('name', '==', submission.building));
+                const buildingSnap = await getDocs(q);
+
+                let buildingDoc;
+                let buildingId;
+
+                if (buildingSnap.empty) {
+                    buildingId = submission.building.toLowerCase().replace(/\s+/g, '-');
+                    buildingDoc = {
+                        id: buildingId,
+                        name: submission.building,
+                        rooms: []
+                    };
+                } else {
+                    buildingId = buildingSnap.docs[0].id;
+                    buildingDoc = buildingSnap.docs[0].data();
+                }
+
+                const newRoom = {
+                    id: `${buildingId}-${submission.roomNumber}`,
+                    capacity: submission.capacity,
+                    roomType: submission.roomType,
+                    floor: submission.roomNumber.charAt(0) === '0' ? '0' : submission.roomNumber.charAt(0),
+                    images: submission.imageUrl ? [submission.imageUrl] : [],
+                    searchAliases: [`${submission.building} ${submission.roomNumber}`]
+                };
+
+                const existingRoomIndex = buildingDoc.rooms.findIndex((r: any) => r.id === newRoom.id);
+                const updatedRooms = [...buildingDoc.rooms];
+
+                if (existingRoomIndex > -1) {
+                    updatedRooms[existingRoomIndex] = {
+                        ...updatedRooms[existingRoomIndex],
+                        capacity: newRoom.capacity || updatedRooms[existingRoomIndex].capacity,
+                        roomType: newRoom.roomType || updatedRooms[existingRoomIndex].roomType,
+                        images: newRoom.images.length > 0 ? newRoom.images : updatedRooms[existingRoomIndex].images
+                    };
+                } else {
+                    updatedRooms.push(newRoom);
+                }
+
+                await setDoc(doc(db, 'buildings', buildingId), {
+                    ...buildingDoc,
+                    rooms: updatedRooms
+                });
+            }
+
             await updateDoc(doc(db, 'submissions', id), {
                 status,
                 reviewedAt: new Date(),
             });
+
+            if (Platform.OS === 'web') {
+                window.alert(`Submission ${status}!`);
+            } else {
+                Alert.alert('Success', `Submission ${status}!`);
+            }
         } catch (error) {
             console.error(`Error ${status} submission:`, error);
             Alert.alert('Error', `Failed to ${status} submission.`);
@@ -241,7 +301,7 @@ export default function AdminScreen() {
                 {statuses.map((status) => {
                     const statusColor = getStatusColor(status);
                     const isActive = statusFilter === status;
-                    
+
                     return (
                         <Pressable
                             key={status}

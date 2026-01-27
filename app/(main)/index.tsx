@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccordionItem } from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
-import { BUILDINGS_DATA } from '../../data/rooms';
+import { Building } from '../../data/rooms';
+import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { Theme, useTheme } from '../../theme';
 
@@ -26,7 +27,7 @@ const BuildingListItem = React.memo(({
   theme,
   styles
 }: {
-  item: typeof BUILDINGS_DATA[0],
+  item: Building,
   index: number,
   isExpanded: boolean,
   onPress: (id: string, index: number) => void,
@@ -82,6 +83,7 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const flatListRef = useRef<FlatList>(null);
+  const { buildings, loading } = useBuildings();
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
 
   const handleBuildingPress = useCallback((id: string, index: number) => {
@@ -122,19 +124,19 @@ export default function Index() {
     const isSearching = searchQuery.trim().length > 0;
     const lowerQuery = searchQuery.toLowerCase();
 
-    const filtered = BUILDINGS_DATA.map(building => {
+    const filtered = buildings.reduce<Building[]>((acc, building) => {
       const isHiddenByDefault = building.id === 'backrooms';
       if (!isSearching && isHiddenByDefault) {
-        return null;
+        return acc;
       }
 
       const buildingNameMatch = building.name.toLowerCase().includes(lowerQuery);
 
-      const matchingRooms = building.rooms.filter(room => {
+      const matchingRooms = building.rooms?.filter(room => {
         const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
-        const roomName = room.id.split('-').pop() || '';
 
         if (isSearching) {
+          const roomName = room.id.split('-').pop() || '';
           const nameMatch = roomName.toLowerCase().includes(lowerQuery);
           const aliasMatch = room.searchAliases?.some(alias =>
             alias.toLowerCase().includes(lowerQuery)
@@ -143,30 +145,26 @@ export default function Index() {
         }
 
         return showPlaceholders || hasPhotos;
-      });
+      }) || [];
 
       if (isSearching) {
         if (matchingRooms.length > 0) {
-          return { ...building, rooms: matchingRooms };
+          acc.push({ ...building, rooms: matchingRooms });
+        } else if (buildingNameMatch) {
+          acc.push(building);
         }
-        if (buildingNameMatch) {
-          return { ...building };
-        }
-        return null;
+      } else if (matchingRooms.length > 0) {
+        acc.push({ ...building, rooms: matchingRooms });
       }
 
-      if (matchingRooms.length > 0) {
-        return { ...building, rooms: matchingRooms };
-      }
-
-      return null;
-    }).filter((item): item is typeof BUILDINGS_DATA[0] => item !== null);
+      return acc;
+    }, []);
 
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  }, [searchQuery, showPlaceholders]);
+  }, [searchQuery, showPlaceholders, buildings]);
 
-  const renderItem = useCallback(({ item, index }: { item: typeof BUILDINGS_DATA[0], index: number }) => {
+  const renderItem = useCallback(({ item, index }: { item: Building, index: number }) => {
     const isSearching = searchQuery.trim().length > 0;
     return (
       <BuildingListItem
@@ -184,6 +182,14 @@ export default function Index() {
   }, [isDesktopWeb, searchQuery, expandedIds, handleBuildingPress, showBuildingImages, theme, styles]);
 
 
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -248,11 +254,6 @@ export default function Index() {
         updateCellsBatchingPeriod={Platform.OS === 'android' ? 100 : 30}
         removeClippedSubviews={false}
         initialNumToRender={Platform.OS === 'android' ? 10 : 100}
-        getItemLayout={(_, index) => ({
-          length: 120,
-          offset: 120 * index,
-          index,
-        })}
         extraData={JSON.stringify(expandedIds) + searchQuery}
         onScrollToIndexFailed={(info) => {
           flatListRef.current?.scrollToOffset({
