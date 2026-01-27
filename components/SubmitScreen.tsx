@@ -330,10 +330,10 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             backgroundColor: theme.background,
         },
         scrollContent: {
-            ...(isDesktop ? { flexGrow: 1, justifyContent: 'center' } : {}),
+            flexGrow: 1,
             paddingHorizontal: 20,
             paddingBottom: 20,
-            ...(Platform.OS === 'web' && !isDesktop ? { paddingTop: 75 } : {}),
+            paddingTop: isDesktop ? 100 : (Platform.OS === 'web' ? 75 : 0),
             maxWidth: 600,
             width: '100%',
             alignSelf: 'center',
