@@ -16,6 +16,7 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { firebaseImage } from '../data/rooms';
 import { db } from '../firebaseConfig';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
@@ -109,7 +110,7 @@ export default function AdminScreen() {
                     capacity: submission.capacity,
                     roomType: submission.roomType,
                     floor: submission.roomNumber.charAt(0) === '0' ? '0' : submission.roomNumber.charAt(0),
-                    images: submission.imageUrl ? [submission.imageUrl] : [],
+                    images: submission.imageUrl ? [submission.imageUrl] : [firebaseImage('placeholder.png')],
                     searchAliases: [`${submission.building} ${submission.roomNumber}`]
                 };
 
@@ -117,11 +118,22 @@ export default function AdminScreen() {
                 const updatedRooms = [...buildingDoc.rooms];
 
                 if (existingRoomIndex > -1) {
+                    const existingImages = updatedRooms[existingRoomIndex].images || [];
+                    const isPlaceholder = (url: string) => url.includes('placeholder.png');
+
+                    let mergedImages;
+                    if (newRoom.images.length > 0) {
+                        const realExistingImages = existingImages.filter((img: string) => !isPlaceholder(img));
+                        mergedImages = [...realExistingImages, ...newRoom.images];
+                    } else {
+                        mergedImages = existingImages;
+                    }
+
                     updatedRooms[existingRoomIndex] = {
                         ...updatedRooms[existingRoomIndex],
                         capacity: newRoom.capacity || updatedRooms[existingRoomIndex].capacity,
                         roomType: newRoom.roomType || updatedRooms[existingRoomIndex].roomType,
-                        images: newRoom.images.length > 0 ? newRoom.images : updatedRooms[existingRoomIndex].images
+                        images: mergedImages
                     };
                 } else {
                     updatedRooms.push(newRoom);
