@@ -35,9 +35,12 @@ export default function OsuScreen() {
             }
         }
 
-        const targetUrl = (Platform.OS === 'android' && item.androidUrl)
-            ? item.androidUrl
-            : item.url;
+        let targetUrl = item.url;
+        if (Platform.OS === 'android' && item.androidUrl) {
+            targetUrl = item.androidUrl;
+        } else if (isDesktopWeb && item.websiteUrl) {
+            targetUrl = item.websiteUrl;
+        }
 
         try {
             await Linking.openURL(targetUrl);
@@ -46,12 +49,17 @@ export default function OsuScreen() {
         }
     };
 
-    const categorizedLinks = OSU_LINKS.reduce((acc, link) => {
-        const cat = link.category;
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(link);
-        return acc;
-    }, {} as Record<string, typeof OSU_LINKS>);
+    let categorizedLinks: Record<string, typeof OSU_LINKS> = {};
+    if (isDesktopWeb) {
+        categorizedLinks['Websites'] = OSU_LINKS.map(link => ({ ...link, category: 'Websites' }));
+    } else {
+        categorizedLinks = OSU_LINKS.reduce((acc, link) => {
+            const cat = link.category;
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(link);
+            return acc;
+        }, {} as Record<string, typeof OSU_LINKS>);
+    }
 
     const renderSection = (title: string, data: typeof OSU_LINKS) => (
         <View style={styles.sectionContainer}>
@@ -73,7 +81,11 @@ export default function OsuScreen() {
                         <View style={{ flex: 1 }}>
                             <Text style={[styles.linkLabel, { color: theme.text }]}>{item.title}</Text>
                             <Text style={[styles.linkUrl, { color: theme.subtext }]} numberOfLines={1}>
-                                {(Platform.OS === 'android' && item.androidUrl) ? item.androidUrl : item.url}
+                                {isDesktopWeb && item.websiteUrl
+                                    ? item.websiteUrl
+                                    : (Platform.OS === 'android' && item.androidUrl)
+                                        ? item.androidUrl
+                                        : item.url}
                             </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={18} color={theme.border} />
@@ -105,7 +117,7 @@ export default function OsuScreen() {
                 ListHeaderComponent={
                     <View>
                         {categorizedLinks['Websites'] && renderSection('Websites', categorizedLinks['Websites'])}
-                        {categorizedLinks['Apps'] && renderSection('Apps', categorizedLinks['Apps'])}
+                        {!isDesktopWeb && categorizedLinks['Apps'] && renderSection('Apps', categorizedLinks['Apps'])}
                     </View>
                 }
             />
