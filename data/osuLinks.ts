@@ -19,7 +19,7 @@ export const OSU_LINKS: OsuLink[] = [
         category: 'Apps',
     },
     {
-        title: 'OSU Events App',
+        title: 'OSU Events',
         url: 'https://apps.apple.com/us/app/oregon-state-events/id1641761931',
         androidUrl: 'https://play.google.com/store/apps/details?id=com.osuhonorsapp',
         websiteUrl: 'https://events.oregonstate.edu',

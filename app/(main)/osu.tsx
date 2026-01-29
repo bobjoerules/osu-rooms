@@ -118,7 +118,7 @@ export default function OsuScreen() {
                 ]}
                 ListHeaderComponent={
                     <View>
-                        {categorizedLinks['Websites'] && renderSection('Websites', categorizedLinks['Websites'])}
+                        {!isDesktopWeb && categorizedLinks['Websites'] && renderSection('Websites', categorizedLinks['Websites'])}
                         {!isDesktopWeb && categorizedLinks['Apps'] && renderSection('Apps', categorizedLinks['Apps'])}
                     </View>
                 }

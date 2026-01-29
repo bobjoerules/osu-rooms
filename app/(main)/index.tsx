@@ -222,7 +222,6 @@ export default function Index() {
                 box-shadow: 0 16px 24px rgba(0,0,0,0.10), 0 8px 8px rgba(0,0,0,0.06) !important;
                 z-index: 5;
               }
-              /* Glassmorphism for headers on web */
               [data-glass-header] {
                 backdrop-filter: blur(12px) !important;
                 -webkit-backdrop-filter: blur(12px) !important;
@@ -355,7 +354,6 @@ function createStyles(theme: Theme) {
     },
     scrollContent: {
       paddingHorizontal: 16,
-      // bottom padding is applied dynamically in contentContainerStyle
     },
     columnWrapper: {
       gap: 16,
