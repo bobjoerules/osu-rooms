@@ -13,6 +13,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bobjoerules.osurooms",
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "LSApplicationQueriesSchemes": [
           "canvas-courses",
           "osuhonorsapp",

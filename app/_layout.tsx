@@ -1,18 +1,36 @@
+import NetInfo from '@react-native-community/netinfo';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as NavigationBar from 'expo-navigation-bar';
+import * as Notifications from 'expo-notifications';
 import { Stack, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, LogBox, Platform, StyleSheet, useColorScheme, View } from 'react-native';
 import AccountScreen from '../components/AccountScreen';
+import NoInternetScreen from '../components/NoInternetScreen';
 import { auth } from '../firebaseConfig';
 import { DatabaseProvider } from '../lib/DatabaseContext';
 import { SettingsProvider } from '../lib/SettingsContext';
 import { ThemeProvider, useTheme } from '../theme';
+
+LogBox.ignoreLogs([
+  'functionality is not fully supported in Expo Go',
+  'Android Push notifications (remote notifications) functionality provided by expo-notifications was removed',
+]);
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true
+  }),
+});
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,6 +39,28 @@ export default function RootLayout() {
   const [localLoaded, setLocalLoaded] = useState(false);
   const prevIsLoggedIn = useRef<boolean | null>(null);
   const router = useRouter();
+  const response = Notifications.useLastNotificationResponse();
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    NetInfo.fetch().then(state => {
+      setIsConnected(state.isConnected);
+    });
+
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (response) {
+      const roomId = response.notification.request.content.data.roomId;
+      if (roomId) {
+        router.push(`/room/${roomId}`);
+      }
+    }
+  }, [response]);
 
   const [loaded, error] = useFonts({
     'Ionicons': require('../assets/fonts/Ionicons.ttf'),
@@ -33,6 +73,8 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -48,7 +90,18 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  if (isLoggedIn === null || !localLoaded) {
+  if (isConnected === false) {
+    return (
+      <SettingsProvider>
+        <ThemeProvider>
+          <ThemeManager />
+          <NoInternetScreen />
+        </ThemeProvider>
+      </SettingsProvider>
+    );
+  }
+
+  if (isLoggedIn === null || !localLoaded || isConnected === null) {
     return (
       <SettingsProvider>
         <DatabaseProvider>

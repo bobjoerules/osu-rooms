@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
+import * as Notifications from 'expo-notifications';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -74,7 +75,6 @@ export default function SubmitScreen() {
             return;
         }
 
-        // Reload user to get latest verification status
         await auth.currentUser.reload();
 
         if (!auth.currentUser.emailVerified) {
@@ -113,7 +113,7 @@ export default function SubmitScreen() {
                 imageUrl = await getDownloadURL(storageRef);
             }
 
-            await addDoc(collection(db, 'submissions'), {
+            const docRef = await addDoc(collection(db, 'submissions'), {
                 building: building.trim(),
                 roomNumber: roomNumber.trim(),
                 roomType: roomType.trim(),
@@ -125,12 +125,27 @@ export default function SubmitScreen() {
                 createdAt: serverTimestamp(),
             });
 
+            try {
+                const { status } = await Notifications.getPermissionsAsync();
+                let finalStatus = status;
+                if (status !== 'granted') {
+                    const { status: newStatus } = await Notifications.requestPermissionsAsync();
+                    finalStatus = newStatus;
+                }
+
+                if (finalStatus === 'granted') {
+                    await addPendingSubmission(docRef.id);
+                }
+            } catch (ignore) {
+            }
+
             const resetForm = () => {
                 setBuilding('');
                 setRoomNumber('');
                 setRoomType('');
                 setCapacity('');
                 setImage(null);
+
                 setIsOtherSelected(false);
             };
 
@@ -302,6 +317,8 @@ export default function SubmitScreen() {
                                 </Pressable>
                             )}
                         </View>
+
+
 
                         <Pressable
                             style={[
@@ -478,5 +495,6 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             fontSize: 16,
             color: theme.text,
         },
+
     });
 }

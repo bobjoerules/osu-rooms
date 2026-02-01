@@ -483,12 +483,14 @@ export default function Account() {
                 <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
               </Pressable>
 
-              <Pressable
-                style={[styles.buttonSecondary, { marginTop: 12, width: '100%', borderColor: theme.destructive + '44', backgroundColor: theme.destructive + '11' }]}
-                onPress={handleDeleteAccount}
-              >
-                <Text style={[styles.buttonText, { color: theme.destructive }]}>Delete Account</Text>
-              </Pressable>
+              {!isAdmin && (
+                <Pressable
+                  style={[styles.buttonSecondary, { marginTop: 12, width: '100%', borderColor: theme.destructive + '44', backgroundColor: theme.destructive + '11' }]}
+                  onPress={handleDeleteAccount}
+                >
+                  <Text style={[styles.buttonText, { color: theme.destructive }]}>Delete Account</Text>
+                </Pressable>
+              )}
 
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16, gap: 12 }}>
                 <Pressable

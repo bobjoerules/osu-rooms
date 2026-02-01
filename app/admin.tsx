@@ -31,9 +31,11 @@ interface Submission {
     capacity: string;
     imageUrl: string | null;
     userEmail: string;
-    createdAt: any;
     status: string;
+    pushToken?: string;
 }
+
+import { sendPushNotification } from '../lib/notifications';
 
 export default function AdminScreen() {
     const theme = useTheme();
@@ -80,6 +82,7 @@ export default function AdminScreen() {
     const handleAction = async (id: string, status: 'approved' | 'rejected') => {
         triggerHaptic();
         try {
+            let createdRoomId: string | null = null;
             if (status === 'approved') {
                 const subRef = doc(db, 'submissions', id);
                 const subSnap = await getDoc(subRef);
@@ -114,6 +117,8 @@ export default function AdminScreen() {
                     searchAliases: [`${submission.building} ${submission.roomNumber}`]
                 };
 
+                createdRoomId = newRoom.id;
+
                 const existingRoomIndex = buildingDoc.rooms.findIndex((r: any) => r.id === newRoom.id);
                 const updatedRooms = [...buildingDoc.rooms];
 
@@ -145,10 +150,26 @@ export default function AdminScreen() {
                 });
             }
 
-            await updateDoc(doc(db, 'submissions', id), {
+            const updateData: any = {
                 status,
                 reviewedAt: new Date(),
-            });
+            };
+
+            if (createdRoomId) {
+                updateData.createdRoomId = createdRoomId;
+
+                const submission = (await getDoc(doc(db, 'submissions', id))).data() as Submission;
+                if (submission?.pushToken) {
+                    await sendPushNotification(
+                        submission.pushToken,
+                        "Room Approved! 🥳",
+                        `Your submission for ${submission.building} ${submission.roomNumber} has been approved. Tap to view.`,
+                        { roomId: createdRoomId }
+                    );
+                }
+            }
+
+            await updateDoc(doc(db, 'submissions', id), updateData);
 
             if (Platform.OS === 'web') {
                 window.alert(`Submission ${status}!`);
