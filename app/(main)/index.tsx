@@ -267,7 +267,7 @@ export default function Index() {
             paddingTop: (
               Platform.OS === 'web'
                 ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
-                : insets.top + headerHeight
+                : (insets.top || (Platform.OS === 'ios' ? 20 : 0)) + headerHeight
             ),
             paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 16),
           }
