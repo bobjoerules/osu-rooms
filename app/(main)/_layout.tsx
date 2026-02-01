@@ -1,20 +1,9 @@
-import * as Haptics from 'expo-haptics';
-import { useNavigation, usePathname } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useEffect } from 'react';
-import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
+import { useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
-    const pathname = usePathname();
-    const triggerHaptic = useHapticFeedback();
     const { useBetaFeatures, showSubmitTab } = useSettings();
-    const navigation = useNavigation();
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('state', () => {
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        });
-        return unsubscribe;
-    }, [navigation, triggerHaptic]);
+
 
     const triggers = [
         <NativeTabs.Trigger key="index" name="index">
