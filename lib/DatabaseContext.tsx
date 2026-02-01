@@ -1,5 +1,5 @@
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Building } from '../data/rooms';
 import { db } from '../firebaseConfig';
 
@@ -37,7 +37,7 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
         return unsubscribe;
     }, []);
 
-    const getRoomById = (roomId: string) => {
+    const getRoomById = useCallback((roomId: string) => {
         for (const building of buildings) {
             const room = building.rooms?.find(r => r.id === roomId);
             if (room) {
@@ -45,10 +45,17 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
             }
         }
         return null;
-    };
+    }, [buildings]);
+
+    const value = React.useMemo(() => ({
+        buildings,
+        loading,
+        error,
+        getRoomById
+    }), [buildings, loading, error, getRoomById]);
 
     return (
-        <DatabaseContext.Provider value={{ buildings, loading, error, getRoomById }}>
+        <DatabaseContext.Provider value={value}>
             {children}
         </DatabaseContext.Provider>
     );

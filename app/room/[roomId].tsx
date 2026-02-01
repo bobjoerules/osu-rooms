@@ -61,7 +61,24 @@ export default function RoomDetail() {
     return unsub;
   }, []);
 
-  const handleResetRoom = () => {
+  const roomData = useMemo(() => {
+    const roomInfo = getRoomById(finalRoomId as string);
+    return roomInfo ? {
+      ...roomInfo.room,
+      building: roomInfo.buildingName,
+      name: roomInfo.room.id.split('-').pop() || '???'
+    } : {
+      id: 'unknown',
+      name: '???',
+      building: 'Unknown Building',
+      images: [firebaseImage('placeholder.png')],
+      floor: 'Unknown',
+      capacity: 'Unknown',
+      roomType: 'Unknown',
+    };
+  }, [getRoomById, finalRoomId]);
+
+  const handleResetRoom = useCallback(() => {
     triggerHaptic();
     Alert.alert(
       "Reset Room Data",
@@ -93,10 +110,6 @@ export default function RoomDetail() {
                 usersSnap.forEach((userDoc) => {
                   batch.delete(doc(db, 'ratings', key, 'userRatings', userDoc.id));
                   ops++;
-                  if (ops >= BATCH_LIMIT) {
-                    // commit and start a new batch
-                    // Note: awaiting inside forEach isn't allowed, but we only await after the loop using a flag.
-                  }
                 });
 
                 if (ops >= BATCH_LIMIT) {
@@ -129,24 +142,9 @@ export default function RoomDetail() {
         }
       ]
     );
-  };
+  }, [triggerHaptic, roomData.name, finalRoomId]);
 
-  const roomInfo = getRoomById(finalRoomId as string);
-  const roomData = roomInfo ? {
-    ...roomInfo.room,
-    building: roomInfo.buildingName,
-    name: roomInfo.room.id.split('-').pop() || '???'
-  } : {
-    id: 'unknown',
-    name: '???',
-    building: 'Unknown Building',
-    images: [firebaseImage('placeholder.png')],
-    floor: 'Unknown',
-    capacity: 'Unknown',
-    roomType: 'Unknown',
-  };
-
-  const isRoomValid = !!roomInfo;
+  const isRoomValid = !!(getRoomById(finalRoomId as string));
 
   const handleMouseDrag = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!mouseDown) return;

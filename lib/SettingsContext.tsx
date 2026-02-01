@@ -113,19 +113,27 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const value = React.useMemo(() => ({
+        showPlaceholders,
+        setShowPlaceholders: updateShowPlaceholders,
+        useHaptics,
+        setUseHaptics: updateUseHaptics,
+        showBuildingImages,
+        setShowBuildingImages: updateShowBuildingImages,
+        useBetaFeatures,
+        setUseBetaFeatures: updateUseBetaFeatures,
+        showSubmitTab,
+        setShowSubmitTab: updateShowSubmitTab
+    }), [
+        showPlaceholders,
+        useHaptics,
+        showBuildingImages,
+        useBetaFeatures,
+        showSubmitTab
+    ]);
+
     return (
-        <SettingsContext.Provider value={{
-            showPlaceholders,
-            setShowPlaceholders: updateShowPlaceholders,
-            useHaptics,
-            setUseHaptics: updateUseHaptics,
-            showBuildingImages,
-            setShowBuildingImages: updateShowBuildingImages,
-            useBetaFeatures,
-            setUseBetaFeatures: updateUseBetaFeatures,
-            showSubmitTab,
-            setShowSubmitTab: updateShowSubmitTab
-        }}>
+        <SettingsContext.Provider value={value}>
             {children}
         </SettingsContext.Provider>
     );

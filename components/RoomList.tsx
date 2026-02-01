@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
@@ -21,12 +21,12 @@ export default function RoomList({ rooms }: RoomListProps) {
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
-  const handleRoomPress = (roomId: string) => {
+  const handleRoomPress = useCallback((roomId: string) => {
     triggerHaptic();
     router.push(`/room/${roomId}`);
-  };
+  }, [router, triggerHaptic]);
 
-  const renderRoomItem = ({ item }: { item: Room }) => {
+  const renderRoomItem = useCallback(({ item }: { item: Room }) => {
     const roomName = item.id.split('-').pop() || '???';
     return (
       <TouchableOpacity
@@ -47,7 +47,7 @@ export default function RoomList({ rooms }: RoomListProps) {
         {!isDesktopWeb && <Ionicons name="chevron-forward" size={20} color={theme.subtext} />}
       </TouchableOpacity>
     );
-  };
+  }, [handleRoomPress, isDesktopWeb, theme.card, theme.text, theme.subtext]);
 
   return (
     <FlatList

@@ -253,7 +253,7 @@ export default function Index() {
         updateCellsBatchingPeriod={Platform.OS === 'android' ? 100 : 30}
         removeClippedSubviews={false}
         initialNumToRender={Platform.OS === 'android' ? 10 : 100}
-        extraData={JSON.stringify(expandedIds) + searchQuery}
+        extraData={expandedIds}
         onScrollToIndexFailed={(info) => {
           flatListRef.current?.scrollToOffset({
             offset: info.averageItemLength * info.index,
@@ -261,7 +261,7 @@ export default function Index() {
           });
         }}
         style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
-        contentContainerStyle={[
+        contentContainerStyle={useMemo(() => [
           styles.scrollContent,
           {
             paddingTop: (
@@ -271,11 +271,11 @@ export default function Index() {
             ),
             paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 16),
           }
-        ]}
+        ], [styles.scrollContent, insets.top, insets.bottom, headerHeight, width])}
       />
 
       <View
-        style={[
+        style={useMemo(() => [
           styles.headerContainer,
           {
             top: 0,
@@ -285,7 +285,7 @@ export default function Index() {
             backgroundColor: theme.background, // Fallback for mobile web
             paddingTop: Platform.OS === 'web' ? 16 : 0,
           }
-        ]}
+        ], [styles.headerContainer, insets.top, headerHeight, width, theme.background])}
         {...(Platform.OS === 'web' ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
         {Platform.OS === 'web' && (

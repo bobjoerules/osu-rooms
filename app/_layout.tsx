@@ -91,8 +91,8 @@ function RootContent() {
       setIsLoggedIn(loggedIn);
       prevIsLoggedIn.current = loggedIn;
     });
-    return unsubscribe;
-  }, []);
+    return () => unsubscribe();
+  }, [router]);
 
   if (isConnected === false) {
     return <NoInternetScreen />;
@@ -111,14 +111,16 @@ function RootContent() {
 
 export default function RootLayout() {
   return (
-    <SettingsProvider>
-      <DatabaseProvider>
-        <ThemeProvider>
-          <ThemeManager />
-          <RootContent />
-        </ThemeProvider>
-      </DatabaseProvider>
-    </SettingsProvider>
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <SettingsProvider>
+        <DatabaseProvider>
+          <ThemeProvider>
+            <ThemeManager />
+            <RootContent />
+          </ThemeProvider>
+        </DatabaseProvider>
+      </SettingsProvider>
+    </View>
   );
 }
 
@@ -136,6 +138,7 @@ function ThemeManager() {
 
   return null;
 }
+
 
 function LoadingScreen() {
   return (
