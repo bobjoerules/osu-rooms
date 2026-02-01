@@ -1,8 +1,20 @@
+import * as Haptics from 'expo-haptics';
+import { useNavigation } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useSettings } from '../../lib/SettingsContext';
+import { useEffect } from 'react';
+import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
     const { useBetaFeatures, showSubmitTab } = useSettings();
+    const triggerHaptic = useHapticFeedback();
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('state', () => {
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        });
+        return unsubscribe;
+    }, [navigation, triggerHaptic]);
 
 
     const triggers = [
