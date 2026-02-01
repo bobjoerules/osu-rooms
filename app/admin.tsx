@@ -287,7 +287,7 @@ export default function AdminScreen() {
             <View style={{ width: Platform.OS === 'web' ? '100%' : windowWidth }}>
                 {loading ? (
                     <View style={styles.centered}>
-                        <ActivityIndicator size="large" color={theme.subtext} />
+                        <ActivityIndicator size="large" color={theme.primary} />
                     </View>
                 ) : pageSubmissions.length === 0 ? (
                     <View style={styles.centered}>

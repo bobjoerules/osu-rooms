@@ -20,26 +20,32 @@ import { ThemeProvider, useTheme } from '../theme';
 LogBox.ignoreLogs([
   'functionality is not fully supported in Expo Go',
   'Android Push notifications (remote notifications) functionality provided by expo-notifications was removed',
+  'Listening to push token changes is not yet fully supported on web',
+  '`expo-notifications` functionality is not fully supported in Expo Go',
 ]);
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true
-  }),
-});
+if (Platform.OS !== 'web') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true
+    }),
+  });
+}
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+const useNotificationResponse = Platform.OS === 'web' ? () => null : Notifications.useLastNotificationResponse;
+
+function RootContent() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [localLoaded, setLocalLoaded] = useState(false);
   const prevIsLoggedIn = useRef<boolean | null>(null);
   const router = useRouter();
-  const response = Notifications.useLastNotificationResponse();
+  const response = useNotificationResponse();
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -54,7 +60,7 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (response) {
+    if (response && 'notification' in response) {
       const roomId = response.notification.request.content.data.roomId;
       if (roomId) {
         router.push(`/room/${roomId}`);
@@ -74,8 +80,6 @@ export default function RootLayout() {
     }
   }, [loaded, error]);
 
-
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       const loggedIn = !!user;
@@ -91,48 +95,27 @@ export default function RootLayout() {
   }, []);
 
   if (isConnected === false) {
-    return (
-      <SettingsProvider>
-        <ThemeProvider>
-          <ThemeManager />
-          <NoInternetScreen />
-        </ThemeProvider>
-      </SettingsProvider>
-    );
+    return <NoInternetScreen />;
   }
 
   if (isLoggedIn === null || !localLoaded || isConnected === null) {
-    return (
-      <SettingsProvider>
-        <DatabaseProvider>
-          <ThemeProvider>
-            <ThemeManager />
-            <LoadingScreen />
-          </ThemeProvider>
-        </DatabaseProvider>
-      </SettingsProvider>
-    );
+    return <LoadingScreen />;
   }
 
   if (!isLoggedIn) {
-    return (
-      <SettingsProvider>
-        <DatabaseProvider>
-          <ThemeProvider>
-            <ThemeManager />
-            <AccountScreen />
-          </ThemeProvider>
-        </DatabaseProvider>
-      </SettingsProvider>
-    );
+    return <AccountScreen />;
   }
 
+  return <AuthenticatedStack />;
+}
+
+export default function RootLayout() {
   return (
     <SettingsProvider>
       <DatabaseProvider>
         <ThemeProvider>
           <ThemeManager />
-          <AuthenticatedStack />
+          <RootContent />
         </ThemeProvider>
       </DatabaseProvider>
     </SettingsProvider>
@@ -157,7 +140,7 @@ function ThemeManager() {
 function LoadingScreen() {
   return (
     <View style={[styles.loadingContainer, { backgroundColor: '#000000' }]}>
-      <ActivityIndicator size="large" color="#ffffff" />
+      <ActivityIndicator size="large" color="#D73F09" />
     </View>
   );
 }
