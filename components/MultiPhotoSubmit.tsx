@@ -50,7 +50,11 @@ export default function MultiPhotoSubmit() {
             }
         } catch (error) {
             console.error('Pick image error:', error);
-            Alert.alert('Error', 'Failed to open image gallery.');
+            if (Platform.OS === 'web') {
+                window.alert('Failed to open image gallery.');
+            } else {
+                Alert.alert('Error', 'Failed to open image gallery.');
+            }
         }
     };
 
@@ -64,13 +68,21 @@ export default function MultiPhotoSubmit() {
 
         triggerHaptic();
         if (!auth.currentUser) {
-            Alert.alert('Error', 'You must be signed in to upload photos.');
+            if (Platform.OS === 'web') {
+                window.alert('You must be signed in to upload photos.');
+            } else {
+                Alert.alert('Error', 'You must be signed in to upload photos.');
+            }
             return;
         }
 
         await auth.currentUser.reload();
         if (!auth.currentUser.emailVerified) {
-            Alert.alert('Verification Required', 'Please verify your email address to upload photos.');
+            if (Platform.OS === 'web') {
+                window.alert('Please verify your email address to upload photos.');
+            } else {
+                Alert.alert('Verification Required', 'Please verify your email address to upload photos.');
+            }
             return;
         }
 
@@ -118,7 +130,11 @@ export default function MultiPhotoSubmit() {
             router.back();
         } catch (error: any) {
             console.error('Upload Error:', error);
-            Alert.alert('Upload Error', 'Failed to upload photos. Please try again.');
+            if (Platform.OS === 'web') {
+                window.alert('Failed to upload photos. Please try again.');
+            } else {
+                Alert.alert('Upload Error', 'Failed to upload photos. Please try again.');
+            }
         } finally {
             setSubmitting(false);
         }

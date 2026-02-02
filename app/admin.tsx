@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActivityIndicator,
@@ -44,7 +44,9 @@ export default function AdminScreen() {
     const triggerHaptic = useHapticFeedback();
     const { width: windowWidth } = useWindowDimensions();
     const horizontalListRef = useRef<FlatList>(null);
-    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [pending, setPending] = useState<Submission[]>([]);
+    const [approved, setApproved] = useState<Submission[]>([]);
+    const [rejected, setRejected] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
 
@@ -52,33 +54,56 @@ export default function AdminScreen() {
 
     useEffect(() => {
         setLoading(true);
-        const q = query(
+        const qPending = query(
             collection(db, 'submissions'),
+            where('status', '==', 'pending'),
             orderBy('createdAt', 'desc')
         );
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const unsubPending = onSnapshot(qPending, (snapshot) => {
             const docs = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as Submission[];
-            setSubmissions(docs);
+            setPending(docs);
             setLoading(false);
         }, (error) => {
-            console.error("Error fetching submissions:", error);
+            console.error("Error fetching pending:", error);
             setLoading(false);
         });
 
-        return unsubscribe;
+        const qApproved = query(
+            collection(db, 'submissions'),
+            where('status', '==', 'approved'),
+            orderBy('createdAt', 'desc'),
+            limit(50)
+        );
+        const unsubApproved = onSnapshot(qApproved, (snapshot) => {
+            setApproved(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Submission[]);
+        });
+
+        const qRejected = query(
+            collection(db, 'submissions'),
+            where('status', '==', 'rejected'),
+            orderBy('createdAt', 'desc'),
+            limit(50)
+        );
+        const unsubRejected = onSnapshot(qRejected, (snapshot) => {
+            setRejected(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Submission[]);
+        });
+
+        return () => {
+            unsubPending();
+            unsubApproved();
+            unsubRejected();
+        };
     }, []);
 
-    const groupedSubmissions = useMemo(() => {
-        return {
-            pending: submissions.filter(s => s.status === 'pending'),
-            approved: submissions.filter(s => s.status === 'approved'),
-            rejected: submissions.filter(s => s.status === 'rejected'),
-        };
-    }, [submissions]);
+    const groupedSubmissions = useMemo(() => ({
+        pending,
+        approved,
+        rejected
+    }), [pending, approved, rejected]);
 
     const handleAction = async (id: string, status: 'approved' | 'rejected') => {
         triggerHaptic();
@@ -183,12 +208,30 @@ export default function AdminScreen() {
             }
         } catch (error) {
             console.error(`Error ${status} submission:`, error);
-            Alert.alert('Error', `Failed to ${status} submission.`);
+            if (Platform.OS === 'web') {
+                window.alert(`Failed to ${status} submission.`);
+            } else {
+                Alert.alert('Error', `Failed to ${status} submission.`);
+            }
         }
     };
 
     const handleDelete = async (id: string) => {
         triggerHaptic();
+        if (Platform.OS === 'web') {
+            const confirmed = window.confirm('Delete Permanently? This will remove this submission from the database forever.');
+            if (confirmed) {
+                try {
+                    await deleteDoc(doc(db, 'submissions', id));
+                    window.alert('Submission deleted.');
+                } catch (error) {
+                    console.error("Error deleting submission:", error);
+                    window.alert('Failed to delete submission.');
+                }
+            }
+            return;
+        }
+
         Alert.alert(
             'Delete Permanently?',
             'This will remove this submission from the database forever.',
@@ -229,7 +272,7 @@ export default function AdminScreen() {
         }
     };
 
-    const renderSubmissionItem = ({ item }: { item: Submission }) => (
+    const SubmissionItem = React.memo(({ item }: { item: Submission }) => (
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
             {item.imageUrls && item.imageUrls.length > 0 ? (
                 <FlatList
@@ -248,6 +291,9 @@ export default function AdminScreen() {
                     snapToAlignment="center"
                     decelerationRate="fast"
                     style={styles.imageContainer}
+                    initialNumToRender={1}
+                    maxToRenderPerBatch={1}
+                    windowSize={2}
                 />
             ) : item.imageUrl ? (
                 <Image
@@ -289,18 +335,20 @@ export default function AdminScreen() {
                             </Pressable>
                         </>
                     )}
-                    {item.status !== 'pending' && (
-                        <Pressable
-                            style={[styles.actionButton, styles.deleteButton]}
-                            onPress={() => handleDelete(item.id)}
-                        >
-                            <Ionicons name="trash-outline" size={20} color="#ff453a" />
-                            <Text style={[styles.actionText, { color: '#ff453a' }]}>Delete Forever</Text>
-                        </Pressable>
-                    )}
+                    <Pressable
+                        style={[styles.actionButton, styles.deleteButton]}
+                        onPress={() => handleDelete(item.id)}
+                    >
+                        <Ionicons name="trash-outline" size={20} color="#ff453a" />
+                        <Text style={[styles.actionText, { color: '#ff453a' }]}>Delete</Text>
+                    </Pressable>
                 </View>
             </View>
         </View>
+    ));
+
+    const renderSubmissionItem = ({ item }: { item: Submission }) => (
+        <SubmissionItem item={item} />
     );
 
     const renderPage = ({ item: status }: { item: 'pending' | 'approved' | 'rejected' }) => {
@@ -324,6 +372,10 @@ export default function AdminScreen() {
                         data={pageSubmissions}
                         renderItem={renderSubmissionItem}
                         keyExtractor={item => item.id}
+                        initialNumToRender={5}
+                        windowSize={5}
+                        removeClippedSubviews={Platform.OS === 'android'}
+                        maxToRenderPerBatch={5}
                         contentContainerStyle={[
                             styles.listContent,
                             Platform.OS === 'web' && { maxWidth: 800, alignSelf: 'center', width: '100%' }
@@ -448,11 +500,12 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         width: '100%',
-        height: 200,
+        height: 250,
     },
     image: {
         width: Platform.OS === 'web' ? '100%' : SCREEN_WIDTH - 32,
-        height: 200,
+        height: 250,
+        maxWidth: 800,
     },
     cardInfo: {
         padding: 16,

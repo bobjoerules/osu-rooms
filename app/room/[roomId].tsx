@@ -29,9 +29,9 @@ export default function RoomDetail() {
   const router = useRouter();
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
-  const styles = useMemo(() => createStyles(theme), [theme]);
   const { width: windowWidth } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && windowWidth >= 768;
+  const styles = useMemo(() => createStyles(theme, isDesktopWeb), [theme, isDesktopWeb]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
@@ -78,7 +78,20 @@ export default function RoomDetail() {
   }, [finalRoomId]);
 
   const handleDeleteComment = async (userId: string) => {
-    triggerHaptic();
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm("Are you sure you want to delete this comment? This will only remove the text, keeping the user's star rating.");
+      if (confirmed) {
+        try {
+          await updateDoc(doc(db, 'ratings', finalRoomId as string, 'userRatings', userId), {
+            comment: ""
+          });
+        } catch (err) {
+          console.error("Error deleting comment:", err);
+        }
+      }
+      return;
+    }
+
     Alert.alert(
       "Delete Comment",
       "Are you sure you want to delete this comment? This will only remove the text, keeping the user's star rating.",
@@ -89,7 +102,6 @@ export default function RoomDetail() {
           style: "destructive",
           onPress: async () => {
             try {
-              const userRef = doc(db, 'ratings', finalRoomId as string, 'userRatings', userId);
               await updateDoc(doc(db, 'ratings', finalRoomId as string, 'userRatings', userId), {
                 comment: ""
               });
@@ -119,8 +131,62 @@ export default function RoomDetail() {
     };
   }, [getRoomById, finalRoomId]);
 
-  const handleResetRoom = useCallback(() => {
-    triggerHaptic();
+  const handleResetRoom = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(`Are you sure you want to reset all ratings for Room ${roomData.name}? This cannot be undone.`);
+      if (confirmed) {
+        triggerHaptic();
+        setResetLoading(true);
+        try {
+          const ratingKeys = [
+            finalRoomId as string,
+            `${finalRoomId}_chairs`,
+            `${finalRoomId}_lighting`,
+            `${finalRoomId}_projector`,
+            `${finalRoomId}_temperature`,
+          ];
+
+          const BATCH_LIMIT = 450;
+          let batch = writeBatch(db);
+          let ops = 0;
+
+          for (const key of ratingKeys) {
+            const usersCol = collection(db, 'ratings', key, 'userRatings');
+            const usersSnap = await getDocs(usersCol);
+            usersSnap.forEach((userDoc) => {
+              batch.delete(doc(db, 'ratings', key, 'userRatings', userDoc.id));
+              ops++;
+            });
+
+            if (ops >= BATCH_LIMIT) {
+              await batch.commit();
+              batch = writeBatch(db);
+              ops = 0;
+            }
+
+            batch.delete(doc(db, 'ratings', key));
+            ops++;
+            if (ops >= BATCH_LIMIT) {
+              await batch.commit();
+              batch = writeBatch(db);
+              ops = 0;
+            }
+          }
+
+          if (ops > 0) {
+            await batch.commit();
+          }
+          window.alert("Room ratings have been reset.");
+        } catch (err) {
+          console.error("Reset failed:", err);
+          window.alert("Failed to reset room data.");
+        } finally {
+          setResetLoading(false);
+        }
+      }
+      return;
+    }
+
     Alert.alert(
       "Reset Room Data",
       `Are you sure you want to reset all ratings for Room ${roomData.name}? This cannot be undone.`,
@@ -647,7 +713,7 @@ export default function RoomDetail() {
   );
 }
 
-function createStyles(theme: Theme) {
+function createStyles(theme: Theme, isDesktopWeb: boolean) {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -676,7 +742,7 @@ function createStyles(theme: Theme) {
     },
     imageContainer: {
       position: 'relative',
-      height: Platform.OS === 'web' ? 500 : 240,
+      height: isDesktopWeb ? 500 : 240,
       width: '100%',
       display: 'flex',
       overflow: Platform.OS === 'web' ? 'hidden' : 'visible',

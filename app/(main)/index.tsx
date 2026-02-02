@@ -25,7 +25,8 @@ const BuildingListItem = React.memo(({
   isSearching,
   showBuildingImages,
   theme,
-  styles
+  styles,
+  allRoomIds
 }: {
   item: Building,
   index: number,
@@ -35,7 +36,8 @@ const BuildingListItem = React.memo(({
   isSearching: boolean,
   showBuildingImages: boolean,
   theme: Theme,
-  styles: any
+  styles: any,
+  allRoomIds?: string[]
 }) => {
   const buildingImage = item.images?.[0];
   const hasValidImage = buildingImage && !isPlaceholderImage(buildingImage);
@@ -43,7 +45,7 @@ const BuildingListItem = React.memo(({
   const title = (
     <View style={{ flex: 1 }}>
       <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>{item.name}</Text>
-      <BuildingRating roomIds={item.rooms.map(r => r.id)} />
+      <BuildingRating roomIds={allRoomIds || item.rooms.map(r => r.id)} />
     </View>
   );
 
@@ -124,13 +126,14 @@ export default function Index() {
     const isSearching = searchQuery.trim().length > 0;
     const lowerQuery = searchQuery.toLowerCase();
 
-    const filtered = buildings.reduce<Building[]>((acc, building) => {
+    const filtered = buildings.reduce<any[]>((acc, building) => {
       const isHiddenByDefault = building.id === 'backrooms';
       if (!isSearching && isHiddenByDefault) {
         return acc;
       }
 
       const buildingNameMatch = building.name.toLowerCase().includes(lowerQuery);
+      const allRoomIds = building.rooms.map(r => r.id);
 
       const matchingRooms = building.rooms?.filter(room => {
         const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
@@ -149,12 +152,12 @@ export default function Index() {
 
       if (isSearching) {
         if (matchingRooms.length > 0) {
-          acc.push({ ...building, rooms: matchingRooms });
+          acc.push({ ...building, rooms: matchingRooms, allRoomIds });
         } else if (buildingNameMatch) {
-          acc.push(building);
+          acc.push({ ...building, allRoomIds });
         }
       } else if (matchingRooms.length > 0) {
-        acc.push({ ...building, rooms: matchingRooms });
+        acc.push({ ...building, rooms: matchingRooms, allRoomIds });
       }
 
       return acc;
@@ -164,7 +167,7 @@ export default function Index() {
     return filtered;
   }, [searchQuery, showPlaceholders, buildings]);
 
-  const renderItem = useCallback(({ item, index }: { item: Building, index: number }) => {
+  const renderItem = useCallback(({ item, index }: { item: any, index: number }) => {
     const isSearching = searchQuery.trim().length > 0;
     return (
       <BuildingListItem
@@ -177,6 +180,7 @@ export default function Index() {
         showBuildingImages={showBuildingImages}
         theme={theme}
         styles={styles}
+        allRoomIds={item.allRoomIds}
       />
     );
   }, [isDesktopWeb, searchQuery, expandedIds, handleBuildingPress, showBuildingImages, theme, styles]);
