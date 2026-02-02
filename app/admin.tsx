@@ -200,12 +200,6 @@ export default function AdminScreen() {
             }
 
             await updateDoc(doc(db, 'submissions', id), updateData);
-
-            if (Platform.OS === 'web') {
-                window.alert(`Submission ${status}!`);
-            } else {
-                Alert.alert('Success', `Submission ${status}!`);
-            }
         } catch (error) {
             console.error(`Error ${status} submission:`, error);
             if (Platform.OS === 'web') {
@@ -223,7 +217,6 @@ export default function AdminScreen() {
             if (confirmed) {
                 try {
                     await deleteDoc(doc(db, 'submissions', id));
-                    window.alert('Submission deleted.');
                 } catch (error) {
                     console.error("Error deleting submission:", error);
                     window.alert('Failed to delete submission.');

@@ -115,18 +115,13 @@ export default function MultiPhotoSubmit() {
                 building: buildingID,
                 roomNumber: roomNumber,
                 imageUrls: uploadedUrls,
-                imageUrl: uploadedUrls[0], // Keep for backward compatibility
+                imageUrl: uploadedUrls[0],
                 userId: auth.currentUser?.uid,
                 userEmail: auth.currentUser?.email,
                 status: 'pending',
                 createdAt: serverTimestamp(),
             });
 
-            if (Platform.OS === 'web') {
-                window.alert('Success: Photos submitted for review!');
-            } else {
-                Alert.alert('Success', 'Photos submitted for review!');
-            }
             router.back();
         } catch (error: any) {
             console.error('Upload Error:', error);
