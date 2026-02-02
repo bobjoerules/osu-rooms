@@ -113,7 +113,7 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
                 })}
             </View>
             <Text style={[styles.text, { color: theme.subtext }]}>
-                {count > 0 ? `${avg.toFixed(1)} (${count})` : 'No ratings'}
+                {count > 0 ? `${avg.toFixed(1)}` : 'No ratings'}
             </Text>
         </View>
     );

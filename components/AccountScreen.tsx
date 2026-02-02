@@ -643,8 +643,8 @@ export default function Account() {
 
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Add Room Tab</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the add room tab in the menu bar</Text>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Add/Edit Tab</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the add/edit room tab in the menu bar</Text>
                   </View>
                   <Switch
                     value={showSubmitTab}
@@ -984,7 +984,6 @@ function createStyles(theme: Theme) {
     },
     adminCard: {
       borderRadius: 12,
-      borderWidth: 1,
       borderColor: theme.border,
       overflow: 'hidden',
     },

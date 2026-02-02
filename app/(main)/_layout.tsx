@@ -23,8 +23,8 @@ export default function TabLayout() {
             <Icon sf="square.grid.2x2.fill" drawable="ic_menu_home" />
         </NativeTabs.Trigger>,
         showSubmitTab ? (
-            <NativeTabs.Trigger key="submit" name="submit">
-                <Label>Add Room</Label>
+            <NativeTabs.Trigger key="add" name="add">
+                <Label>Add/Edit</Label>
                 <Icon sf="plus.circle.fill" drawable="ic_input_add" />
             </NativeTabs.Trigger>
         ) : null,

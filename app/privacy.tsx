@@ -80,9 +80,11 @@ export default function PrivacyPolicy() {
             <Stack.Screen options={{ headerShown: false }} />
 
             <View style={[styles.header, isDesktopWeb && styles.webContainer]}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color={theme.text} />
-                </TouchableOpacity>
+                {router.canGoBack() && (
+                    <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                        <Ionicons name="arrow-back" size={24} color={theme.text} />
+                    </TouchableOpacity>
+                )}
                 <Text style={styles.headerTitle}>Privacy Policy</Text>
             </View>
 

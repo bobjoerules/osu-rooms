@@ -215,7 +215,7 @@ export default function Index() {
               [data-grid-item] {
                 transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
                 will-change: box-shadow !important;
-                border: 1px solid ${theme.border} !important;
+                border: none !important;
                 background-color: ${theme.card} !important;
               }
               [data-grid-item]:hover {

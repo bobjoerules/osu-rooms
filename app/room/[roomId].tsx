@@ -361,6 +361,7 @@ export default function RoomDetail() {
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
+        {/* @ts-ignore */}
         <View
           style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}
           onMouseDown={handleMouseDown}
@@ -450,45 +451,64 @@ export default function RoomDetail() {
             <View style={styles.mainRatingSection}>
               <RatingDisplay itemId={finalRoomId as string} size={32} />
 
-              <TouchableOpacity
-                style={[styles.rateButton, { backgroundColor: theme.border }]}
-                onPress={async () => {
-                  try {
-                    if (!auth.currentUser) {
-                      if (Platform.OS === 'web') {
-                        window.alert('Sign in required: Please sign in to rate this room.');
-                      } else {
-                        Alert.alert('Sign In Required', 'Please sign in to rate this room.');
+              <View style={styles.actionButtonsContainer}>
+                <TouchableOpacity
+                  style={[styles.actionButton, { backgroundColor: theme.border }]}
+                  onPress={async () => {
+                    try {
+                      if (!auth.currentUser) {
+                        if (Platform.OS === 'web') {
+                          window.alert('Sign in required: Please sign in to rate this room.');
+                        } else {
+                          Alert.alert('Sign In Required', 'Please sign in to rate this room.');
+                        }
+                        return;
                       }
-                      return;
-                    }
-                    await auth.currentUser.reload();
-                    if (!auth.currentUser.emailVerified) {
-                      if (Platform.OS === 'web') {
-                        window.alert('Email verification required: Please verify your email address to rate rooms.');
-                      } else {
-                        Alert.alert('Email Verification Required', 'Please verify your email address to rate rooms.');
+                      await auth.currentUser.reload();
+                      if (!auth.currentUser.emailVerified) {
+                        if (Platform.OS === 'web') {
+                          window.alert('Email verification required: Please verify your email address to rate rooms.');
+                        } else {
+                          Alert.alert('Email Verification Required', 'Please verify your email address to rate rooms.');
+                        }
+                        return;
                       }
-                      return;
+                      const myReview = comments.find(c => c.id === auth.currentUser?.uid);
+                      router.push({
+                        pathname: `/room/${finalRoomId}/rate` as any,
+                        params: { initialComment: myReview?.comment || '' }
+                      });
+                    } catch (error) {
+                      console.error('Rate button error:', error);
+                      if (Platform.OS === 'web') {
+                        window.alert('An error occurred. Please try again.');
+                      } else {
+                        Alert.alert('Error', 'An error occurred. Please try again.');
+                      }
                     }
-                    const myReview = comments.find(c => c.id === auth.currentUser?.uid);
+                  }}
+                >
+                  <Ionicons name="pencil" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
+                  <Text style={[styles.actionButtonText, { color: theme.subtext }]}>Rate Room</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.actionButton, { backgroundColor: theme.border }]}
+                  onPress={() => {
+                    triggerHaptic();
                     router.push({
-                      pathname: `/room/${finalRoomId}/rate`,
-                      params: { initialComment: myReview?.comment || '' }
+                      pathname: '/submit' as any,
+                      params: {
+                        initialBuilding: roomData.building,
+                        initialRoomNumber: roomData.name
+                      }
                     });
-                  } catch (error) {
-                    console.error('Rate button error:', error);
-                    if (Platform.OS === 'web') {
-                      window.alert('An error occurred. Please try again.');
-                    } else {
-                      Alert.alert('Error', 'An error occurred. Please try again.');
-                    }
-                  }
-                }}
-              >
-                <Ionicons name="pencil" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
-                <Text style={[styles.rateButtonText, { color: theme.subtext }]}>Rate Room</Text>
-              </TouchableOpacity>
+                  }}
+                >
+                  <Ionicons name="camera" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
+                  <Text style={[styles.actionButtonText, { color: theme.subtext }]}>Upload Photo</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -776,7 +796,15 @@ function createStyles(theme: Theme) {
       fontSize: 16,
       fontWeight: '500',
     },
-    rateButton: {
+    actionButtonsContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      width: '100%',
+      justifyContent: 'center',
+    },
+    actionButton: {
+      flex: 1,
+      maxWidth: 160,
       flexDirection: 'row',
       marginTop: 8,
       paddingVertical: 10,
@@ -785,8 +813,8 @@ function createStyles(theme: Theme) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    rateButtonText: {
-      fontSize: 15,
+    actionButtonText: {
+      fontSize: 14,
       fontWeight: '600',
     },
     resetButton: {
@@ -822,7 +850,6 @@ function createStyles(theme: Theme) {
     reviewCard: {
       borderRadius: 16,
       padding: 16,
-      borderWidth: 1,
       gap: 8,
     },
     reviewHeader: {

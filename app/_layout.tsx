@@ -238,6 +238,13 @@ function AuthenticatedStack() {
               animation: 'slide_from_right',
             }}
           />
+          <Stack.Screen
+            name="submit"
+            options={{
+              headerShown: false,
+              animation: 'slide_from_bottom',
+            }}
+          />
         </Stack>
         {Platform.OS === 'web' && (
           <style dangerouslySetInnerHTML={{

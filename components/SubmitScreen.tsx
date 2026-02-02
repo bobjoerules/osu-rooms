@@ -182,9 +182,12 @@ export default function SubmitScreen() {
                     scrollEnabled={true}
                 >
                     <View style={styles.header}>
-                        {(initialBuilding || initialRoomNumber) ? (
-                            <Pressable onPress={() => { triggerHaptic(); router.back(); }} style={styles.backButton}>
-                                <Ionicons name="close" size={28} color={theme.text} />
+                        {router.canGoBack() ? (
+                            <Pressable
+                                onPress={() => { triggerHaptic(); router.back(); }}
+                                style={styles.backButton}
+                            >
+                                <Ionicons name="chevron-back" size={28} color={theme.text} />
                             </Pressable>
                         ) : (
                             <View style={{ width: 40 }} />

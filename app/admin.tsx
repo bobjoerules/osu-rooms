@@ -323,7 +323,14 @@ export default function AdminScreen() {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
             <View style={styles.header}>
-                <Pressable onPress={() => { triggerHaptic(); router.back(); }} style={styles.backButton}>
+                <Pressable onPress={() => {
+                    triggerHaptic();
+                    if (router.canGoBack()) {
+                        router.back();
+                    } else {
+                        router.replace('/');
+                    }
+                }} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={28} color={theme.text} />
                 </Pressable>
                 <Text style={[styles.headerTitle, { color: theme.text }]}>Review Submissions</Text>
