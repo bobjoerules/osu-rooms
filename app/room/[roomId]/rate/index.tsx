@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StarRating from '../../../../components/StarRating';
 import TemperatureRating from '../../../../components/TemperatureRating';
 import { auth, db } from '../../../../firebaseConfig';
+import { checkProfanity } from '../../../../lib/profanity';
 import { useHapticFeedback } from '../../../../lib/SettingsContext';
 import { useUser } from '../../../../lib/UserContext';
 import { Theme, useTheme } from '../../../../theme';
@@ -15,19 +16,7 @@ const MAX_COMMENT_LENGTH = 500;
 
 const MemoStarRating = React.memo(StarRating);
 
-// Simple profanity filter list - in a real app, use a library or API
-const OBSCENE_WORDS = [
-    'fuck', 'shit', 'asshole', 'bitch', 'cunt', 'dick', 'nigger', 'faggot'
-    // ... add more as needed, or use a library if available
-];
 
-function containsProfanity(text: string) {
-    const lowerText = text.toLowerCase();
-    return OBSCENE_WORDS.some(word => {
-        const regex = new RegExp(`\\b${word}\\b`, 'i');
-        return regex.test(lowerText);
-    });
-}
 
 export default function RateRoomModal() {
     const { roomId } = useLocalSearchParams<{ roomId: string }>();
@@ -74,7 +63,11 @@ export default function RateRoomModal() {
     };
 
     const handleDone = async () => {
-        if (containsProfanity(comment)) {
+        setIsSaving(true);
+
+        const hasProfanity = await checkProfanity(comment);
+        if (hasProfanity) {
+            setIsSaving(false);
             triggerHaptic();
             Alert.alert(
                 "Inappropriate Content",
@@ -84,7 +77,6 @@ export default function RateRoomModal() {
             return;
         }
 
-        setIsSaving(true);
         try {
             const user = auth.currentUser;
             if (user) {
@@ -168,7 +160,7 @@ export default function RateRoomModal() {
                             {canComment && (
                                 <View style={styles.commentGroup}>
                                     <View style={styles.commentHeader}>
-                                        <Text style={[styles.label, { color: theme.text }]}>Any additional comments?</Text>
+                                        <Text style={[styles.label, { color: theme.text }]}>Text Review</Text>
                                         <Text style={[styles.charCount, {
                                             color: comment.length >= MAX_COMMENT_LENGTH ? theme.destructive : theme.subtext
                                         }]}>
@@ -180,7 +172,7 @@ export default function RateRoomModal() {
                                             style={[styles.commentInput, {
                                                 color: theme.text,
                                             }]}
-                                            placeholder={initialLoad ? "Loading your comment..." : "Share your experience (optional)..."}
+                                            placeholder={initialLoad ? "Scanning for past reviews..." : "Add a review (optional)..."}
                                             placeholderTextColor={theme.placeholder}
                                             value={comment}
                                             onChangeText={setComment}
