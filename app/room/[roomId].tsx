@@ -489,7 +489,7 @@ export default function RoomDetail() {
                   }}
                 >
                   <Ionicons name="pencil" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
-                  <Text style={[styles.actionButtonText, { color: theme.subtext }]}>Rate Room</Text>
+                  <Text style={[styles.actionButtonText, { color: theme.subtext }]} numberOfLines={1} adjustsFontSizeToFit>Rate Room</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -497,16 +497,16 @@ export default function RoomDetail() {
                   onPress={() => {
                     triggerHaptic();
                     router.push({
-                      pathname: '/submit' as any,
+                      pathname: `/room/${finalRoomId}/add-photos` as any,
                       params: {
-                        initialBuilding: roomData.building,
-                        initialRoomNumber: roomData.name
+                        buildingID: roomData.building,
+                        roomNumber: roomData.name
                       }
                     });
                   }}
                 >
                   <Ionicons name="camera" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
-                  <Text style={[styles.actionButtonText, { color: theme.subtext }]}>Upload Photo</Text>
+                  <Text style={[styles.actionButtonText, { color: theme.subtext }]} numberOfLines={1} adjustsFontSizeToFit>Upload Photo(s)</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -804,7 +804,7 @@ function createStyles(theme: Theme) {
     },
     actionButton: {
       flex: 1,
-      maxWidth: 160,
+      maxWidth: 185,
       flexDirection: 'row',
       marginTop: 8,
       paddingVertical: 10,

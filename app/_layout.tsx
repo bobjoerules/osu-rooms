@@ -238,8 +238,9 @@ function AuthenticatedStack() {
               animation: 'slide_from_right',
             }}
           />
+
           <Stack.Screen
-            name="submit"
+            name="room/[roomId]/add-photos"
             options={{
               headerShown: false,
               animation: 'slide_from_bottom',

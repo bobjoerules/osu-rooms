@@ -29,7 +29,8 @@ interface Submission {
     roomNumber: string;
     roomType: string;
     capacity: string;
-    imageUrl: string | null;
+    imageUrl?: string | null;
+    imageUrls?: string[];
     userEmail: string;
     status: string;
     pushToken?: string;
@@ -108,12 +109,16 @@ export default function AdminScreen() {
                     buildingDoc = buildingSnap.docs[0].data();
                 }
 
+                const submissionImages = (submission.imageUrls && submission.imageUrls.length > 0)
+                    ? submission.imageUrls
+                    : (submission.imageUrl ? [submission.imageUrl] : [firebaseImage('placeholder.png')]);
+
                 const newRoom = {
                     id: `${buildingId}-${submission.roomNumber}`,
                     capacity: submission.capacity,
                     roomType: submission.roomType,
                     floor: submission.roomNumber.charAt(0) === '0' ? '0' : submission.roomNumber.charAt(0),
-                    images: submission.imageUrl ? [submission.imageUrl] : [firebaseImage('placeholder.png')],
+                    images: submissionImages,
                     searchAliases: [`${submission.building} ${submission.roomNumber}`]
                 };
 
@@ -226,13 +231,31 @@ export default function AdminScreen() {
 
     const renderSubmissionItem = ({ item }: { item: Submission }) => (
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            {item.imageUrl && (
+            {item.imageUrls && item.imageUrls.length > 0 ? (
+                <FlatList
+                    data={item.imageUrls}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item: imgUri }) => (
+                        <Image
+                            source={{ uri: imgUri }}
+                            style={styles.image}
+                            contentFit="cover"
+                        />
+                    )}
+                    keyExtractor={(u) => u}
+                    pagingEnabled
+                    snapToAlignment="center"
+                    decelerationRate="fast"
+                    style={styles.imageContainer}
+                />
+            ) : item.imageUrl ? (
                 <Image
                     source={{ uri: item.imageUrl }}
                     style={styles.image}
                     contentFit="cover"
                 />
-            )}
+            ) : null}
             <View style={styles.cardInfo}>
                 <Text style={[styles.buildingName, { color: theme.text }]}>{item.building}</Text>
                 <Text style={[styles.roomInfo, { color: theme.subtext }]}>
@@ -423,8 +446,12 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         overflow: 'hidden',
     },
-    image: {
+    imageContainer: {
         width: '100%',
+        height: 200,
+    },
+    image: {
+        width: Platform.OS === 'web' ? '100%' : SCREEN_WIDTH - 32,
         height: 200,
     },
     cardInfo: {
