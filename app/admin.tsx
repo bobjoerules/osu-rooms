@@ -268,7 +268,8 @@ export default function AdminScreen() {
     const SubmissionItem = React.memo(({ item }: { item: Submission }) => {
         const { width: windowWidth } = useWindowDimensions();
         const isWeb = Platform.OS === 'web';
-        const cardWidth = isWeb ? 800 : windowWidth - 32;
+        // Base width for the image within the card (subtracting list padding)
+        const imageWidth = isWeb ? (windowWidth > 832 ? 768 : windowWidth - 32) : windowWidth - 32;
 
         return (
             <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -281,7 +282,7 @@ export default function AdminScreen() {
                             renderItem={({ item: imgUri }) => (
                                 <Image
                                     source={imgUri}
-                                    style={[styles.image, { width: isWeb ? Math.min(cardWidth, windowWidth - 64) : windowWidth - 32 }]}
+                                    style={[styles.image, { width: imageWidth }]}
                                     contentFit="cover"
                                 />
                             )}
@@ -295,11 +296,13 @@ export default function AdminScreen() {
                         />
                     </View>
                 ) : item.imageUrl ? (
-                    <Image
-                        source={item.imageUrl}
-                        style={[styles.image, { width: isWeb ? '100%' : windowWidth - 32 }]}
-                        contentFit="cover"
-                    />
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={item.imageUrl}
+                            style={[styles.image, { width: '100%' }]}
+                            contentFit="cover"
+                        />
+                    </View>
                 ) : null}
                 <View style={styles.cardInfo}>
                     <Text style={[styles.buildingName, { color: theme.text }]}>{item.building}</Text>
