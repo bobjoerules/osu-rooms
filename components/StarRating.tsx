@@ -121,7 +121,7 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
           newAvg = (currentAvg * currentCount - oldRating + value) / currentCount;
         }
 
-        tx.set(userRef, { rating: value, updatedAt: serverTimestamp() }, { merge: true });
+        tx.set(userRef, { rating: value, userId: user.uid, updatedAt: serverTimestamp() }, { merge: true });
         tx.set(
           itemRef,
           { avg: newAvg, count: newCount, updatedAt: serverTimestamp() },

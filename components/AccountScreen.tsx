@@ -13,10 +13,12 @@ import {
 } from "firebase/auth";
 import {
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getCountFromServer,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   where,
@@ -325,6 +327,34 @@ export default function Account() {
         console.log("User doc deleted");
       } catch (e) {
         console.error("Failed to delete user doc:", e);
+      }
+
+      try {
+        console.log("Querying user ratings to delete...");
+
+        const userIdQuery = query(collectionGroup(db, 'userRatings'), where('userId', '==', uid));
+        const [userIdSnap, userEmailSnap] = await Promise.all([
+          getDocs(userIdQuery),
+          userEmail ? getDocs(query(collectionGroup(db, 'userRatings'), where('userEmail', '==', userEmail))) : Promise.resolve({ docs: [] } as any)
+        ]);
+
+        const allDocs = [...userIdSnap.docs];
+        userEmailSnap.forEach((d: any) => {
+          if (!allDocs.find(ad => ad.id === d.id && ad.ref.path === d.ref.path)) {
+            allDocs.push(d);
+          }
+        });
+
+        console.log(`Found ${allDocs.length} ratings/comments to delete.`);
+
+        const batch = writeBatch(db);
+        allDocs.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
+        console.log("All user comments and detailed ratings deleted.");
+      } catch (e) {
+        console.error("Failed to delete user ratings/comments:", e);
       }
 
       console.log("Deleting auth user...");

@@ -90,6 +90,7 @@ export default function RateRoomModal() {
             if (user) {
                 const userRef = doc(db, 'ratings', finalRoomId as string, 'userRatings', user.uid);
                 const updateData: any = {
+                    userId: user.uid,
                     userEmail: user.email,
                     displayName: user.displayName,
                     updatedAt: serverTimestamp()
@@ -110,7 +111,7 @@ export default function RateRoomModal() {
     };
 
     const STAR_SIZE = 40;
-    const starWidth = 5 * (STAR_SIZE + 8); // 5 stars, 8px horizontal padding per star
+    const starWidth = 5 * (STAR_SIZE + 8);
 
     return (
         <View style={{ flex: 1, backgroundColor: 'transparent' }}>
