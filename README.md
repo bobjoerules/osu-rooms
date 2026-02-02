@@ -6,6 +6,5 @@ The app is accessible on web at https://osurooms.bobjoerules.com and soon will b
 
 # Notes
 
-- This app uses firebase for the ranking system, submissions, and user accounts.
+- This app uses firebase for the ranking system, submissions, comments, and user accounts.
 - All room data has been moved to Firebase as of 26/1/26
-- Comment section for rooms could be added but not that likely atm
