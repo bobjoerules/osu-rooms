@@ -265,80 +265,88 @@ export default function AdminScreen() {
         }
     };
 
-    const SubmissionItem = React.memo(({ item }: { item: Submission }) => (
-        <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            {item.imageUrls && item.imageUrls.length > 0 ? (
-                <FlatList
-                    data={item.imageUrls}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({ item: imgUri }) => (
-                        <Image
-                            source={{ uri: imgUri }}
-                            style={styles.image}
-                            contentFit="cover"
-                        />
-                    )}
-                    keyExtractor={(u) => u}
-                    pagingEnabled
-                    snapToAlignment="center"
-                    decelerationRate="fast"
-                    style={styles.imageContainer}
-                    initialNumToRender={1}
-                    maxToRenderPerBatch={1}
-                    windowSize={2}
-                />
-            ) : item.imageUrl ? (
-                <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.image}
-                    contentFit="cover"
-                />
-            ) : null}
-            <View style={styles.cardInfo}>
-                <Text style={[styles.buildingName, { color: theme.text }]}>{item.building}</Text>
-                <Text style={[styles.roomInfo, { color: theme.subtext }]}>
-                    Room {item.roomNumber} • {item.roomType}
-                </Text>
-                {item.capacity && (
-                    <Text style={[styles.roomInfo, { color: theme.subtext }]}>
-                        Capacity: {item.capacity}
-                    </Text>
-                )}
-                <Text style={[styles.userEmail, { color: theme.subtext }]}>
-                    Submitted by: {item.userEmail}
-                </Text>
+    const SubmissionItem = React.memo(({ item }: { item: Submission }) => {
+        const { width: windowWidth } = useWindowDimensions();
+        const isWeb = Platform.OS === 'web';
+        const cardWidth = isWeb ? 800 : windowWidth - 32;
 
-                <View style={styles.actions}>
-                    {item.status === 'pending' && (
-                        <>
-                            <Pressable
-                                style={[styles.actionButton, styles.rejectButton]}
-                                onPress={() => handleAction(item.id, 'rejected')}
-                            >
-                                <Ionicons name="close-circle" size={20} color="#ff453a" />
-                                <Text style={[styles.actionText, { color: '#ff453a' }]}>Reject</Text>
-                            </Pressable>
-                            <Pressable
-                                style={[styles.actionButton, styles.approveButton]}
-                                onPress={() => handleAction(item.id, 'approved')}
-                            >
-                                <Ionicons name="checkmark-circle" size={20} color="#34c759" />
-                                <Text style={[styles.actionText, { color: '#34c759' }]}>Approve</Text>
-                            </Pressable>
-                        </>
+        return (
+            <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                {item.imageUrls && item.imageUrls.length > 0 ? (
+                    <View style={styles.imageContainer}>
+                        <FlatList
+                            data={item.imageUrls}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            renderItem={({ item: imgUri }) => (
+                                <Image
+                                    source={imgUri}
+                                    style={[styles.image, { width: isWeb ? Math.min(cardWidth, windowWidth - 64) : windowWidth - 32 }]}
+                                    contentFit="cover"
+                                />
+                            )}
+                            keyExtractor={(u) => u}
+                            pagingEnabled={!isWeb}
+                            snapToAlignment="center"
+                            decelerationRate="fast"
+                            initialNumToRender={2}
+                            maxToRenderPerBatch={2}
+                            windowSize={3}
+                        />
+                    </View>
+                ) : item.imageUrl ? (
+                    <Image
+                        source={item.imageUrl}
+                        style={[styles.image, { width: isWeb ? '100%' : windowWidth - 32 }]}
+                        contentFit="cover"
+                    />
+                ) : null}
+                <View style={styles.cardInfo}>
+                    <Text style={[styles.buildingName, { color: theme.text }]}>{item.building}</Text>
+                    <Text style={[styles.roomInfo, { color: theme.subtext }]}>
+                        Room {item.roomNumber} • {item.roomType}
+                    </Text>
+                    {item.capacity && (
+                        <Text style={[styles.roomInfo, { color: theme.subtext }]}>
+                            Capacity: {item.capacity}
+                        </Text>
                     )}
-                    <Pressable
-                        style={[styles.actionButton, styles.deleteButton]}
-                        onPress={() => handleDelete(item.id)}
-                    >
-                        <Ionicons name="trash-outline" size={20} color="#ff453a" />
-                        <Text style={[styles.actionText, { color: '#ff453a' }]}>Delete</Text>
-                    </Pressable>
+                    <Text style={[styles.userEmail, { color: theme.subtext }]}>
+                        Submitted by: {item.userEmail}
+                    </Text>
+
+                    <View style={styles.actions}>
+                        {item.status === 'pending' && (
+                            <>
+                                <Pressable
+                                    style={[styles.actionButton, styles.rejectButton]}
+                                    onPress={() => handleAction(item.id, 'rejected')}
+                                >
+                                    <Ionicons name="close-circle" size={20} color="#ff453a" />
+                                    <Text style={[styles.actionText, { color: '#ff453a' }]}>Reject</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={[styles.actionButton, styles.approveButton]}
+                                    onPress={() => handleAction(item.id, 'approved')}
+                                >
+                                    <Ionicons name="checkmark-circle" size={20} color="#34c759" />
+                                    <Text style={[styles.actionText, { color: '#34c759' }]}>Approve</Text>
+                                </Pressable>
+                            </>
+                        )}
+                        <Pressable
+                            style={[styles.actionButton, styles.deleteButton]}
+                            onPress={() => handleDelete(item.id)}
+                        >
+                            <Ionicons name="trash-outline" size={20} color="#ff453a" />
+                            <Text style={[styles.actionText, { color: '#ff453a' }]}>Delete</Text>
+                        </Pressable>
+                    </View>
                 </View>
             </View>
-        </View>
-    ));
+        );
+    });
+
 
     const renderSubmissionItem = ({ item }: { item: Submission }) => (
         <SubmissionItem item={item} />
@@ -493,11 +501,10 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         width: '100%',
-        height: 250,
+        height: 300,
     },
     image: {
-        width: Platform.OS === 'web' ? '100%' : SCREEN_WIDTH - 32,
-        height: 250,
+        height: 300,
         maxWidth: 800,
     },
     cardInfo: {
