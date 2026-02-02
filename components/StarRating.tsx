@@ -3,8 +3,7 @@ import {
   doc,
   onSnapshot,
   runTransaction,
-  serverTimestamp,
-  getDoc,
+  serverTimestamp
 } from 'firebase/firestore';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -17,9 +16,11 @@ export type StarRatingProps = {
   initialMax?: number;
   size?: number;
   showMetaText?: boolean;
+  comment?: string;
+  onCommentChange?: (comment: string) => void;
 };
 
-export default function StarRating({ itemId, initialMax = 5, size = 40, showMetaText = false }: StarRatingProps) {
+export default function StarRating({ itemId, initialMax = 5, size = 40, showMetaText = false, onCommentChange }: StarRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -51,6 +52,8 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
     });
     return unsub;
   }, [itemId]);
+
+
 
   useEffect(() => {
     const user = auth.currentUser;

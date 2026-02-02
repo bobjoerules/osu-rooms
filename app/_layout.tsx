@@ -15,6 +15,7 @@ import NoInternetScreen from '../components/NoInternetScreen';
 import { auth } from '../firebaseConfig';
 import { DatabaseProvider } from '../lib/DatabaseContext';
 import { SettingsProvider } from '../lib/SettingsContext';
+import { UserProvider } from '../lib/UserContext';
 import { ThemeProvider, useTheme } from '../theme';
 
 LogBox.ignoreLogs([
@@ -113,12 +114,14 @@ export default function RootLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}>
       <SettingsProvider>
-        <DatabaseProvider>
-          <ThemeProvider>
-            <ThemeManager />
-            <RootContent />
-          </ThemeProvider>
-        </DatabaseProvider>
+        <UserProvider>
+          <DatabaseProvider>
+            <ThemeProvider>
+              <ThemeManager />
+              <RootContent />
+            </ThemeProvider>
+          </DatabaseProvider>
+        </UserProvider>
       </SettingsProvider>
     </View>
   );

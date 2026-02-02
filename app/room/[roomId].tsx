@@ -2,11 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, writeBatch } from 'firebase/firestore';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
+import StaticStarRating from '../../components/StaticStarRating';
 import TemperatureDisplay from '../../components/TemperatureDisplay';
 import { auth, db } from '../../firebaseConfig';
 import { useBuildings } from '../../lib/DatabaseContext';
@@ -37,6 +38,7 @@ export default function RoomDetail() {
   const flatListRef = useRef<FlatList>(null);
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseStartX, setMouseStartX] = useState(0);
+  const [comments, setComments] = useState<{ id: string, rating: number, comment: string, userEmail?: string, displayName?: string, updatedAt: any }[]>([]);
 
   const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
 
@@ -60,6 +62,45 @@ export default function RoomDetail() {
     });
     return unsub;
   }, []);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'ratings', finalRoomId as string, 'userRatings'),
+      orderBy('updatedAt', 'desc')
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      const data = snap.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter((d: any) => d.comment && d.comment.trim().length > 0);
+      setComments(data as any);
+    });
+    return unsub;
+  }, [finalRoomId]);
+
+  const handleDeleteComment = async (userId: string) => {
+    triggerHaptic();
+    Alert.alert(
+      "Delete Comment",
+      "Are you sure you want to delete this comment? This will only remove the text, keeping the user's star rating.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const userRef = doc(db, 'ratings', finalRoomId as string, 'userRatings', userId);
+              await updateDoc(doc(db, 'ratings', finalRoomId as string, 'userRatings', userId), {
+                comment: ""
+              });
+            } catch (err) {
+              console.error("Error deleting comment:", err);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const roomData = useMemo(() => {
     const roomInfo = getRoomById(finalRoomId as string);
@@ -409,93 +450,125 @@ export default function RoomDetail() {
         </View>
 
         <View style={styles.content}>
-          <View style={styles.mainRatingSection}>
-            <View style={styles.overallRating}>
-              <Text style={[styles.ratingLabel, { color: theme.subtext }]}>Overall Rating</Text>
-              <RatingDisplay itemId={finalRoomId as string} size={28} />
-            </View>
+          <View style={styles.sectionContainer}>
+            <Text style={[styles.sectionTitle, { color: theme.subtext, width: '100%', textAlign: 'center' }]}>Overall Rating</Text>
+            <View style={styles.mainRatingSection}>
+              <RatingDisplay itemId={finalRoomId as string} size={32} />
 
-            <TouchableOpacity
-              style={[styles.rateButton, { backgroundColor: theme.primary, marginTop: 16, flexDirection: 'row', gap: 8 }]}
-              onPress={async () => {
-                triggerHaptic();
-                try {
-                  if (!auth.currentUser) {
-                    if (Platform.OS === 'web') {
-                      window.alert('Sign in required: Please sign in to rate this room.');
-                    } else {
-                      Alert.alert('Sign In Required', 'Please sign in to rate this room.');
+              <TouchableOpacity
+                style={[styles.rateButton, { backgroundColor: theme.border }]}
+                onPress={async () => {
+                  try {
+                    if (!auth.currentUser) {
+                      if (Platform.OS === 'web') {
+                        window.alert('Sign in required: Please sign in to rate this room.');
+                      } else {
+                        Alert.alert('Sign In Required', 'Please sign in to rate this room.');
+                      }
+                      return;
                     }
-                    return;
-                  }
-                  await auth.currentUser.reload();
-                  if (!auth.currentUser.emailVerified) {
-                    if (Platform.OS === 'web') {
-                      window.alert('Email verification required: Please verify your email address to rate rooms.');
-                    } else {
-                      Alert.alert('Email Verification Required', 'Please verify your email address to rate rooms.');
+                    await auth.currentUser.reload();
+                    if (!auth.currentUser.emailVerified) {
+                      if (Platform.OS === 'web') {
+                        window.alert('Email verification required: Please verify your email address to rate rooms.');
+                      } else {
+                        Alert.alert('Email Verification Required', 'Please verify your email address to rate rooms.');
+                      }
+                      return;
                     }
-                    return;
+                    router.push(`/room/${finalRoomId}/rate`);
+                  } catch (error) {
+                    console.error('Rate button error:', error);
+                    if (Platform.OS === 'web') {
+                      window.alert('An error occurred. Please try again.');
+                    } else {
+                      Alert.alert('Error', 'An error occurred. Please try again.');
+                    }
                   }
-                  router.push(`/room/${finalRoomId}/rate`);
-                } catch (error) {
-                  console.error('Rate button error:', error);
-                  if (Platform.OS === 'web') {
-                    window.alert('An error occurred. Please try again.');
-                  } else {
-                    Alert.alert('Error', 'An error occurred. Please try again.');
-                  }
-                }
-              }}
-            >
-              <Ionicons name="pencil" size={18} color="#fff" />
-              <Text style={styles.rateButtonText}>Rate Room</Text>
-            </TouchableOpacity>
+                }}
+              >
+                <Ionicons name="pencil" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
+                <Text style={[styles.rateButtonText, { color: theme.subtext }]}>Rate Room</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <View style={styles.mainRatingSection}>
+          <View style={styles.sectionContainer}>
             <Text style={[styles.sectionTitle, { color: theme.subtext, width: '100%', textAlign: 'center' }]}>Detailed Ratings</Text>
+            <View style={styles.mainRatingSection}>
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: theme.text }]}>Chairs</Text>
+                <RatingDisplay itemId={`${finalRoomId}_chairs`} size={24} showMetaText={false} />
+              </View>
 
-            <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Chairs</Text>
-              <RatingDisplay itemId={`${finalRoomId}_chairs`} size={24} showMetaText={false} />
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: theme.text }]}>Lighting</Text>
+                <RatingDisplay itemId={`${finalRoomId}_lighting`} size={24} showMetaText={false} />
+              </View>
+
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: theme.text }]}>Projector Visibility</Text>
+                <RatingDisplay itemId={`${finalRoomId}_projector`} size={24} showMetaText={false} />
+              </View>
+
+              <View style={[styles.detailRow, { alignItems: 'center' }]}>
+                <Text style={[styles.detailLabel, { color: theme.text }]}>Temperature</Text>
+                {(() => {
+                  const STAR_SIZE_DETAILED = 24;
+                  const STAR_PAD = 4; // matches RatingDisplay starBtn paddingHorizontal
+                  const starWidthDetailed = 5 * (STAR_SIZE_DETAILED + STAR_PAD * 2) - 10; // nudge to visually match
+                  return (
+                    <TemperatureDisplay itemId={`${finalRoomId}_temperature`} width={starWidthDetailed} />
+                  );
+                })()}
+              </View>
             </View>
-
-            <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Lighting</Text>
-              <RatingDisplay itemId={`${finalRoomId}_lighting`} size={24} showMetaText={false} />
-            </View>
-
-            <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Projector Visibility</Text>
-              <RatingDisplay itemId={`${finalRoomId}_projector`} size={24} showMetaText={false} />
-            </View>
-
-            <View style={[styles.detailRow, { alignItems: 'center' }]}>
-              <Text style={[styles.detailLabel, { color: theme.text }]}>Temperature</Text>
-              {(() => {
-                const STAR_SIZE_DETAILED = 24;
-                const STAR_PAD = 4; // matches RatingDisplay starBtn paddingHorizontal
-                const starWidthDetailed = 5 * (STAR_SIZE_DETAILED + STAR_PAD * 2) - 10; // nudge to visually match
-                return (
-                  <TemperatureDisplay itemId={`${finalRoomId}_temperature`} width={starWidthDetailed} />
-                );
-              })()}
-            </View>
-
           </View>
 
-          <View style={styles.infoSection}>
+          <View style={styles.sectionContainer}>
             <Text style={[styles.sectionTitle, { color: theme.subtext, width: '100%', textAlign: 'center' }]}>Info</Text>
-            <View style={styles.infoSeparator} />
-            <Text style={[styles.buildingName, { color: theme.text }]}>Building: {roomData.building}</Text>
-            <View style={styles.infoSeparator} />
-            <Text style={[styles.buildingName, { color: theme.text }]}>Room Type: {roomData.roomType || 'Unknown'}</Text>
-            <View style={styles.infoSeparator} />
-            <Text style={[styles.buildingName, { color: theme.text }]}>Capacity: {roomData.capacity}</Text>
-            <View style={styles.infoSeparator} />
-            <Text style={[styles.floor, { color: theme.text }]}>Floor: {roomData.floor}</Text>
+            <View style={styles.infoSection}>
+              <Text style={[styles.buildingName, { color: theme.text }]}>Building: {roomData.building}</Text>
+              <View style={styles.infoSeparator} />
+              <Text style={[styles.buildingName, { color: theme.text }]}>Room Type: {roomData.roomType || 'Unknown'}</Text>
+              <View style={styles.infoSeparator} />
+              <Text style={[styles.buildingName, { color: theme.text }]}>Capacity: {roomData.capacity}</Text>
+              <View style={styles.infoSeparator} />
+              <Text style={[styles.columnLabel, { color: theme.text }]}>Floor: {roomData.floor}</Text>
+            </View>
           </View>
+
+          {comments.length > 0 && (
+            <View style={styles.reviewSection}>
+              <Text style={[styles.sectionTitle, { color: theme.subtext, width: '100%', textAlign: 'center' }]}>User Reviews</Text>
+              {comments.map((item) => (
+                <View key={item.id} style={[styles.reviewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                  <View style={styles.reviewHeader}>
+                    <View style={styles.reviewUserInfo}>
+                      <Text style={[styles.reviewUser, { color: theme.text }]}>
+                        {item.displayName || item.userEmail?.split('@')[0] || 'Anonymous'}
+                      </Text>
+                      <Text style={[styles.reviewDate, { color: theme.subtext }]}>
+                        {item.updatedAt?.toDate() ? new Date(item.updatedAt.toDate()).toLocaleDateString() : ''}
+                      </Text>
+                    </View>
+                    <View style={styles.reviewHeaderRight}>
+                      <StaticStarRating rating={item.rating || 0} size={14} />
+                      {isAdmin && (
+                        <TouchableOpacity
+                          onPress={() => handleDeleteComment(item.id)}
+                          style={styles.deleteCommentBtn}
+                        >
+                          <Ionicons name="trash-outline" size={16} color={theme.destructive} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                  <Text style={[styles.reviewText, { color: theme.text }]}>{item.comment}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
           {isAdmin && (
             <TouchableOpacity
@@ -516,7 +589,7 @@ export default function RoomDetail() {
 
 
         </View>
-      </ScrollView>
+      </ScrollView >
 
       <View
         style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
@@ -563,7 +636,7 @@ function createStyles(theme: Theme) {
     headerFloatingContainer: {
       position: 'absolute',
       zIndex: 10,
-      backgroundColor: theme.background, // Ensure background is set
+      backgroundColor: theme.background,
     },
     header: {
       flexDirection: 'row',
@@ -618,16 +691,33 @@ function createStyles(theme: Theme) {
       paddingVertical: 20,
     },
     mainRatingSection: {
-      marginBottom: 20,
       backgroundColor: theme.card,
       borderRadius: 16,
       padding: 20,
       alignItems: 'center',
       gap: 20,
     },
-    overallRating: {
+    overallRatingRow: {
+      flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      justifyContent: 'center',
+      width: '100%',
+      position: 'relative',
+    },
+    rateIconButton: {
+      position: 'absolute',
+      right: 0,
+      width: 42,
+      height: 42,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: -14, // Aligns with the vertical center of the stars
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 4,
     },
     ratingLabel: {
       fontSize: 14,
@@ -647,10 +737,13 @@ function createStyles(theme: Theme) {
       gap: 8,
     },
     infoSection: {
-      marginBottom: 20,
       backgroundColor: theme.card,
       borderRadius: 16,
       padding: 20,
+      gap: 12,
+    },
+    sectionContainer: {
+      marginBottom: 20,
       gap: 12,
     },
     sectionTitle: {
@@ -685,16 +778,16 @@ function createStyles(theme: Theme) {
       fontWeight: '500',
     },
     rateButton: {
+      flexDirection: 'row',
       marginTop: 8,
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
     },
     rateButtonText: {
-      color: '#fff',
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: '600',
     },
     resetButton: {
@@ -724,5 +817,46 @@ function createStyles(theme: Theme) {
       fontSize: 14,
       fontWeight: '600',
     },
+    reviewSection: {
+      gap: 12,
+    },
+    reviewCard: {
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      gap: 8,
+    },
+    reviewHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    reviewUserInfo: {
+      flex: 1,
+    },
+    reviewUser: {
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    reviewDate: {
+      fontSize: 12,
+    },
+    reviewText: {
+      fontSize: 15,
+      lineHeight: 22,
+    },
+    reviewHeaderRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    deleteCommentBtn: {
+      padding: 4,
+    },
+    columnLabel: {
+      fontSize: 14,
+      lineHeight: 20,
+    }
   });
 }
+
