@@ -175,39 +175,41 @@ export default function RateRoomModal() {
                                             {comment.length} / {MAX_COMMENT_LENGTH}
                                         </Text>
                                     </View>
-                                    <TextInput
-                                        style={[styles.commentInput, {
-                                            backgroundColor: theme.inputBg,
-                                            color: theme.text,
-                                            borderColor: theme.border,
-                                            height: 120,
-                                        }]}
-                                        placeholder="Share your experience (optional)..."
-                                        placeholderTextColor={theme.placeholder}
-                                        value={comment}
-                                        onChangeText={setComment}
-                                        multiline
-                                        numberOfLines={4}
-                                        textAlignVertical="top"
-                                        maxLength={MAX_COMMENT_LENGTH}
-                                        blurOnSubmit={false}
-                                        onFocus={() => {
-                                            setTimeout(() => {
-                                                scrollViewRef.current?.scrollToEnd({ animated: true });
-                                            }, 250);
-                                        }}
-                                    />
+                                    <View style={[styles.commentInputContainer, { backgroundColor: theme.inputBg, borderColor: theme.border }]}>
+                                        <TextInput
+                                            style={[styles.commentInput, {
+                                                color: theme.text,
+                                            }]}
+                                            placeholder={initialLoad ? "Loading your comment..." : "Share your experience (optional)..."}
+                                            placeholderTextColor={theme.placeholder}
+                                            value={comment}
+                                            onChangeText={setComment}
+                                            multiline
+                                            numberOfLines={4}
+                                            textAlignVertical="top"
+                                            maxLength={MAX_COMMENT_LENGTH}
+                                            blurOnSubmit={false}
+                                            editable={!initialLoad}
+                                            onFocus={() => {
+                                                setTimeout(() => {
+                                                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                                                }, 250);
+                                            }}
+                                        />
+                                    </View>
                                 </View>
                             )}
                         </ScrollView>
                     </View>
 
                     <TouchableOpacity
-                        style={[styles.doneButton, { backgroundColor: theme.primary }]}
+                        style={[styles.doneButton, { backgroundColor: theme.primary }, (isSaving || initialLoad) && styles.doneButtonDisabled]}
                         onPress={() => handleDone()}
-                        disabled={isSaving}
+                        disabled={isSaving || initialLoad}
                     >
-                        <Text style={styles.doneButtonText}>{isSaving ? 'Saving...' : 'Done'}</Text>
+                        <Text style={styles.doneButtonText}>
+                            {isSaving ? 'Saving...' : initialLoad ? 'Loading...' : 'Done'}
+                        </Text>
                     </TouchableOpacity>
 
                     {isSaving && (
@@ -278,10 +280,12 @@ function createStyles(theme: Theme) {
             fontSize: 18,
             fontWeight: 'bold',
         },
+        doneButtonDisabled: {
+            backgroundColor: theme.border,
+        },
         commentGroup: {
             gap: 12,
             width: '100%',
-            alignItems: 'center', // Added back to center the header and input
         },
         commentHeader: {
             flexDirection: 'row',
@@ -293,12 +297,19 @@ function createStyles(theme: Theme) {
             fontSize: 12,
             fontWeight: '500',
         },
-        commentInput: {
+        commentInputContainer: {
             borderRadius: 12,
             borderWidth: 1,
-            padding: 16,
-            fontSize: 16,
             width: '100%',
+            height: 120,
+            overflow: 'hidden',
+        },
+        commentInput: {
+            flex: 1,
+            paddingHorizontal: 16,
+            paddingTop: 12,
+            paddingBottom: 12,
+            fontSize: 16,
         },
     });
 }
