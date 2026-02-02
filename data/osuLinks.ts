@@ -61,12 +61,6 @@ export const OSU_LINKS: OsuLink[] = [
         category: 'Websites',
     },
     {
-        title: 'MyDegrees',
-        url: 'https://mydegrees.oregonstate.edu',
-        icon: 'ribbon',
-        category: 'Websites',
-    },
-    {
         title: 'OSU Rooms (Web)',
         url: 'https://osurooms.bobjoerules.com',
         icon: 'star',
