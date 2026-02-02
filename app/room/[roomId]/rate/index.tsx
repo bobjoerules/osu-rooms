@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,39 +19,44 @@ const MemoStarRating = React.memo(StarRating);
 
 
 export default function RateRoomModal() {
-    const { roomId } = useLocalSearchParams<{ roomId: string }>();
+    const { roomId, initialComment } = useLocalSearchParams<{ roomId: string, initialComment?: string }>();
     const router = useRouter();
     const theme = useTheme();
     const triggerHaptic = useHapticFeedback();
     const styles = useMemo(() => createStyles(theme), [theme]);
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState(initialComment || '');
     const [isSaving, setIsSaving] = useState(false);
-    const [initialLoad, setInitialLoad] = useState(true);
-    const { canComment } = useUser();
+    const [initialLoad, setInitialLoad] = useState(!initialComment);
+    const { user, loading: authLoading, canComment } = useUser();
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
 
     const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
 
     useEffect(() => {
-        async function fetchInitialComment() {
-            const user = auth.currentUser;
-            if (!user || !finalRoomId) return;
-            try {
-                const userRef = doc(db, 'ratings', finalRoomId, 'userRatings', user.uid);
-                const snap = await getDoc(userRef);
-                if (snap.exists()) {
-                    setComment(snap.data().comment || '');
-                }
-            } catch (err) {
-                console.error("Error fetching initial comment:", err);
-            } finally {
-                setInitialLoad(false);
-            }
+        if (authLoading || !user || !finalRoomId) {
+            if (!authLoading && !user) setInitialLoad(false);
+            return;
         }
+        const userRef = doc(db, 'ratings', finalRoomId, 'userRatings', user.uid);
+        const unsubscribe = onSnapshot(userRef, (snap) => {
+            if (snap.exists()) {
+                const data = snap.data();
+                setComment(prev => {
+                    if (prev === "" || initialLoad) {
+                        return data.comment || "";
+                    }
+                    return prev;
+                });
+            }
+            setInitialLoad(false);
+        }, (err) => {
+            console.error("Error syncing comment:", err);
+            setInitialLoad(false);
+        });
 
-        fetchInitialComment();
-    }, [finalRoomId]);
+        return unsubscribe;
+    }, [finalRoomId, user, authLoading]);
 
     const handleClose = (shouldHaptic = true) => {
         if (shouldHaptic) triggerHaptic();
@@ -107,7 +112,6 @@ export default function RateRoomModal() {
 
     return (
         <View style={{ flex: 1, backgroundColor: 'transparent' }}>
-            {/* Background Overlay */}
             <TouchableOpacity
                 style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
                 activeOpacity={1}
@@ -260,7 +264,6 @@ function createStyles(theme: Theme) {
             borderRadius: 16,
             alignItems: 'center',
             width: '90%',
-            // Add shadow to make it pop against the background
             elevation: 4,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
@@ -274,6 +277,7 @@ function createStyles(theme: Theme) {
         },
         doneButtonDisabled: {
             backgroundColor: theme.border,
+            opacity: 1,
         },
         commentGroup: {
             gap: 12,

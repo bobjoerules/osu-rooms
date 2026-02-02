@@ -6,7 +6,7 @@ import { auth, db } from '../firebaseConfig';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
-type TemperatureValue = 1 | 2 | 3; // 1=cold, 2=just right, 3=hot
+type TemperatureValue = 1 | 2 | 3;
 type TemperatureRatingProps = { itemId: string; width?: number };
 
 export default function TemperatureRating({ itemId, width }: TemperatureRatingProps) {
@@ -132,7 +132,6 @@ export default function TemperatureRating({ itemId, width }: TemperatureRatingPr
           ))}
         </View>
       </LinearGradient>
-      {/* Meta text intentionally hidden for temperature rating */}
       {error && <Text style={[styles.error]}>{error}</Text>}
     </View>
   );

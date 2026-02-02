@@ -25,7 +25,7 @@ interface AccordionItemProps {
   title: React.ReactNode;
   children: React.ReactNode;
   isExpanded: boolean;
-  onPress: () => boolean; // Return true to prevent default toggle
+  onPress: () => boolean;
   image?: string | number;
   showImage?: boolean;
   containerStyle?: any;
@@ -39,7 +39,6 @@ export const AccordionItem = React.memo<AccordionItemProps>(({ title, children, 
     triggerHaptic();
     const preventDefault = onPress();
     if (!preventDefault) {
-      // Use custom faster animation (200ms instead of default ~300-400ms)
       LayoutAnimation.configureNext(snapAnimation);
     }
   };
@@ -114,7 +113,7 @@ export default function Accordion({ items, forceExpandAll = false }: AccordionPr
   const toggleItem = (id: string, customOnPress?: () => void) => {
     if (customOnPress) {
       customOnPress();
-      if (isDesktopWeb) return true; // Prevent expansion on desktop
+      if (isDesktopWeb) return true;
     }
     setExpandedId(expandedId === id ? null : id);
     return false;

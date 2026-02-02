@@ -141,7 +141,7 @@ export default function RoomDetail() {
                 `${finalRoomId}_temperature`,
               ];
 
-              const BATCH_LIMIT = 450; // stay under 500 operations
+              const BATCH_LIMIT = 450;
               let batch = writeBatch(db);
               let ops = 0;
 
@@ -159,7 +159,6 @@ export default function RoomDetail() {
                   ops = 0;
                 }
 
-                // delete aggregate doc last
                 batch.delete(doc(db, 'ratings', key));
                 ops++;
                 if (ops >= BATCH_LIMIT) {
@@ -217,7 +216,6 @@ export default function RoomDetail() {
   const GAP = 12;
   const SNAP_INTERVAL = IMAGE_WIDTH + GAP;
   const SIDE_PADDING = (SCREEN_WIDTH - IMAGE_WIDTH) / 2;
-  // For desktop: account for container padding (16px each side) and add buffer
   const DESKTOP_IMAGE_WIDTH = isDesktopWeb ? Math.min(1168, windowWidth - 80) : IMAGE_WIDTH;
 
   const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -248,7 +246,6 @@ export default function RoomDetail() {
         setActiveImageIndex(nearestIndex);
       }
     } else {
-      // On native mobile, rely on snapToInterval + center alignment without correction
       const itemSize = IMAGE_WIDTH + GAP;
       nearestIndex = Math.round((scrollOffset + SIDE_PADDING) / itemSize);
       if (nearestIndex >= 0 && nearestIndex < roomData.images.length) {
@@ -259,7 +256,6 @@ export default function RoomDetail() {
 
   const insets = useSafeAreaInsets();
 
-  // Handle keyboard navigation
   useEffect(() => {
     if (Platform.OS !== 'web') return;
 
@@ -365,7 +361,6 @@ export default function RoomDetail() {
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
-        {/* @ts-ignore */}
         <View
           style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}
           onMouseDown={handleMouseDown}
@@ -476,7 +471,11 @@ export default function RoomDetail() {
                       }
                       return;
                     }
-                    router.push(`/room/${finalRoomId}/rate`);
+                    const myReview = comments.find(c => c.id === auth.currentUser?.uid);
+                    router.push({
+                      pathname: `/room/${finalRoomId}/rate`,
+                      params: { initialComment: myReview?.comment || '' }
+                    });
                   } catch (error) {
                     console.error('Rate button error:', error);
                     if (Platform.OS === 'web') {
@@ -515,8 +514,8 @@ export default function RoomDetail() {
                 <Text style={[styles.detailLabel, { color: theme.text }]}>Temperature</Text>
                 {(() => {
                   const STAR_SIZE_DETAILED = 24;
-                  const STAR_PAD = 4; // matches RatingDisplay starBtn paddingHorizontal
-                  const starWidthDetailed = 5 * (STAR_SIZE_DETAILED + STAR_PAD * 2) - 10; // nudge to visually match
+                  const STAR_PAD = 4;
+                  const starWidthDetailed = 5 * (STAR_SIZE_DETAILED + STAR_PAD * 2) - 10;
                   return (
                     <TemperatureDisplay itemId={`${finalRoomId}_temperature`} width={starWidthDetailed} />
                   );
@@ -712,7 +711,7 @@ function createStyles(theme: Theme) {
       borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: -14, // Aligns with the vertical center of the stars
+      marginTop: -14,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.15,

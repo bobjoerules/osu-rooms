@@ -33,7 +33,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Load initial settings
         const loadSettings = async () => {
             try {
                 const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue] = await Promise.all([

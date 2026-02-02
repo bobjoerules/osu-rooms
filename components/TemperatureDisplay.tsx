@@ -28,9 +28,8 @@ export default function TemperatureDisplay({ itemId, width }: TemperatureDisplay
     setBarWidth(e.nativeEvent.layout.width);
   };
 
-  // avg in [0..3], normalize to [0..1]
   const posPct = Math.max(0, Math.min(1, (avg - 1) / 2));
-  const markerLeft = barWidth * posPct - 6; // center marker (12px wide)
+  const markerLeft = barWidth * posPct - 6;
 
   const computedWidthStyle = width ? { width } : undefined;
 
@@ -45,8 +44,6 @@ export default function TemperatureDisplay({ itemId, width }: TemperatureDisplay
         />
         <View style={[styles.marker, { left: isNaN(markerLeft) ? 0 : markerLeft }]} />
       </View>
-      {/* Labels removed intentionally for a cleaner detailed view */}
-      {/* Meta text intentionally hidden for temperature display */}
     </View>
   );
 }

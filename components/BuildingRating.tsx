@@ -11,13 +11,11 @@ export type BuildingRatingProps = {
     priority?: boolean;
 };
 
-// Global cache to prevent redundant fetching across the app session
 const ratingCache: Record<string, { avg: number; count: number }> = {};
 const listeners: Record<string, number> = {};
 
 export default function BuildingRating({ roomIds, size = 14, priority = false }: BuildingRatingProps) {
     const theme = useTheme();
-    // Initialize state with cached values if they exist
     const [roomRatings, setRoomRatings] = useState<Record<string, { avg: number; count: number }>>(() => {
         const initial: Record<string, { avg: number; count: number }> = {};
         roomIds.forEach(id => {
@@ -39,7 +37,6 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
                     const data = snap.data() as { avg?: number; count?: number } | undefined;
                     const rating = { avg: data?.avg ?? 0, count: data?.count ?? 0 };
 
-                    // Update cache
                     ratingCache[id] = rating;
 
                     setRoomRatings((prev) => ({
@@ -51,7 +48,6 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
             });
         };
 
-        // If not priority, delay loading to allow user to scroll past
         const timer = priority ? null : setTimeout(startListening, 400);
         if (priority) startListening();
 

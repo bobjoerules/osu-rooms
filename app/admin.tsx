@@ -313,9 +313,9 @@ export default function AdminScreen() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'pending': return '#FFCC00'; // Yellow
-            case 'approved': return '#34C759'; // Green
-            case 'rejected': return '#FF3B30'; // Red
+            case 'pending': return '#FFCC00';
+            case 'approved': return '#34C759';
+            case 'rejected': return '#FF3B30';
             default: return theme.primary;
         }
     };

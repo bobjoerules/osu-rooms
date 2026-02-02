@@ -175,17 +175,14 @@ function AuthenticatedStack() {
         <Head>
           <title>OSU Rooms</title>
           <meta name="description" content="Rate and explore OSU rooms with photos and ratings." />
-          {/* Open Graph */}
           <meta property="og:type" content="website" />
           <meta property="og:title" content="OSU Rooms" />
           <meta property="og:description" content="Rate and explore OSU rooms with photos and ratings." />
           <meta property="og:image" content="/favicon.png" />
-          {/* Twitter */}
           <meta name="twitter:card" content="summary" />
           <meta name="twitter:title" content="OSU Rooms" />
           <meta name="twitter:description" content="Rate and explore OSU rooms with photos and ratings." />
           <meta name="twitter:image" content="/favicon.png" />
-          {/* Ensure Apple touch icon uses icon.png (copied as favicon) */}
           <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
         </Head>
       )}

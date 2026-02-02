@@ -13,7 +13,6 @@ export type RatingDisplayProps = {
   align?: 'center' | 'flex-start' | 'flex-end';
 };
 
-// Global cache for room ratings
 const ratingCache: Record<string, { avg: number; count: number }> = {};
 
 export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showMetaText = true, align = 'center' }: RatingDisplayProps) {

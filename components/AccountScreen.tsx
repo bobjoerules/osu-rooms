@@ -55,7 +55,7 @@ export default function Account() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const isDesktopWeb = Platform.OS === 'web' && width >= 768; // Renamed from isDesktop to match original context
+  const isDesktopWeb = Platform.OS === 'web' && width >= 768;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -106,7 +106,6 @@ export default function Account() {
             if (role === "admin" || role === "owner") {
               setIsAdmin(true);
 
-              // Set up real-time listener for pending submissions count
               const submissionsColl = collection(db, "submissions");
               const q = query(submissionsColl, where("status", "==", "pending"));
               onSnapshot(q, (snapshot) => {

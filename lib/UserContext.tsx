@@ -25,10 +25,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             setUser(currentUser);
 
             if (currentUser) {
-                // 1. Instant check for OSU email
                 const isOSU = currentUser.email?.toLowerCase().endsWith('@oregonstate.edu') ?? false;
 
-                // 2. Database check for roles
                 try {
                     const userDoc = await getDoc(doc(db, "users", currentUser.uid));
                     if (userDoc.exists()) {
