@@ -32,9 +32,9 @@ if (Platform.OS === 'web') {
 
 const storage: FirebaseStorage = getStorage(app);
 const db: Firestore = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager()
-  })
+  localCache: Platform.OS === 'web'
+    ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    : persistentLocalCache({}) // Standard persistent cache for native without tab manager
 });
 
 export { app, auth, db, storage };

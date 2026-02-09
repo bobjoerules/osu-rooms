@@ -50,7 +50,7 @@ const colours = { white: '#ffffff' };
 
 export default function Account() {
   const theme = useTheme();
-  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures, showSubmitTab, setShowSubmitTab } = useSettings();
+  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures, showSubmitTab, setShowSubmitTab, showDormTab, setShowDormTab } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -79,6 +79,10 @@ export default function Account() {
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
 
   const { buildings } = useBuildings();
+
+  const activeTabs = 2 + (showSubmitTab ? 1 : 0) + (useBetaFeatures ? 1 : 0) + (showDormTab ? 1 : 0);
+  const isAtTabLimit = Platform.OS === 'android' && activeTabs >= 4;
+  const isOSUVerified = userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu');
 
   const totalRooms = useMemo(() => {
     return buildings.reduce((acc, building) => acc + (building.rooms?.length || 0), 0);
@@ -332,26 +336,27 @@ export default function Account() {
         console.log("Querying user ratings to delete...");
 
         const userIdQuery = query(collectionGroup(db, 'userRatings'), where('userId', '==', uid));
-        const [userIdSnap, userEmailSnap] = await Promise.all([
+        const [userIdSnap, userEmailSnap, dormPostsSnap] = await Promise.all([
           getDocs(userIdQuery),
-          userEmail ? getDocs(query(collectionGroup(db, 'userRatings'), where('userEmail', '==', userEmail))) : Promise.resolve({ docs: [] } as any)
+          userEmail ? getDocs(query(collectionGroup(db, 'userRatings'), where('userEmail', '==', userEmail))) : Promise.resolve({ docs: [] } as any),
+          getDocs(query(collection(db, 'dorm_posts'), where('userId', '==', uid)))
         ]);
 
-        const allDocs = [...userIdSnap.docs];
+        const allDocs = [...userIdSnap.docs, ...dormPostsSnap.docs];
         userEmailSnap.forEach((d: any) => {
           if (!allDocs.find(ad => ad.id === d.id && ad.ref.path === d.ref.path)) {
             allDocs.push(d);
           }
         });
 
-        console.log(`Found ${allDocs.length} ratings/comments to delete.`);
+        console.log(`Found ${allDocs.length} items (ratings/posts) to delete.`);
 
         const batch = writeBatch(db);
         allDocs.forEach((doc) => {
           batch.delete(doc.ref);
         });
         await batch.commit();
-        console.log("All user comments and detailed ratings deleted.");
+        console.log("All user comments, ratings, and dorm posts deleted.");
       } catch (e) {
         console.error("Failed to delete user ratings/comments:", e);
       }
@@ -558,7 +563,7 @@ export default function Account() {
                       <View style={{ flex: 1 }}>
                         <Text style={[styles.adminCardTitle, { color: theme.text }]}>Review Submissions</Text>
                         <Text style={[styles.adminCardSubtitle, { color: theme.subtext }]}>
-                          {pendingCount !== null ? `${pendingCount} pending reviews` : 'Manage room updates'}
+                          {pendingCount !== null ? `${pendingCount} pending reviews` : 'Manage room posts'}
                         </Text>
                       </View>
                       <Ionicons name="chevron-forward" size={20} color={theme.subtext} />
@@ -638,6 +643,7 @@ export default function Account() {
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
                     activeThumbColor={colours.white}
+                    disabled={!useBetaFeatures && isAtTabLimit}
                   />
                 </View>
 
@@ -655,6 +661,27 @@ export default function Account() {
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
                     activeThumbColor={colours.white}
+                    disabled={!showSubmitTab && isAtTabLimit}
+                  />
+                </View>
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Dorm Posts</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>
+                      {isOSUVerified ? "View and share dorm posts" : "Requires verified OSU email"}
+                    </Text>
+                  </View>
+                  <Switch
+                    value={showDormTab}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowDormTab(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                    disabled={!isOSUVerified || (!showDormTab && isAtTabLimit)}
                   />
                 </View>
               </View>

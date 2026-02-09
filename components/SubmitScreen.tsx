@@ -113,7 +113,7 @@ export default function SubmitScreen() {
                 imageUrl = await getDownloadURL(storageRef);
             }
 
-            const docRef = await addDoc(collection(db, 'submissions'), {
+            await addDoc(collection(db, 'submissions'), {
                 building: building.trim(),
                 roomNumber: roomNumber.trim(),
                 roomType: roomType.trim(),
@@ -127,14 +127,8 @@ export default function SubmitScreen() {
 
             try {
                 const { status } = await Notifications.getPermissionsAsync();
-                let finalStatus = status;
                 if (status !== 'granted') {
-                    const { status: newStatus } = await Notifications.requestPermissionsAsync();
-                    finalStatus = newStatus;
-                }
-
-                if (finalStatus === 'granted') {
-                    await addPendingSubmission(docRef.id);
+                    await Notifications.requestPermissionsAsync();
                 }
             } catch (ignore) {
             }
@@ -145,7 +139,6 @@ export default function SubmitScreen() {
                 setRoomType('');
                 setCapacity('');
                 setImage(null);
-
                 setIsOtherSelected(false);
             };
 
@@ -169,6 +162,14 @@ export default function SubmitScreen() {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
+            <View style={[
+                styles.headerContainer,
+                isDesktop && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
+            ]}>
+                <Text style={styles.title}>Add/Edit Room</Text>
+                <Text style={styles.subtitle}>Submit a room or suggest an update</Text>
+            </View>
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
@@ -181,21 +182,6 @@ export default function SubmitScreen() {
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={true}
                 >
-                    <View style={styles.header}>
-                        {router.canGoBack() ? (
-                            <Pressable
-                                onPress={() => { triggerHaptic(); router.back(); }}
-                                style={styles.backButton}
-                            >
-                                <Ionicons name="chevron-back" size={28} color={theme.text} />
-                            </Pressable>
-                        ) : (
-                            <View style={{ width: 40 }} />
-                        )}
-                        <Text style={styles.headerTitle}>Add/Edit Room</Text>
-                        <View style={{ width: 40 }} />
-                    </View>
-
                     <View style={styles.form}>
                         <Text style={styles.label}>Building Name</Text>
                         <View style={styles.dropdownContainer}>
@@ -321,8 +307,6 @@ export default function SubmitScreen() {
                             )}
                         </View>
 
-
-
                         <Pressable
                             style={[
                                 styles.submitButton,
@@ -354,26 +338,24 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             flexGrow: 1,
             paddingHorizontal: 20,
             paddingBottom: 20,
-            paddingTop: isDesktop ? 100 : (Platform.OS === 'web' ? 75 : 0),
             maxWidth: 600,
             width: '100%',
             alignSelf: 'center',
         },
-        header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: Platform.OS === 'web' ? 0 : 12,
+        headerContainer: {
+            paddingHorizontal: 20,
+            paddingVertical: 16,
+            paddingTop: Platform.OS === 'web' ? 75 + 16 : 16,
         },
-        backButton: {
-            width: 40,
-            height: 40,
-            justifyContent: 'center',
-        },
-        headerTitle: {
-            fontSize: 20,
+        title: {
+            fontSize: 28,
             fontWeight: 'bold',
             color: theme.text,
+        },
+        subtitle: {
+            fontSize: 14,
+            color: theme.subtext,
+            marginTop: 4,
         },
         form: {
             marginTop: 12,
@@ -498,6 +480,5 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             fontSize: 16,
             color: theme.text,
         },
-
     });
 }

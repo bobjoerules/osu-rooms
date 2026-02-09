@@ -14,6 +14,8 @@ interface SettingsContextType {
     setUseBetaFeatures: (value: boolean) => void;
     showSubmitTab: boolean;
     setShowSubmitTab: (value: boolean) => void;
+    showDormTab: boolean;
+    setShowDormTab: (value: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -23,6 +25,7 @@ const HAPTICS_KEY = '@osu_rooms_use_haptics';
 const BUILDING_IMAGES_KEY = '@osu_rooms_show_building_images';
 const BETA_FEATURES_KEY = '@osu_rooms_use_beta_features';
 const SHOW_SUBMIT_TAB_KEY = '@osu_rooms_show_submit_tab';
+const DORM_TAB_KEY = '@osu_rooms_show_dorm_tab';
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showPlaceholders, setShowPlaceholders] = useState(false);
@@ -30,17 +33,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showBuildingImages, setShowBuildingImages] = useState(Platform.OS !== 'web');
     const [useBetaFeatures, setUseBetaFeatures] = useState(false);
     const [showSubmitTab, setShowSubmitTab] = useState(true);
+    const [showDormTab, setShowDormTab] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadSettings = async () => {
             try {
-                const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue] = await Promise.all([
+                const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue, showDormTabValue] = await Promise.all([
                     AsyncStorage.getItem(PLACEHOLDERS_KEY),
                     AsyncStorage.getItem(HAPTICS_KEY),
                     AsyncStorage.getItem(BUILDING_IMAGES_KEY),
                     AsyncStorage.getItem(BETA_FEATURES_KEY),
                     AsyncStorage.getItem(SHOW_SUBMIT_TAB_KEY),
+                    AsyncStorage.getItem(DORM_TAB_KEY),
                 ]);
 
                 if (placeholdersValue !== null) {
@@ -57,6 +62,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 }
                 if (showSubmitTabValue !== null) {
                     setShowSubmitTab(JSON.parse(showSubmitTabValue));
+                }
+                if (showDormTabValue !== null) {
+                    setShowDormTab(JSON.parse(showDormTabValue));
                 }
             } catch (e) {
                 console.error('Failed to load settings', e);
@@ -112,6 +120,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const updateShowDormTab = async (value: boolean) => {
+        try {
+            setShowDormTab(value);
+            await AsyncStorage.setItem(DORM_TAB_KEY, JSON.stringify(value));
+        } catch (e) {
+            console.error('Failed to save settings', e);
+        }
+    };
+
     const value = React.useMemo(() => ({
         showPlaceholders,
         setShowPlaceholders: updateShowPlaceholders,
@@ -122,13 +139,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         useBetaFeatures,
         setUseBetaFeatures: updateUseBetaFeatures,
         showSubmitTab,
-        setShowSubmitTab: updateShowSubmitTab
+        setShowSubmitTab: updateShowSubmitTab,
+        showDormTab,
+        setShowDormTab: updateShowDormTab
     }), [
         showPlaceholders,
         useHaptics,
         showBuildingImages,
         useBetaFeatures,
-        showSubmitTab
+        showSubmitTab,
+        showDormTab
     ]);
 
     return (
