@@ -108,7 +108,11 @@ export default function BuildingDetail() {
                             <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
                                 {building.name}
                             </Text>
-                            <BuildingRating roomIds={building.rooms.map(r => r.id)} />
+                            <BuildingRating
+                                roomIds={building.rooms.map(r => r.id)}
+                                initialAvg={building.avgRating}
+                                initialCount={building.count}
+                            />
                         </View>
                         <View style={{ width: 40 }} />
                     </View>

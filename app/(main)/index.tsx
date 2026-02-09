@@ -45,7 +45,11 @@ const BuildingListItem = React.memo(({
   const title = (
     <View style={{ flex: 1 }}>
       <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>{item.name}</Text>
-      <BuildingRating roomIds={allRoomIds || item.rooms.map(r => r.id)} />
+      <BuildingRating
+        roomIds={allRoomIds || item.rooms.map(r => r.id)}
+        initialAvg={item.avgRating}
+        initialCount={item.count}
+      />
     </View>
   );
 

@@ -19,4 +19,6 @@ export interface Building {
     name: string;
     images?: any[];
     rooms: Room[];
+    avgRating?: number;
+    count?: number;
 }

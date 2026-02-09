@@ -9,12 +9,14 @@ export type BuildingRatingProps = {
     roomIds: string[];
     size?: number;
     priority?: boolean;
+    initialAvg?: number;
+    initialCount?: number;
 };
 
 const ratingCache: Record<string, { avg: number; count: number }> = {};
 const listeners: Record<string, number> = {};
 
-export default function BuildingRating({ roomIds, size = 14, priority = false }: BuildingRatingProps) {
+export default function BuildingRating({ roomIds, size = 14, priority = false, initialAvg, initialCount }: BuildingRatingProps) {
     const theme = useTheme();
     const [roomRatings, setRoomRatings] = useState<Record<string, { avg: number; count: number }>>(() => {
         const initial: Record<string, { avg: number; count: number }> = {};
@@ -25,6 +27,7 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
     });
 
     useEffect(() => {
+        if (initialCount !== undefined && initialCount > 0) return;
         let isActive = true;
         const unsubs: (() => void)[] = [];
 
@@ -59,6 +62,10 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
     }, [roomIds, priority]);
 
     const { avg, count } = useMemo(() => {
+        if (initialCount !== undefined && initialCount > 0) {
+            return { avg: initialAvg || 0, count: initialCount };
+        }
+
         let totalScore = 0;
         let totalCount = 0;
 
@@ -73,7 +80,7 @@ export default function BuildingRating({ roomIds, size = 14, priority = false }:
             avg: totalCount > 0 ? totalScore / totalCount : 0,
             count: totalCount
         };
-    }, [roomRatings]);
+    }, [roomRatings, initialAvg, initialCount]);
 
     return (
         <View style={styles.container}>

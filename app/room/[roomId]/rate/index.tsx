@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StarRating from '../../../../components/StarRating';
 import TemperatureRating from '../../../../components/TemperatureRating';
 import { auth, db } from '../../../../firebaseConfig';
+import { useBuildings } from '../../../../lib/DatabaseContext';
 import { checkProfanity } from '../../../../lib/profanity';
 import { useHapticFeedback } from '../../../../lib/SettingsContext';
 import { useUser } from '../../../../lib/UserContext';
@@ -30,8 +31,12 @@ export default function RateRoomModal() {
     const { user, loading: authLoading, canComment } = useUser();
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
+    const { buildings } = useBuildings();
 
     const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
+    const building = useMemo(() => {
+        return buildings.find(b => b.rooms.some(r => r.id === finalRoomId));
+    }, [buildings, finalRoomId]);
 
     useEffect(() => {
         if (authLoading || !user || !finalRoomId) {
@@ -137,6 +142,7 @@ export default function RateRoomModal() {
                                 <Text style={[styles.label, { color: theme.text }]}>Overall Rating</Text>
                                 <MemoStarRating
                                     itemId={finalRoomId as string}
+                                    buildingId={building?.id}
                                     size={STAR_SIZE}
                                 />
                             </View>

@@ -68,7 +68,7 @@ export default function OsuScreen() {
             {!(hideTitle) && (
                 <Text style={[styles.sectionTitle, { color: theme.text }]}>{title}</Text>
             )}
-            <View style={[styles.sectionBox, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+            <View style={[styles.sectionBox, { backgroundColor: theme.card, borderColor: theme.border }]}>
                 {data.map((item, index) => (
                     <Pressable
                         key={item.url}

@@ -268,7 +268,6 @@ export default function AdminScreen() {
     const SubmissionItem = React.memo(({ item }: { item: Submission }) => {
         const { width: windowWidth } = useWindowDimensions();
         const isWeb = Platform.OS === 'web';
-        // Base width for the image within the card (subtracting list padding)
         const imageWidth = isWeb ? (windowWidth > 832 ? 768 : windowWidth - 32) : windowWidth - 32;
 
         return (

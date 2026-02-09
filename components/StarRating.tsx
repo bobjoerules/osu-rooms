@@ -13,6 +13,7 @@ import { Theme, useTheme } from '../theme';
 
 export type StarRatingProps = {
   itemId: string;
+  buildingId?: string;
   initialMax?: number;
   size?: number;
   showMetaText?: boolean;
@@ -20,7 +21,7 @@ export type StarRatingProps = {
   onCommentChange?: (comment: string) => void;
 };
 
-export default function StarRating({ itemId, initialMax = 5, size = 40, showMetaText = false, onCommentChange }: StarRatingProps) {
+export default function StarRating({ itemId, buildingId, initialMax = 5, size = 40, showMetaText = false, onCommentChange }: StarRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -127,6 +128,32 @@ export default function StarRating({ itemId, initialMax = 5, size = 40, showMeta
           { avg: newAvg, count: newCount, updatedAt: serverTimestamp() },
           { merge: true }
         );
+
+        if (buildingId) {
+          const buildingRef = doc(db, 'buildings', buildingId);
+          const buildingSnap = await tx.get(buildingRef);
+          if (buildingSnap.exists()) {
+            const bData = buildingSnap.data();
+            const bAvg = bData.avgRating || 0;
+            const bCount = bData.count || 0;
+
+            let newBAvg = bAvg;
+            let newBCount = bCount;
+
+            if (oldRating == null) {
+              newBCount = bCount + 1;
+              newBAvg = (bAvg * bCount + value) / newBCount;
+            } else {
+              newBAvg = (bAvg * bCount - oldRating + value) / bCount;
+            }
+
+            tx.set(buildingRef, {
+              avgRating: newBAvg,
+              count: newBCount,
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          }
+        }
       });
     } catch {
       setError('Failed to save rating.');

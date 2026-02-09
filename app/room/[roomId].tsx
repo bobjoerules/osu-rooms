@@ -951,4 +951,3 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
     }
   });
 }
-
