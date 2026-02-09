@@ -95,6 +95,7 @@ export default function RateRoomModal() {
                     userId: user.uid,
                     userEmail: user.email,
                     displayName: user.displayName,
+                    userPhotoUrl: user.photoURL || null,
                     updatedAt: serverTimestamp()
                 };
 

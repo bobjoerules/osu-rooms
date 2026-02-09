@@ -38,7 +38,7 @@ export default function RoomDetail() {
   const flatListRef = useRef<FlatList>(null);
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseStartX, setMouseStartX] = useState(0);
-  const [comments, setComments] = useState<{ id: string, rating: number, comment: string, userEmail?: string, displayName?: string, updatedAt: any }[]>([]);
+  const [comments, setComments] = useState<{ id: string, rating: number, comment: string, userEmail?: string, displayName?: string, userPhotoUrl?: string | null, updatedAt: any }[]>([]);
 
   const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
 
@@ -430,10 +430,12 @@ export default function RoomDetail() {
         {/* @ts-ignore */}
         <View
           style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMoveWrapper}
-          onMouseUp={handleMouseUp}
-          {...(roomData.images.length > 1 ? { dataSet: { 'carousel-container': 'true' } } : {})}
+          {...(Platform.OS === 'web' ? {
+            onMouseDown: handleMouseDown,
+            onMouseMove: handleMouseMoveWrapper,
+            onMouseUp: handleMouseUp
+          } : {})}
+          {...(roomData.images.length > 1 && Platform.OS === 'web' ? { dataSet: { 'carousel-container': 'true' } } : {})}
         >
           {roomData.images.length > 1 ? (
             <>
@@ -630,12 +632,26 @@ export default function RoomDetail() {
                 <View key={item.id} style={[styles.reviewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
                   <View style={styles.reviewHeader}>
                     <View style={styles.reviewUserInfo}>
-                      <Text style={[styles.reviewUser, { color: theme.text }]}>
-                        {item.displayName || item.userEmail?.split('@')[0] || 'Anonymous'}
-                      </Text>
-                      <Text style={[styles.reviewDate, { color: theme.subtext }]}>
-                        {item.updatedAt?.toDate() ? new Date(item.updatedAt.toDate()).toLocaleDateString() : ''}
-                      </Text>
+                      <View style={styles.reviewAvatar}>
+                        {(item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) ? (
+                          <Image
+                            source={{ uri: (item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                            style={styles.reviewAvatarImage}
+                          />
+                        ) : (
+                          <Text style={styles.reviewAvatarText}>
+                            {(item.displayName || item.userEmail || "?").charAt(0).toUpperCase()}
+                          </Text>
+                        )}
+                      </View>
+                      <View>
+                        <Text style={[styles.reviewUser, { color: theme.text }]}>
+                          {item.displayName || item.userEmail?.split('@')[0] || 'Anonymous'}
+                        </Text>
+                        <Text style={[styles.reviewDate, { color: theme.subtext }]}>
+                          {item.updatedAt?.toDate() ? new Date(item.updatedAt.toDate()).toLocaleDateString() : ''}
+                        </Text>
+                      </View>
                     </View>
                     <View style={styles.reviewHeaderRight}>
                       <StaticStarRating rating={item.rating || 0} size={14} />
@@ -925,10 +941,31 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
     },
     reviewUserInfo: {
       flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    reviewAvatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: '#8882',
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    reviewAvatarImage: {
+      width: '100%',
+      height: '100%',
+    },
+    reviewAvatarText: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.subtext,
     },
     reviewUser: {
       fontSize: 14,
-      fontWeight: '600',
+      fontWeight: 'bold',
     },
     reviewDate: {
       fontSize: 12,

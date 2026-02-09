@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
@@ -21,9 +22,11 @@ import {
   getDocs,
   onSnapshot,
   query,
+  updateDoc,
   where,
   writeBatch
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -41,7 +44,7 @@ import {
   useWindowDimensions
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { auth, db } from "../firebaseConfig";
+import { auth, db, storage } from "../firebaseConfig";
 import { useBuildings } from "../lib/DatabaseContext";
 import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
 import { Theme, useTheme } from "../theme";
@@ -75,6 +78,8 @@ export default function Account() {
   const [pendingCount, setPendingCount] = useState<number | null>(null);
   const [showAppStore, setShowAppStore] = useState(false);
   const [showPlayStore, setShowPlayStore] = useState(false);
+  const [photoURL, setPhotoURL] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
 
@@ -96,12 +101,16 @@ export default function Account() {
       setUserName(user?.displayName ?? null);
 
       if (user) {
+        setPhotoURL(user.photoURL);
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
             if (userData.username) {
               setUserName(userData.username);
+            }
+            if (userData.photoURL) {
+              setPhotoURL(userData.photoURL);
             }
 
             const role = userData.role;
@@ -155,10 +164,14 @@ export default function Account() {
         currentUser.reload().then(async () => {
           setUserEmail(currentUser.email);
           setUserName(currentUser.displayName);
+          setPhotoURL(currentUser.photoURL);
           try {
             const userDoc = await getDoc(doc(db, "users", currentUser.uid));
             if (userDoc.exists()) {
               const userData = userDoc.data();
+              if (userData.photoURL) {
+                setPhotoURL(userData.photoURL);
+              }
               const role = userData.role;
               setUserRole(role);
 
@@ -410,6 +423,71 @@ export default function Account() {
     }
   }
 
+  const pickProfilePicture = async () => {
+    triggerHaptic();
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      uploadProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const uploadProfilePicture = async (uri: string) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    setUploading(true);
+    try {
+      const blob: Blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () { resolve(xhr.response); };
+        xhr.onerror = function (e) { reject(new TypeError("Network request failed")); };
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+      });
+
+      const filename = `profile_pictures/${user.uid}.jpg`;
+      const storageRef = ref(storage, filename);
+      await uploadBytes(storageRef, blob);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      await updateProfile(user, { photoURL: downloadURL });
+      await updateDoc(doc(db, "users", user.uid), { photoURL: downloadURL });
+
+      // Sync new photo to all existing posts and submissions
+      const batch = writeBatch(db);
+
+      const dormPostsQuery = query(collection(db, 'dorm_posts'), where('userId', '==', user.uid));
+      const dormSnap = await getDocs(dormPostsQuery);
+      dormSnap.forEach(d => batch.update(d.ref, { userPhotoUrl: downloadURL }));
+
+      const subQuery = query(collection(db, 'submissions'), where('userId', '==', user.uid));
+      const subSnap = await getDocs(subQuery);
+      subSnap.forEach(d => batch.update(d.ref, { userPhotoUrl: downloadURL }));
+
+      const ratingsQuery = query(collectionGroup(db, 'userRatings'), where('userId', '==', user.uid));
+      const ratingsSnap = await getDocs(ratingsQuery);
+      ratingsSnap.forEach(r => batch.update(r.ref, { userPhotoUrl: downloadURL }));
+
+      await batch.commit();
+
+      setPhotoURL(downloadURL);
+      Alert.alert("Success", "Profile picture updated everywhere!");
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      Alert.alert("Error", "Failed to upload profile picture.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const isSignup = mode === "signup";
   const isDisabled = isSignup
     ? !email.trim() || !password.trim() || !username.trim()
@@ -476,6 +554,29 @@ export default function Account() {
         <View style={styles.card}>
           {userEmail ? (
             <View style={styles.section}>
+              <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                <Pressable onPress={pickProfilePicture} disabled={uploading}>
+                  <View style={styles.profilePicContainer}>
+                    {photoURL ? (
+                      <Image source={{ uri: photoURL }} style={styles.profilePic} />
+                    ) : (
+                      <View style={[styles.profilePic, styles.profilePicPlaceholder]}>
+                        <Text style={styles.profilePicInitial}>
+                          {(userName || "U").charAt(0).toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
+                    <View style={styles.editBadge}>
+                      {uploading ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Ionicons name="camera" size={12} color="#fff" />
+                      )}
+                    </View>
+                  </View>
+                </Pressable>
+              </View>
+
               <View style={styles.infoRow}>
                 <View>
                   <Text style={styles.label}>Username</Text>
@@ -908,12 +1009,48 @@ function createStyles(theme: Theme) {
     },
     buttonSecondary: {
       backgroundColor: theme.inputBg,
-      paddingVertical: 12,
+      paddingVertical: 14,
       borderRadius: 12,
       alignItems: "center",
-      marginTop: 8,
       borderWidth: 1,
       borderColor: theme.border,
+    },
+    profilePicContainer: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      position: 'relative',
+    },
+    profilePic: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 50,
+    },
+    profilePicPlaceholder: {
+      backgroundColor: theme.primary + '22',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.primary + '44',
+      borderStyle: 'dashed',
+    },
+    profilePicInitial: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.primary,
+    },
+    editBadge: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      backgroundColor: theme.primary,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: theme.card,
     },
     buttonText: {
       color: theme.buttonText,

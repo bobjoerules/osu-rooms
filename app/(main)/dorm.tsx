@@ -31,8 +31,12 @@ interface DormPost {
     id: string;
     text: string;
     hall: string;
+    wing?: string;
+    floor?: string;
+    roomNumber?: string;
     userId: string;
     username: string;
+    userPhotoUrl?: string | null;
     createdAt: any;
     likes: string[];
     imageUrl?: string;
@@ -54,10 +58,14 @@ export default function DormScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [newPostText, setNewPostText] = useState('');
     const [selectedBuilding, setSelectedBuilding] = useState('');
+    const [wing, setWing] = useState('');
+    const [floor, setFloor] = useState('');
+    const [roomNumber, setRoomNumber] = useState('');
     const [image, setImage] = useState<string | null>(null);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -119,21 +127,67 @@ export default function DormScreen() {
 
     const pickImage = async () => {
         triggerHaptic();
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.8,
-        });
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+        const handleImageResult = (result: ImagePicker.ImagePickerResult) => {
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        };
+
+        const options = {
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            quality: 0.8,
+        };
+
+        const openCamera = async () => {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'We need camera access to take photos.');
+                return;
+            }
+            const result = await ImagePicker.launchCameraAsync(options);
+            handleImageResult(result);
+        };
+
+        const openLibrary = async () => {
+            const result = await ImagePicker.launchImageLibraryAsync(options);
+            handleImageResult(result);
+        };
+
+        if (Platform.OS === 'ios') {
+            ActionSheetIOS.showActionSheetWithOptions(
+                {
+                    options: ['Cancel', 'Take Photo', 'Choose from Library'],
+                    cancelButtonIndex: 0,
+                    title: 'Add a photo'
+                },
+                (buttonIndex) => {
+                    if (buttonIndex === 1) openCamera();
+                    else if (buttonIndex === 2) openLibrary();
+                }
+            );
+        } else {
+            // Simple choice for Android/Web (Web usually only supports Library well via browser picker anyway)
+            if (Platform.OS === 'web') {
+                openLibrary();
+            } else {
+                Alert.alert(
+                    'Add Photo',
+                    'Choose a source',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        { text: 'Take Photo', onPress: openCamera },
+                        { text: 'Choose from Library', onPress: openLibrary },
+                    ]
+                );
+            }
         }
     };
 
     const handleAddPost = async () => {
         triggerHaptic();
-        if (!newPostText.trim() || !selectedBuilding) return;
+        if (!image || !selectedBuilding) return;
 
         setSubmitting(true);
         try {
@@ -155,10 +209,14 @@ export default function DormScreen() {
             }
 
             await addDoc(collection(db, 'dorm_posts'), {
-                text: newPostText.trim(),
+                text: newPostText.trim() || '',
                 hall: selectedBuilding,
+                wing: wing.trim() || null,
+                floor: floor.trim() || null,
+                roomNumber: roomNumber.trim() || null,
                 userId: auth.currentUser?.uid,
                 username: auth.currentUser?.displayName || 'Anonymous',
+                userPhotoUrl: auth.currentUser?.photoURL || null,
                 createdAt: serverTimestamp(),
                 likes: [],
                 imageUrl
@@ -166,6 +224,9 @@ export default function DormScreen() {
             setModalVisible(false);
             setNewPostText('');
             setSelectedBuilding('');
+            setWing('');
+            setFloor('');
+            setRoomNumber('');
             setImage(null);
         } catch (error) {
             console.error("Error adding post: ", error);
@@ -250,35 +311,71 @@ export default function DormScreen() {
 
         return (
             <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                    <Text style={styles.hallName}>{item.hall}</Text>
-                    <Text style={styles.date}>{date}</Text>
+                {/* Header: User & Location */}
+                <View style={styles.igHeader}>
+                    <View style={styles.avatar}>
+                        {((item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl)) ? (
+                            <Image
+                                source={{ uri: (item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                                style={styles.avatarImage}
+                                contentFit="cover"
+                            />
+                        ) : (
+                            <Text style={styles.avatarText}>{item.username.charAt(0).toUpperCase()}</Text>
+                        )}
+                    </View>
+                    <View style={styles.igHeaderText}>
+                        <Text style={styles.igUsername}>{item.username}</Text>
+                        <Text style={styles.igLocation}>
+                            {[
+                                item.hall,
+                                item.wing ? `${item.wing} Wing` : null,
+                                item.floor ? `Floor ${item.floor}` : null,
+                                item.roomNumber ? `Room ${item.roomNumber}` : null
+                            ].filter(Boolean).join(' • ')}
+                        </Text>
+                    </View>
+                    {(isAdmin || item.userId === userId) && (
+                        <Pressable style={styles.igDeleteButton} onPress={() => handleDeletePost(item)}>
+                            <Ionicons name="ellipsis-horizontal" size={20} color={theme.subtext} />
+                        </Pressable>
+                    )}
                 </View>
 
+                {/* Image */}
                 {item.imageUrl && (
-                    <Image
-                        source={{ uri: item.imageUrl }}
-                        style={styles.postImage}
-                        contentFit="cover"
-                        transition={200}
-                    />
+                    <Pressable
+                        onPress={() => {
+                            triggerHaptic();
+                            setEnlargedImage(item.imageUrl || null);
+                        }}
+                    >
+                        <Image
+                            source={{ uri: item.imageUrl }}
+                            style={styles.igPostImage}
+                            contentFit="cover"
+                            transition={200}
+                        />
+                    </Pressable>
                 )}
 
-                <Text style={styles.postText}>{item.text}</Text>
-
-                <View style={styles.cardFooter}>
-                    <Text style={styles.username}>@{item.username}</Text>
-                    <View style={styles.actions}>
-                        {(isAdmin || item.userId === userId) && (
-                            <Pressable style={styles.deleteButton} onPress={() => handleDeletePost(item)}>
-                                <Ionicons name="trash-outline" size={18} color={theme.destructive} />
-                            </Pressable>
-                        )}
-                        <Pressable style={styles.likeButton} onPress={() => handleLike(item)}>
-                            <Ionicons name={isLiked ? "heart" : "heart-outline"} size={20} color={isLiked ? "#FF3B30" : theme.subtext} />
-                            <Text style={[styles.likeCount, { color: theme.subtext }]}>{item.likes?.length || 0}</Text>
+                {/* Actions & Likes */}
+                <View style={styles.igActionsSection}>
+                    <View style={styles.igActionsRow}>
+                        <Pressable style={styles.igLikeButton} onPress={() => handleLike(item)}>
+                            <Ionicons
+                                name={isLiked ? "heart" : "heart-outline"}
+                                size={26}
+                                color={isLiked ? "#FF3B30" : theme.text}
+                            />
+                            <Text style={styles.igLikesCount}>{item.likes?.length || 0}</Text>
                         </Pressable>
                     </View>
+                </View>
+
+                <View style={styles.igCaptionSection}>
+                    <Text style={styles.igCaption}>{item.text}</Text>
+                    <Text style={styles.igDate}>{date}</Text>
                 </View>
             </View>
         );
@@ -286,7 +383,7 @@ export default function DormScreen() {
 
     if (!isOSUVerified) {
         return (
-            <View style={[styles.container, styles.centered]}>
+            <View style={[styles.container, styles.centeredOverlay]}>
                 <Ionicons name="lock-closed" size={48} color={theme.subtext} />
                 <Text style={[styles.message, { marginTop: 16 }]}>Access Restricted</Text>
                 <Text style={styles.subMessage}>You must have a verified Oregon State University email to access this tab.</Text>
@@ -302,10 +399,9 @@ export default function DormScreen() {
                 isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
             ]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={[styles.title, { color: theme.text }]}>Dorm Posts</Text>
+                    <Text style={[styles.title, { color: theme.text }]}>Dorms</Text>
                     <Pressable
                         onPress={() => { triggerHaptic(); setModalVisible(true); }}
-                        style={styles.addButtonContainer}
                     >
                         {Platform.OS === 'ios' ? (
                             <GlassView
@@ -325,18 +421,18 @@ export default function DormScreen() {
                 </View>
             </View>
 
-            <View style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}>
-                {loading ? (
-                    <View style={styles.centered}>
-                        <ActivityIndicator size="large" color={theme.primary} />
-                    </View>
-                ) : posts.length === 0 ? (
-                    <View style={styles.centered}>
-                        <Ionicons name="chatbubbles-outline" size={48} color={theme.subtext + '44'} />
-                        <Text style={[styles.message, { marginTop: 16, color: theme.subtext }]}>No posts yet</Text>
-                        <Text style={styles.subMessage}>Be the first to share an update from your hall!</Text>
-                    </View>
-                ) : (
+            {loading ? (
+                <View style={styles.centeredOverlay}>
+                    <ActivityIndicator size="large" color={theme.primary} />
+                </View>
+            ) : posts.length === 0 ? (
+                <View style={styles.centeredOverlay}>
+                    <Ionicons name="chatbubbles-outline" size={48} color={theme.subtext + '44'} />
+                    <Text style={[styles.message, { marginTop: 16, color: theme.subtext }]}>No posts yet</Text>
+                    <Text style={styles.subMessage}>Be the first to share an update from your hall!</Text>
+                </View>
+            ) : (
+                <View style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}>
                     <FlatList
                         data={posts}
                         renderItem={renderItem}
@@ -347,8 +443,8 @@ export default function DormScreen() {
                             { paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 40) }
                         ]}
                     />
-                )}
-            </View>
+                </View>
+            )}
 
             <Modal
                 animationType="fade"
@@ -384,30 +480,71 @@ export default function DormScreen() {
                                     </Text>
                                     <Ionicons name={isPickerOpen ? "chevron-up" : "chevron-down"} size={20} color={theme.subtext} />
                                 </Pressable>
+
+                                {isPickerOpen && (
+                                    <View style={styles.pickerList}>
+                                        <FlatList
+                                            data={buildingNames}
+                                            keyExtractor={item => item}
+                                            nestedScrollEnabled
+                                            renderItem={({ item, index }) => (
+                                                <Pressable
+                                                    style={[
+                                                        styles.pickerItem,
+                                                        index === 0 && { borderTopWidth: 0 }
+                                                    ]}
+                                                    onPress={() => {
+                                                        setSelectedBuilding(item);
+                                                        setIsPickerOpen(false);
+                                                    }}
+                                                >
+                                                    <Text style={styles.pickerItemText}>{item}</Text>
+                                                </Pressable>
+                                            )}
+                                        />
+                                    </View>
+                                )}
                             </View>
 
-                            {isPickerOpen && (
-                                <View style={styles.pickerList}>
-                                    <FlatList
-                                        data={buildingNames}
-                                        keyExtractor={item => item}
-                                        nestedScrollEnabled
-                                        renderItem={({ item }) => (
-                                            <Pressable
-                                                style={styles.pickerItem}
-                                                onPress={() => {
-                                                    setSelectedBuilding(item);
-                                                    setIsPickerOpen(false);
-                                                }}
-                                            >
-                                                <Text style={styles.pickerItemText}>{item}</Text>
-                                            </Pressable>
-                                        )}
+                            <View style={styles.row}>
+                                <View style={styles.rowInput}>
+                                    <Text style={styles.label}>Wing</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="A, B, C..."
+                                        placeholderTextColor={theme.placeholder}
+                                        value={wing}
+                                        onChangeText={setWing}
+                                        maxLength={10}
                                     />
                                 </View>
-                            )}
+                                <View style={styles.rowInput}>
+                                    <Text style={styles.label}>Floor</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="1-5"
+                                        placeholderTextColor={theme.placeholder}
+                                        value={floor}
+                                        onChangeText={setFloor}
+                                        keyboardType="numeric"
+                                        maxLength={2}
+                                    />
+                                </View>
+                                <View style={styles.rowInput}>
+                                    <Text style={styles.label}>Room</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="101"
+                                        placeholderTextColor={theme.placeholder}
+                                        value={roomNumber}
+                                        onChangeText={setRoomNumber}
+                                        keyboardType="numeric"
+                                        maxLength={10}
+                                    />
+                                </View>
+                            </View>
 
-                            <Text style={styles.label}>Message</Text>
+                            <Text style={styles.label}>Message (Optional)</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Share something..."
@@ -418,7 +555,7 @@ export default function DormScreen() {
                                 onChangeText={setNewPostText}
                             />
 
-                            <Text style={styles.label}>Image (Optional)</Text>
+                            <Text style={styles.label}>Image</Text>
                             <Pressable style={styles.imagePicker} onPress={pickImage}>
                                 {image ? (
                                     <View style={{ width: '100%', height: '100%' }}>
@@ -443,9 +580,9 @@ export default function DormScreen() {
                             </Pressable>
 
                             <Pressable
-                                style={[styles.submitButton, (!selectedBuilding || !newPostText.trim() || submitting) && styles.disabledButton]}
+                                style={[styles.submitButton, (!selectedBuilding || !image || submitting) && styles.disabledButton]}
                                 onPress={handleAddPost}
-                                disabled={!selectedBuilding || !newPostText.trim() || submitting}
+                                disabled={!selectedBuilding || !image || submitting}
                             >
                                 {submitting ? (
                                     <ActivityIndicator color="#fff" />
@@ -455,6 +592,26 @@ export default function DormScreen() {
                             </Pressable>
                         </Pressable>
                     </KeyboardAvoidingView>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                visible={!!enlargedImage}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setEnlargedImage(null)}
+            >
+                <Pressable
+                    style={styles.fullScreenModal}
+                    onPress={() => setEnlargedImage(null)}
+                >
+                    {enlargedImage && (
+                        <Image
+                            source={{ uri: enlargedImage }}
+                            style={styles.fullScreenImage}
+                            contentFit="contain"
+                        />
+                    )}
                 </Pressable>
             </Modal>
         </SafeAreaView>
@@ -467,12 +624,12 @@ function createStyles(theme: Theme) {
             flex: 1,
             backgroundColor: theme.background,
         },
-        centered: {
-            flex: 1,
+        centeredOverlay: {
+            ...StyleSheet.absoluteFillObject,
             justifyContent: 'center',
             alignItems: 'center',
             padding: 20,
-            paddingBottom: 80,
+            zIndex: -1,
         },
         header: {
             paddingHorizontal: 20,
@@ -504,76 +661,98 @@ function createStyles(theme: Theme) {
             alignItems: 'center',
         },
         listContent: {
-            padding: 20,
-            paddingTop: 0,
-            gap: 16,
+            padding: 0,
+            paddingBottom: 40,
         },
         card: {
             backgroundColor: theme.card,
-            padding: 16,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: theme.border,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.05,
-            shadowRadius: 8,
-            elevation: 2,
-        },
-        postImage: {
-            width: '100%',
-            height: 200,
-            borderRadius: 8,
-            marginBottom: 12,
-        },
-        cardHeader: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+            borderRadius: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
             marginBottom: 8,
+            overflow: 'hidden',
         },
-        hallName: {
+        igHeader: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 12,
+        },
+        avatar: {
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            backgroundColor: theme.primary + '22',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 10,
+            overflow: 'hidden',
+        },
+        avatarImage: {
+            width: '100%',
+            height: '100%',
+        },
+        avatarText: {
             fontSize: 14,
-            fontWeight: '600',
+            fontWeight: 'bold',
             color: theme.primary,
         },
-        date: {
+        igHeaderText: {
+            flex: 1,
+        },
+        igUsername: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: theme.text,
+        },
+        igLocation: {
             fontSize: 12,
             color: theme.subtext,
         },
-        postText: {
-            fontSize: 16,
-            color: theme.text,
-            marginBottom: 12,
-            lineHeight: 22,
-        },
-        cardFooter: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-        },
-        username: {
-            fontSize: 13,
-            color: theme.subtext,
-            fontWeight: '500',
-            flex: 1,
-        },
-        actions: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-        },
-        deleteButton: {
-            padding: 4,
-            opacity: 0.7,
-        },
-        likeButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
+        igDeleteButton: {
             padding: 4,
         },
-        likeCount: {
+        igPostImage: {
+            width: '100%',
+            aspectRatio: 1,
+            maxHeight: 500,
+        },
+        igActionsSection: {
+            paddingHorizontal: 12,
+            paddingTop: 12,
+        },
+        igActionsRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 8,
+        },
+        igLikeButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+        },
+        igLikesCount: {
             fontSize: 14,
+            fontWeight: 'bold',
+            color: theme.text,
+        },
+        igCaptionSection: {
+            paddingHorizontal: 12,
+            paddingTop: 6,
+            paddingBottom: 16,
+        },
+        igCaption: {
+            fontSize: 14,
+            color: theme.text,
+            lineHeight: 18,
+        },
+        igCaptionUsername: {
+            fontWeight: 'bold',
+        },
+        igDate: {
+            fontSize: 10,
+            color: theme.subtext,
+            marginTop: 6,
+            textTransform: 'uppercase',
         },
         message: {
             fontSize: 18,
@@ -630,7 +809,8 @@ function createStyles(theme: Theme) {
             marginTop: 12,
         },
         dropdownContainer: {
-            zIndex: 10,
+            zIndex: 100,
+            position: 'relative',
         },
         pickerTrigger: {
             backgroundColor: theme.card,
@@ -647,17 +827,27 @@ function createStyles(theme: Theme) {
             color: theme.text,
         },
         pickerList: {
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
             maxHeight: 200,
             backgroundColor: theme.card,
             borderWidth: 1,
             borderColor: theme.border,
             borderRadius: 12,
             marginTop: 4,
+            zIndex: 1000,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
         },
         pickerItem: {
             padding: 12,
-            borderBottomWidth: 1,
-            borderBottomColor: theme.border,
+            borderTopWidth: 1,
+            borderTopColor: theme.border,
         },
         pickerItemText: {
             fontSize: 16,
@@ -672,6 +862,14 @@ function createStyles(theme: Theme) {
             fontSize: 16,
             color: theme.text,
             textAlignVertical: 'top',
+        },
+        row: {
+            flexDirection: 'row',
+            gap: 12,
+            marginTop: 4,
+        },
+        rowInput: {
+            flex: 1,
         },
         submitButton: {
             backgroundColor: theme.primary,
@@ -712,6 +910,16 @@ function createStyles(theme: Theme) {
             right: 8,
             backgroundColor: 'rgba(0,0,0,0.5)',
             borderRadius: 12,
+        },
+        fullScreenModal: {
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.95)',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        fullScreenImage: {
+            width: '100%',
+            height: '100%',
         },
     });
 }

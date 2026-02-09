@@ -118,6 +118,8 @@ export default function MultiPhotoSubmit() {
                 imageUrl: uploadedUrls[0],
                 userId: auth.currentUser?.uid,
                 userEmail: auth.currentUser?.email,
+                userName: auth.currentUser?.displayName || 'Anonymous',
+                userPhotoUrl: auth.currentUser?.photoURL || null,
                 status: 'pending',
                 createdAt: serverTimestamp(),
             });

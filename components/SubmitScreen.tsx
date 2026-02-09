@@ -7,6 +7,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useMemo, useState } from 'react';
 import {
+    ActionSheetIOS,
     ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
@@ -53,14 +54,64 @@ export default function SubmitScreen() {
 
     const pickImage = async () => {
         triggerHaptic();
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'images',
+
+        const handleImageResult = (result: ImagePicker.ImagePickerResult) => {
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        };
+
+        const options: ImagePicker.ImagePickerOptions = {
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             quality: 0.8,
-        });
+        };
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+        const openCamera = async () => {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                if (Platform.OS === 'web') {
+                    window.alert('Camera permission required.');
+                } else {
+                    Alert.alert('Permission Required', 'We need camera access to take photos.');
+                }
+                return;
+            }
+            const result = await ImagePicker.launchCameraAsync(options);
+            handleImageResult(result);
+        };
+
+        const openLibrary = async () => {
+            const result = await ImagePicker.launchImageLibraryAsync(options);
+            handleImageResult(result);
+        };
+
+        if (Platform.OS === 'ios') {
+            ActionSheetIOS.showActionSheetWithOptions(
+                {
+                    options: ['Cancel', 'Take Photo', 'Choose from Library'],
+                    cancelButtonIndex: 0,
+                    title: 'Add a photo'
+                },
+                (buttonIndex) => {
+                    if (buttonIndex === 1) openCamera();
+                    else if (buttonIndex === 2) openLibrary();
+                }
+            );
+        } else {
+            if (Platform.OS === 'web') {
+                openLibrary();
+            } else {
+                Alert.alert(
+                    'Add Photo',
+                    'Choose a source',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        { text: 'Take Photo', onPress: openCamera },
+                        { text: 'Choose from Library', onPress: openLibrary },
+                    ]
+                );
+            }
         }
     };
 
@@ -121,6 +172,8 @@ export default function SubmitScreen() {
                 imageUrl,
                 userId: auth.currentUser?.uid,
                 userEmail: auth.currentUser?.email,
+                userName: auth.currentUser?.displayName || 'Anonymous',
+                userPhotoUrl: auth.currentUser?.photoURL || null,
                 status: 'pending',
                 createdAt: serverTimestamp(),
             });
@@ -186,7 +239,7 @@ export default function SubmitScreen() {
                         <Text style={styles.label}>Building Name</Text>
                         <View style={styles.dropdownContainer}>
                             <Pressable
-                                style={[styles.pickerTrigger, isPickerOpen && styles.pickerTriggerOpen]}
+                                style={styles.pickerTrigger}
                                 onPress={() => {
                                     triggerHaptic();
                                     setIsPickerOpen(!isPickerOpen);
@@ -208,10 +261,13 @@ export default function SubmitScreen() {
                             {isPickerOpen && (
                                 <View style={styles.inlinePicker}>
                                     <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled>
-                                        {buildingNames.map((item) => (
+                                        {buildingNames.map((item, index) => (
                                             <Pressable
                                                 key={item}
-                                                style={styles.inlinePickerItem}
+                                                style={[
+                                                    styles.inlinePickerItem,
+                                                    index === 0 && { borderTopWidth: 0 }
+                                                ]}
                                                 onPress={() => {
                                                     triggerHaptic();
                                                     if (item === "Other (Type manually)") {
@@ -446,11 +502,7 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             borderWidth: 1,
             borderColor: theme.border,
         },
-        pickerTriggerOpen: {
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            borderColor: theme.border,
-        },
+
         pickerTriggerText: {
             fontSize: 16,
             color: theme.text,
@@ -460,12 +512,21 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             position: 'relative',
         },
         inlinePicker: {
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
             backgroundColor: theme.card,
             borderWidth: 1,
             borderColor: theme.border,
-            borderTopWidth: 0,
-            borderBottomLeftRadius: 12,
-            borderBottomRightRadius: 12,
+            borderRadius: 12,
+            marginTop: 4,
+            zIndex: 1000,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
             overflow: 'hidden',
         },
         inlinePickerItem: {

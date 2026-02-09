@@ -32,6 +32,8 @@ interface Submission {
     imageUrl?: string | null;
     imageUrls?: string[];
     userEmail: string;
+    userName?: string;
+    userPhotoUrl?: string | null;
     status: string;
     pushToken?: string;
 }
@@ -313,9 +315,29 @@ export default function AdminScreen() {
                             Capacity: {item.capacity}
                         </Text>
                     )}
-                    <Text style={[styles.userEmail, { color: theme.subtext }]}>
-                        Submitted by: {item.userEmail}
-                    </Text>
+                    <View style={styles.userInfoRow}>
+                        <View style={styles.userAvatar}>
+                            {item.userPhotoUrl ? (
+                                <Image
+                                    source={{ uri: item.userPhotoUrl }}
+                                    style={styles.userAvatarImage}
+                                    contentFit="cover"
+                                />
+                            ) : (
+                                <Text style={styles.userAvatarText}>
+                                    {(item.userName || item.userEmail || "?").charAt(0).toUpperCase()}
+                                </Text>
+                            )}
+                        </View>
+                        <View>
+                            <Text style={[styles.userName, { color: theme.text }]}>
+                                {item.userName || 'Anonymous'}
+                            </Text>
+                            <Text style={[styles.userEmail, { color: theme.subtext }]}>
+                                {item.userEmail}
+                            </Text>
+                        </View>
+                    </View>
 
                     <View style={styles.actions}>
                         {item.status === 'pending' && (
@@ -577,5 +599,33 @@ const styles = StyleSheet.create({
     tabText: {
         fontSize: 14,
         fontWeight: '600',
+    },
+    userInfoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 12,
+        gap: 10,
+    },
+    userAvatar: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#8882',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    userAvatarImage: {
+        width: '100%',
+        height: '100%',
+    },
+    userAvatarText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#888',
+    },
+    userName: {
+        fontSize: 14,
+        fontWeight: 'bold',
     },
 });
