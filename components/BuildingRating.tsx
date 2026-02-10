@@ -27,9 +27,17 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
     });
 
     useEffect(() => {
-        if (initialCount !== undefined && initialCount > 0) return;
         let isActive = true;
         const unsubs: (() => void)[] = [];
+
+        // Reset state when roomIds change
+        setRoomRatings(() => {
+            const initial: Record<string, { avg: number; count: number }> = {};
+            roomIds.forEach(id => {
+                if (ratingCache[id]) initial[id] = ratingCache[id];
+            });
+            return initial;
+        });
 
         const startListening = () => {
             if (!isActive) return;
@@ -46,6 +54,8 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
                         ...prev,
                         [id]: rating,
                     }));
+                }, (err) => {
+                    console.error(`Error fetching rating for ${id}:`, err);
                 });
                 unsubs.push(unsub);
             });
@@ -62,8 +72,9 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
     }, [roomIds, priority]);
 
     const { avg, count } = useMemo(() => {
-        if (initialCount !== undefined && initialCount > 0) {
-            return { avg: initialAvg || 0, count: initialCount };
+        // Use denormalized building data if available, but only if it's actually populated
+        if (initialCount !== undefined && initialCount > 0 && initialAvg !== undefined) {
+            return { avg: initialAvg, count: initialCount };
         }
 
         let totalScore = 0;

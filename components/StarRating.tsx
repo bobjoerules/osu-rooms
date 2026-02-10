@@ -45,6 +45,10 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
   }
 
   useEffect(() => {
+    // Reset state when itemId changes
+    setAvg(0);
+    setCount(0);
+
     const itemRef = doc(db, 'ratings', itemId);
     const unsub = onSnapshot(itemRef, (snap) => {
       const data = snap.data() as { avg?: number; count?: number } | undefined;
@@ -62,6 +66,9 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
       setMyRating(0);
       return;
     }
+    // Reset state when itemId changes
+    setMyRating(0);
+
     const userRef = doc(db, 'ratings', itemId, 'userRatings', user.uid);
     const unsub = onSnapshot(userRef, (snap) => {
       const data = snap.data() as { rating?: number } | undefined;

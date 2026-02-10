@@ -30,6 +30,10 @@ export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showM
   }
 
   useEffect(() => {
+    // Reset state immediately when itemId changes
+    setAvg(ratingCache[itemId]?.avg ?? 0);
+    setCount(ratingCache[itemId]?.count ?? 0);
+
     const itemRef = doc(db, 'ratings', itemId);
     const unsub = onSnapshot(itemRef, (snap) => {
       const data = snap.data() as { avg?: number; count?: number } | undefined;
