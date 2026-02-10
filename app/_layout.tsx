@@ -44,20 +44,32 @@ const useNotificationResponse = Platform.OS === 'web' ? () => null : Notificatio
 function RootContent() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [localLoaded, setLocalLoaded] = useState(false);
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
   const prevIsLoggedIn = useRef<boolean | null>(null);
   const router = useRouter();
   const response = useNotificationResponse();
-  const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean | null>(Platform.OS === 'web' ? true : null);
 
   useEffect(() => {
-    NetInfo.fetch().then(state => {
-      setIsConnected(state.isConnected);
-    });
+    // Safety timeout: if we're still loading after 10 seconds, force show content
+    const timer = setTimeout(() => {
+      setLoadingTimeout(true);
+    }, 10000);
+
+    if (Platform.OS !== 'web') {
+      NetInfo.fetch().then(state => {
+        setIsConnected(state.isConnected);
+      });
+    }
 
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-    return () => unsubscribe();
+
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -99,7 +111,10 @@ function RootContent() {
     return <NoInternetScreen />;
   }
 
-  if (isLoggedIn === null || !localLoaded || isConnected === null) {
+  // Force show content after timeout even if some things (like NetInfo) haven't resolved
+  const isActuallyLoading = (isLoggedIn === null || !localLoaded || isConnected === null) && !loadingTimeout;
+
+  if (isActuallyLoading) {
     return <LoadingScreen />;
   }
 
