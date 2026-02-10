@@ -31,7 +31,7 @@ export default function TabLayout() {
         showDormTab ? (
             <NativeTabs.Trigger key="dorm" name="dorm">
                 <Label>Dorms</Label>
-                <Icon sf="message.fill" drawable="ic_menu_agenda" />
+                <Icon sf="person.2.fill" drawable="ic_menu_allfriends" />
             </NativeTabs.Trigger>
         ) : null,
         useBetaFeatures ? (

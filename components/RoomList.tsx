@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
-import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { FlatList, Platform, Image as RNImage, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
@@ -37,7 +37,20 @@ export default function RoomList({ rooms }: RoomListProps) {
       >
         <View style={isDesktopWeb ? styles.roomImageGridContainer : undefined}>
           {item.images && item.images.length > 0 && (
-            <Image source={item.images[0]} style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage} />
+            Platform.OS === 'web' ? (
+              <RNImage
+                source={{ uri: item.images[0] as string }}
+                style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Image
+                source={item.images[0]}
+                style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage}
+                contentFit="cover"
+                transition={200}
+              />
+            )
           )}
         </View>
         <View style={[styles.roomContent, isDesktopWeb && styles.roomContentGrid]}>
@@ -97,6 +110,8 @@ const styles = StyleSheet.create({
   roomImageGridContainer: {
     width: '100%',
     aspectRatio: 16 / 9,
+    minHeight: 150,
+    backgroundColor: '#00000010',
     overflow: 'hidden',
   },
   roomImageGrid: {

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View, useWindowDimensions } from 'react-native';
+import { LayoutAnimation, Platform, Image as RNImage, StyleSheet, Text, TouchableOpacity, UIManager, View, useWindowDimensions } from 'react-native';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
 
@@ -72,11 +72,19 @@ export const AccordionItem = React.memo<AccordionItemProps>(({ title, children, 
           onPress={handlePress}
           activeOpacity={0.7}
         >
-          <Image
-            source={typeof image === 'string' ? { uri: image } : image}
-            style={styles.image}
-            contentFit="cover"
-          />
+          {Platform.OS === 'web' ? (
+            <RNImage
+              source={typeof image === 'string' ? { uri: image } : image}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ) : (
+            <Image
+              source={typeof image === 'string' ? { uri: image } : image}
+              style={styles.image}
+              contentFit="cover"
+            />
+          )}
           <LinearGradient
             colors={[theme.card, 'transparent']}
             style={styles.gradientOverlay}
@@ -204,6 +212,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
+    minHeight: 300,
+    backgroundColor: '#00000010',
     position: 'relative',
   },
   image: {

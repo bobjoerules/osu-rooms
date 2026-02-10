@@ -10,10 +10,11 @@ import {
     FlatList,
     Platform,
     Pressable,
+    Image as RNImage,
     StyleSheet,
     Text,
     useWindowDimensions,
-    View,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseImage } from '../data/rooms';
@@ -281,11 +282,19 @@ export default function AdminScreen() {
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item: imgUri }) => (
-                                <Image
-                                    source={imgUri}
-                                    style={[styles.image, { width: imageWidth }]}
-                                    contentFit="cover"
-                                />
+                                Platform.OS === 'web' ? (
+                                    <RNImage
+                                        source={{ uri: imgUri }}
+                                        style={[styles.image, { width: imageWidth }]}
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <Image
+                                        source={imgUri}
+                                        style={[styles.image, { width: imageWidth }]}
+                                        contentFit="cover"
+                                    />
+                                )
                             )}
                             keyExtractor={(u) => u}
                             pagingEnabled={!isWeb}
@@ -298,11 +307,19 @@ export default function AdminScreen() {
                     </View>
                 ) : item.imageUrl ? (
                     <View style={styles.imageContainer}>
-                        <Image
-                            source={item.imageUrl}
-                            style={[styles.image, { width: '100%' }]}
-                            contentFit="cover"
-                        />
+                        {Platform.OS === 'web' ? (
+                            <RNImage
+                                source={{ uri: item.imageUrl }}
+                                style={[styles.image, { width: '100%' }]}
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <Image
+                                source={item.imageUrl}
+                                style={[styles.image, { width: '100%' }]}
+                                contentFit="cover"
+                            />
+                        )}
                     </View>
                 ) : null}
                 <View style={styles.cardInfo}>
@@ -318,11 +335,19 @@ export default function AdminScreen() {
                     <View style={styles.userInfoRow}>
                         <View style={styles.userAvatar}>
                             {item.userPhotoUrl ? (
-                                <Image
-                                    source={{ uri: item.userPhotoUrl }}
-                                    style={styles.userAvatarImage}
-                                    contentFit="cover"
-                                />
+                                Platform.OS === 'web' ? (
+                                    <RNImage
+                                        source={{ uri: item.userPhotoUrl }}
+                                        style={styles.userAvatarImage}
+                                        resizeMode="cover"
+                                    />
+                                ) : (
+                                    <Image
+                                        source={{ uri: item.userPhotoUrl }}
+                                        style={styles.userAvatarImage}
+                                        contentFit="cover"
+                                    />
+                                )
                             ) : (
                                 <Text style={styles.userAvatarText}>
                                     {(item.userName || item.userEmail || "?").charAt(0).toUpperCase()}

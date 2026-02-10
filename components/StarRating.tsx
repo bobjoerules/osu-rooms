@@ -6,7 +6,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../firebaseConfig';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
@@ -107,8 +107,18 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
 
     try {
       await runTransaction(db, async (tx) => {
+        // 1. ALL READS FIRST
         const itemSnap = await tx.get(itemRef);
         const userSnap = await tx.get(userRef);
+
+        let buildingSnap = null;
+        let buildingRef = null;
+        if (buildingId) {
+          buildingRef = doc(db, 'buildings', buildingId);
+          buildingSnap = await tx.get(buildingRef);
+        }
+
+        // 2. LOGIC
         const currentAvg = (itemSnap.exists() ? (itemSnap.data() as any).avg : 0) || 0;
         const currentCount = (itemSnap.exists() ? (itemSnap.data() as any).count : 0) || 0;
         const oldRating = userSnap.exists() ? (userSnap.data() as any).rating : null;
@@ -119,9 +129,13 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
           newCount = currentCount + 1;
           newAvg = (currentAvg * currentCount + value) / newCount;
         } else {
-          newAvg = (currentAvg * currentCount - oldRating + value) / currentCount;
+          newAvg = (currentAvg * currentCount - oldRating + value) / (currentCount || 1);
         }
 
+        // Final safety check for NaN
+        if (isNaN(newAvg)) newAvg = value;
+
+        // 3. ALL WRITES LAST
         tx.set(userRef, { rating: value, userId: user.uid, updatedAt: serverTimestamp() }, { merge: true });
         tx.set(
           itemRef,
@@ -129,34 +143,33 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
           { merge: true }
         );
 
-        if (buildingId) {
-          const buildingRef = doc(db, 'buildings', buildingId);
-          const buildingSnap = await tx.get(buildingRef);
-          if (buildingSnap.exists()) {
-            const bData = buildingSnap.data();
-            const bAvg = bData.avgRating || 0;
-            const bCount = bData.count || 0;
+        if (buildingRef && buildingSnap?.exists()) {
+          const bData = buildingSnap.data();
+          const bAvg = bData.avgRating || 0;
+          const bCount = bData.count || 0;
 
-            let newBAvg = bAvg;
-            let newBCount = bCount;
+          let newBAvg = bAvg;
+          let newBCount = bCount;
 
-            if (oldRating == null) {
-              newBCount = bCount + 1;
-              newBAvg = (bAvg * bCount + value) / newBCount;
-            } else {
-              newBAvg = (bAvg * bCount - oldRating + value) / bCount;
-            }
-
-            tx.set(buildingRef, {
-              avgRating: newBAvg,
-              count: newBCount,
-              updatedAt: serverTimestamp()
-            }, { merge: true });
+          if (oldRating == null) {
+            newBCount = bCount + 1;
+            newBAvg = (bAvg * bCount + value) / newBCount;
+          } else {
+            newBAvg = (bAvg * bCount - (oldRating || 0) + value) / (bCount || 1);
           }
+
+          if (isNaN(newBAvg)) newBAvg = value;
+
+          tx.set(buildingRef, {
+            avgRating: newBAvg,
+            count: newBCount,
+            updatedAt: serverTimestamp()
+          }, { merge: true });
         }
       });
-    } catch {
-      setError('Failed to save rating.');
+    } catch (err) {
+      console.error('Rating transaction failed:', err);
+      setError('Failed to save rating. Please try again.');
       setMyRating(previousMyRating);
       setAvg(previousAvg);
       setCount(previousCount);
@@ -203,6 +216,28 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
 
   const handleDragStart = (event: any) => {
     const { pageX, pageY } = event.nativeEvent;
+
+    if (Platform.OS === 'web' && rowRef.current) {
+      const rect = (rowRef.current as any).getBoundingClientRect?.();
+      if (rect) {
+        rowBoxRef.current = {
+          x: rect.left + window.scrollX,
+          y: rect.top + window.scrollY,
+          width: rect.width,
+          height: rect.height,
+          ready: true
+        };
+        rowHeightRef.current = rect.height;
+        slotWidthRef.current = rect.width / initialMax;
+
+        const rating = calculateRatingFromTouch(pageX, pageY);
+        if (rating !== null) {
+          setPreviewRating(rating);
+          lastPreviewRef.current = rating;
+        }
+        return;
+      }
+    }
 
     if (rowRef.current) {
       rowRef.current.measure((x, y, width, height, px, py) => {
@@ -259,6 +294,21 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
         onResponderRelease={handleDragEnd}
         onLayout={() => {
           if (!rowRef.current) return;
+          if (Platform.OS === 'web') {
+            const rect = (rowRef.current as any).getBoundingClientRect?.();
+            if (rect) {
+              rowHeightRef.current = rect.height;
+              slotWidthRef.current = rect.width / initialMax;
+              rowBoxRef.current = {
+                x: rect.left + window.scrollX,
+                y: rect.top + window.scrollY,
+                width: rect.width,
+                height: rect.height,
+                ready: true
+              };
+              return;
+            }
+          }
           rowRef.current.measure((x, y, width, height, pageX, pageY) => {
             rowHeightRef.current = height;
             slotWidthRef.current = width / initialMax;

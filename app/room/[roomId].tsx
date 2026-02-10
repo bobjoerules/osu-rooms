@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, writeBatch } from 'firebase/firestore';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, Image as RNImage, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import StaticStarRating from '../../components/StaticStarRating';
@@ -634,10 +634,20 @@ export default function RoomDetail() {
                     <View style={styles.reviewUserInfo}>
                       <View style={styles.reviewAvatar}>
                         {(item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) ? (
-                          <Image
-                            source={{ uri: (item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
-                            style={styles.reviewAvatarImage}
-                          />
+                          Platform.OS === 'web' ? (
+                            <RNImage
+                              source={{ uri: (item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                              style={styles.reviewAvatarImage}
+                              resizeMode="cover"
+                            />
+                          ) : (
+                            <Image
+                              source={{ uri: (item.id === auth.currentUser?.uid ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                              style={styles.reviewAvatarImage}
+                              contentFit="cover"
+                              transition={200}
+                            />
+                          )
                         ) : (
                           <Text style={styles.reviewAvatarText}>
                             {(item.displayName || item.userEmail || "?").charAt(0).toUpperCase()}

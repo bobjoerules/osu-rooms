@@ -766,25 +766,7 @@ export default function Account() {
                   />
                 </View>
 
-                <View style={styles.settingRow}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Dorm Posts</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>
-                      {isOSUVerified ? "View and share dorm posts" : "Requires verified OSU email"}
-                    </Text>
-                  </View>
-                  <Switch
-                    value={showDormTab}
-                    onValueChange={(val) => {
-                      triggerHaptic();
-                      setShowDormTab(val);
-                    }}
-                    trackColor={{ false: theme.border, true: theme.primary }}
-                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
-                    activeThumbColor={colours.white}
-                    disabled={!isOSUVerified || (!showDormTab && isAtTabLimit)}
-                  />
-                </View>
+
               </View>
             </View>
           ) : (

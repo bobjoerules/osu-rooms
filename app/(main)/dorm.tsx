@@ -10,11 +10,14 @@ import {
     ActionSheetIOS,
     ActivityIndicator,
     Alert,
+    Dimensions,
     FlatList,
     KeyboardAvoidingView,
     Modal,
     Platform,
     Pressable,
+    Image as RNImage,
+    Share,
     StyleSheet,
     Text,
     TextInput,
@@ -45,12 +48,12 @@ interface DormPost {
 
 export default function DormScreen() {
     const theme = useTheme();
-    const styles = useMemo(() => createStyles(theme), [theme]);
+    const { width } = useWindowDimensions();
+    const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+    const styles = useMemo(() => createStyles(theme, isDesktopWeb), [theme, isDesktopWeb]);
     useBuildings();
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
-    const { width } = useWindowDimensions();
-    const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
     const [user, setUser] = useState(auth.currentUser);
     const [posts, setPosts] = useState<DormPost[]>([]);
@@ -66,6 +69,9 @@ export default function DormScreen() {
     const [submitting, setSubmitting] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+    const [editingPostId, setEditingPostId] = useState<string | null>(null);
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [menuData, setMenuData] = useState<{ post: DormPost, px: number, py: number } | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -187,12 +193,15 @@ export default function DormScreen() {
 
     const handleAddPost = async () => {
         triggerHaptic();
-        if (!image || !selectedBuilding) return;
+        if (!selectedBuilding) return;
+        // If creating new post, image is required. If editing, we keep old image if no new one.
+        if (!editingPostId && !image) return;
 
         setSubmitting(true);
         try {
-            let imageUrl = null;
-            if (image) {
+            let imageUrl = image;
+            // Only upload if it's a new local image (not a firebase URL)
+            if (image && !image.startsWith('https://')) {
                 const blob: Blob = await new Promise((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
                     xhr.onload = function () { resolve(xhr.response); };
@@ -208,7 +217,7 @@ export default function DormScreen() {
                 imageUrl = await getDownloadURL(storageRef);
             }
 
-            await addDoc(collection(db, 'dorm_posts'), {
+            const postData = {
                 text: newPostText.trim() || '',
                 hall: selectedBuilding,
                 wing: wing.trim() || null,
@@ -217,11 +226,22 @@ export default function DormScreen() {
                 userId: auth.currentUser?.uid,
                 username: auth.currentUser?.displayName || 'Anonymous',
                 userPhotoUrl: auth.currentUser?.photoURL || null,
-                createdAt: serverTimestamp(),
-                likes: [],
+                updatedAt: serverTimestamp(),
                 imageUrl
-            });
+            };
+
+            if (editingPostId) {
+                await updateDoc(doc(db, 'dorm_posts', editingPostId), postData);
+            } else {
+                await addDoc(collection(db, 'dorm_posts'), {
+                    ...postData,
+                    createdAt: serverTimestamp(),
+                    likes: [],
+                });
+            }
+
             setModalVisible(false);
+            setEditingPostId(null);
             setNewPostText('');
             setSelectedBuilding('');
             setWing('');
@@ -229,8 +249,8 @@ export default function DormScreen() {
             setRoomNumber('');
             setImage(null);
         } catch (error) {
-            console.error("Error adding post: ", error);
-            Alert.alert("Error", "Failed to post. Please try again.");
+            console.error("Error saving post: ", error);
+            Alert.alert("Error", `Failed to ${editingPostId ? 'save' : 'post'}. Please try again.`);
         } finally {
             setSubmitting(false);
         }
@@ -253,8 +273,18 @@ export default function DormScreen() {
         }
     };
 
-    const handleDeletePost = async (post: DormPost) => {
+    const handleMorePress = (event: any, post: DormPost) => {
         triggerHaptic();
+        // Use coordinates to position the menu
+        const { pageX, pageY } = event.nativeEvent;
+        setMenuData({ post, px: pageX, py: pageY });
+        setMenuVisible(true);
+    };
+
+    const handleMoreAction = async (action: 'edit' | 'delete') => {
+        if (!menuData) return;
+        const post = menuData.post;
+        setMenuVisible(false);
 
         const performDelete = async () => {
             try {
@@ -265,45 +295,40 @@ export default function DormScreen() {
             }
         };
 
-        if (Platform.OS === 'ios') {
-            ActionSheetIOS.showActionSheetWithOptions(
-                {
-                    options: ['Cancel', 'Delete Post'],
-                    destructiveButtonIndex: 1,
-                    cancelButtonIndex: 0,
-                    title: 'Delete post?',
-                    message: 'This action cannot be undone.'
-                },
-                (buttonIndex) => {
-                    if (buttonIndex === 1) {
-                        performDelete();
-                    }
+        if (action === 'edit') {
+            setEditingPostId(post.id);
+            setNewPostText(post.text);
+            setSelectedBuilding(post.hall);
+            setWing(post.wing || '');
+            setFloor(post.floor || '');
+            setRoomNumber(post.roomNumber || '');
+            setImage(post.imageUrl || null);
+            setModalVisible(true);
+        } else if (action === 'delete') {
+            if (Platform.OS === 'web') {
+                if (window.confirm("Delete Post: Are you sure? This cannot be undone.")) {
+                    performDelete();
                 }
-            );
-        } else {
-            const confirm = async () => {
-                if (Platform.OS === 'web') {
-                    return window.confirm("Are you sure you want to delete this post?");
-                } else {
-                    return new Promise((resolve) => {
-                        Alert.alert(
-                            "Delete Post",
-                            "Are you sure you want to delete this post? This action cannot be undone.",
-                            [
-                                { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
-                                { text: "Delete", style: "destructive", onPress: () => resolve(true) }
-                            ]
-                        );
-                    });
-                }
-            };
-
-            if (await confirm()) {
-                performDelete();
+            } else {
+                Alert.alert("Delete Post", "Are you sure? This cannot be undone.", [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Delete", style: "destructive", onPress: performDelete }
+                ]);
             }
         }
     };
-
+    const handleShare = async (post: DormPost) => {
+        triggerHaptic();
+        try {
+            const message = `Check out this post from ${post.hall}${post.roomNumber ? ` Room ${post.roomNumber}` : ''} on OSU Room Rates!\n\n"${post.text}"${post.imageUrl ? `\n\nImage: ${post.imageUrl}` : ''}`;
+            await Share.share({
+                message,
+                url: post.imageUrl // iOS supports URL separately
+            });
+        } catch (error) {
+            console.error("Error sharing post: ", error);
+        }
+    };
     const renderItem = ({ item }: { item: DormPost }) => {
         const userId = auth.currentUser?.uid;
         const isLiked = item.likes?.includes(userId || '');
@@ -315,11 +340,19 @@ export default function DormScreen() {
                 <View style={styles.igHeader}>
                     <View style={styles.avatar}>
                         {((item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl)) ? (
-                            <Image
-                                source={{ uri: (item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
-                                style={styles.avatarImage}
-                                contentFit="cover"
-                            />
+                            Platform.OS === 'web' ? (
+                                <RNImage
+                                    source={{ uri: (item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                                    style={styles.avatarImage}
+                                    resizeMode="cover"
+                                />
+                            ) : (
+                                <Image
+                                    source={{ uri: (item.userId === userId ? auth.currentUser?.photoURL : item.userPhotoUrl) as string }}
+                                    style={styles.avatarImage}
+                                    contentFit="cover"
+                                />
+                            )
                         ) : (
                             <Text style={styles.avatarText}>{item.username.charAt(0).toUpperCase()}</Text>
                         )}
@@ -336,7 +369,7 @@ export default function DormScreen() {
                         </Text>
                     </View>
                     {(isAdmin || item.userId === userId) && (
-                        <Pressable style={styles.igDeleteButton} onPress={() => handleDeletePost(item)}>
+                        <Pressable style={styles.igDeleteButton} onPress={(e) => handleMorePress(e, item)}>
                             <Ionicons name="ellipsis-horizontal" size={20} color={theme.subtext} />
                         </Pressable>
                     )}
@@ -350,12 +383,22 @@ export default function DormScreen() {
                             setEnlargedImage(item.imageUrl || null);
                         }}
                     >
-                        <Image
-                            source={{ uri: item.imageUrl }}
-                            style={styles.igPostImage}
-                            contentFit="cover"
-                            transition={200}
-                        />
+                        <View style={styles.igPostImageContainer}>
+                            {Platform.OS === 'web' ? (
+                                <RNImage
+                                    source={{ uri: item.imageUrl }}
+                                    style={styles.igPostImage}
+                                    resizeMode="cover"
+                                />
+                            ) : (
+                                <Image
+                                    source={{ uri: item.imageUrl }}
+                                    style={styles.igPostImage}
+                                    contentFit="cover"
+                                    transition={200}
+                                />
+                            )}
+                        </View>
                     </Pressable>
                 )}
 
@@ -401,7 +444,17 @@ export default function DormScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={[styles.title, { color: theme.text }]}>Dorms</Text>
                     <Pressable
-                        onPress={() => { triggerHaptic(); setModalVisible(true); }}
+                        onPress={() => {
+                            triggerHaptic();
+                            setEditingPostId(null);
+                            setNewPostText('');
+                            setSelectedBuilding('');
+                            setWing('');
+                            setFloor('');
+                            setRoomNumber('');
+                            setImage(null);
+                            setModalVisible(true);
+                        }}
                     >
                         {Platform.OS === 'ios' ? (
                             <GlassView
@@ -427,7 +480,7 @@ export default function DormScreen() {
                 </View>
             ) : posts.length === 0 ? (
                 <View style={styles.centeredOverlay}>
-                    <Ionicons name="chatbubbles-outline" size={48} color={theme.subtext + '44'} />
+                    <Ionicons name="people-outline" size={48} color={theme.subtext + '44'} />
                     <Text style={[styles.message, { marginTop: 16, color: theme.subtext }]}>No posts yet</Text>
                     <Text style={styles.subMessage}>Be the first to share an update from your hall!</Text>
                 </View>
@@ -454,7 +507,16 @@ export default function DormScreen() {
             >
                 <Pressable
                     style={styles.modalOverlay}
-                    onPress={() => setModalVisible(false)}
+                    onPress={() => {
+                        setModalVisible(false);
+                        setEditingPostId(null);
+                        setNewPostText('');
+                        setSelectedBuilding('');
+                        setWing('');
+                        setFloor('');
+                        setRoomNumber('');
+                        setImage(null);
+                    }}
                 >
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -463,8 +525,17 @@ export default function DormScreen() {
                     >
                         <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
                             <View style={styles.modalHeader}>
-                                <Text style={styles.modalTitle}>New Post</Text>
-                                <Pressable onPress={() => setModalVisible(false)}>
+                                <Text style={styles.modalTitle}>{editingPostId ? 'Edit Post' : 'New Post'}</Text>
+                                <Pressable onPress={() => {
+                                    setModalVisible(false);
+                                    setEditingPostId(null);
+                                    setNewPostText('');
+                                    setSelectedBuilding('');
+                                    setWing('');
+                                    setFloor('');
+                                    setRoomNumber('');
+                                    setImage(null);
+                                }}>
                                     <Ionicons name="close" size={24} color={theme.text} />
                                 </Pressable>
                             </View>
@@ -555,21 +626,29 @@ export default function DormScreen() {
                                 onChangeText={setNewPostText}
                             />
 
-                            <Text style={styles.label}>Image</Text>
-                            <Pressable style={styles.imagePicker} onPress={pickImage}>
+                            <Text style={[styles.label, editingPostId && { color: theme.subtext }]}>
+                                {editingPostId ? 'Image (Cannot be changed)' : 'Image'}
+                            </Text>
+                            <Pressable
+                                style={[styles.imagePicker, editingPostId && { opacity: 0.7, borderStyle: 'solid' }]}
+                                onPress={editingPostId ? undefined : pickImage}
+                                disabled={!!editingPostId}
+                            >
                                 {image ? (
                                     <View style={{ width: '100%', height: '100%' }}>
                                         <Image source={{ uri: image }} style={styles.previewImage} contentFit="cover" />
-                                        <Pressable
-                                            style={styles.removeImage}
-                                            onPress={(e) => {
-                                                e.stopPropagation();
-                                                triggerHaptic();
-                                                setImage(null);
-                                            }}
-                                        >
-                                            <Ionicons name="close-circle" size={24} color="#fff" />
-                                        </Pressable>
+                                        {!editingPostId && (
+                                            <Pressable
+                                                style={styles.removeImage}
+                                                onPress={(e) => {
+                                                    e.stopPropagation();
+                                                    triggerHaptic();
+                                                    setImage(null);
+                                                }}
+                                            >
+                                                <Ionicons name="close-circle" size={24} color="#fff" />
+                                            </Pressable>
+                                        )}
                                     </View>
                                 ) : (
                                     <View style={styles.imagePlaceholder}>
@@ -587,7 +666,7 @@ export default function DormScreen() {
                                 {submitting ? (
                                     <ActivityIndicator color="#fff" />
                                 ) : (
-                                    <Text style={styles.submitButtonText}>Post</Text>
+                                    <Text style={styles.submitButtonText}>{editingPostId ? 'Save' : 'Post'}</Text>
                                 )}
                             </Pressable>
                         </Pressable>
@@ -602,15 +681,52 @@ export default function DormScreen() {
                 onRequestClose={() => setEnlargedImage(null)}
             >
                 <Pressable
-                    style={styles.fullScreenModal}
+                    style={styles.fullScreenOverlay}
                     onPress={() => setEnlargedImage(null)}
                 >
-                    {enlargedImage && (
-                        <Image
-                            source={{ uri: enlargedImage }}
-                            style={styles.fullScreenImage}
-                            contentFit="contain"
-                        />
+                    <Image
+                        source={{ uri: enlargedImage || '' }}
+                        style={styles.fullScreenImage}
+                        contentFit="contain"
+                    />
+                </Pressable>
+            </Modal>
+
+            {/* Post Options Dropdown */}
+            <Modal
+                visible={menuVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setMenuVisible(false)}
+            >
+                <Pressable
+                    style={StyleSheet.absoluteFill}
+                    onPress={() => setMenuVisible(false)}
+                >
+                    {menuData && (
+                        <View style={[
+                            styles.popoverMenu,
+                            {
+                                top: Math.min(menuData.py, SCREEN_HEIGHT - 120),
+                                left: Math.min(menuData.px - 140, width - 170)
+                            }
+                        ]}>
+                            <Pressable
+                                style={({ pressed }) => [styles.menuItem, pressed && { backgroundColor: theme.border + '44' }]}
+                                onPress={() => handleMoreAction('edit')}
+                            >
+                                <Ionicons name="pencil-outline" size={18} color={theme.text} />
+                                <Text style={[styles.menuItemText, { color: theme.text }]}>Edit Text</Text>
+                            </Pressable>
+                            <View style={[styles.menuDivider, { backgroundColor: theme.border + '44' }]} />
+                            <Pressable
+                                style={({ pressed }) => [styles.menuItem, pressed && { backgroundColor: theme.destructive + '11' }]}
+                                onPress={() => handleMoreAction('delete')}
+                            >
+                                <Ionicons name="trash-outline" size={18} color={theme.destructive} />
+                                <Text style={[styles.menuItemText, { color: theme.destructive }]}>Delete Post</Text>
+                            </Pressable>
+                        </View>
                     )}
                 </Pressable>
             </Modal>
@@ -618,7 +734,9 @@ export default function DormScreen() {
     );
 }
 
-function createStyles(theme: Theme) {
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+function createStyles(theme: Theme, isDesktopWeb: boolean) {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -711,10 +829,17 @@ function createStyles(theme: Theme) {
         igDeleteButton: {
             padding: 4,
         },
+        igPostImageContainer: {
+            width: '100%',
+            aspectRatio: isDesktopWeb ? 16 / 9 : 1,
+            minHeight: isDesktopWeb ? 300 : 250,
+            maxHeight: isDesktopWeb ? 600 : 500,
+            backgroundColor: theme.border + '22',
+            overflow: 'hidden',
+        },
         igPostImage: {
             width: '100%',
-            aspectRatio: 1,
-            maxHeight: 500,
+            height: '100%',
         },
         igActionsSection: {
             paddingHorizontal: 12,
@@ -723,12 +848,16 @@ function createStyles(theme: Theme) {
         igActionsRow: {
             flexDirection: 'row',
             alignItems: 'center',
+            gap: 16,
             marginBottom: 8,
         },
         igLikeButton: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 6,
+        },
+        igShareButton: {
+            padding: 4,
         },
         igLikesCount: {
             fontSize: 14,
@@ -911,7 +1040,7 @@ function createStyles(theme: Theme) {
             backgroundColor: 'rgba(0,0,0,0.5)',
             borderRadius: 12,
         },
-        fullScreenModal: {
+        fullScreenOverlay: {
             flex: 1,
             backgroundColor: 'rgba(0,0,0,0.95)',
             justifyContent: 'center',
@@ -920,6 +1049,36 @@ function createStyles(theme: Theme) {
         fullScreenImage: {
             width: '100%',
             height: '100%',
+        },
+        popoverMenu: {
+            position: 'absolute',
+            width: 160,
+            backgroundColor: theme.card,
+            borderRadius: 12,
+            padding: 4,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.2,
+            shadowRadius: 8,
+            borderWidth: 1,
+            borderColor: theme.border + '44',
+            zIndex: 1000,
+        },
+        menuItem: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 12,
+            gap: 12,
+            borderRadius: 8,
+        },
+        menuItemText: {
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        menuDivider: {
+            height: 1,
+            marginHorizontal: 8,
         },
     });
 }
