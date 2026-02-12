@@ -31,10 +31,18 @@ if (Platform.OS === 'web') {
 }
 
 const storage: FirebaseStorage = getStorage(app);
-const db: Firestore = initializeFirestore(app, {
-  localCache: Platform.OS === 'web'
-    ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-    : persistentLocalCache({}) // Standard persistent cache for native without tab manager
-});
+
+let db: Firestore;
+try {
+  db = initializeFirestore(app, {
+    localCache: Platform.OS === 'web'
+      ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+      : persistentLocalCache({}) // Standard persistent cache for native without tab manager
+  });
+} catch (e) {
+  // If already initialized, use getFirestore instead
+  const { getFirestore } = require('firebase/firestore');
+  db = getFirestore(app);
+}
 
 export { app, auth, db, storage };
