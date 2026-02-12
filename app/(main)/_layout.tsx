@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
-    const { useBetaFeatures, showSubmitTab, showDormTab } = useSettings();
+    const { useBetaFeatures, showSubmitTab, showDormTab, showReviewsTab } = useSettings();
     const triggerHaptic = useHapticFeedback();
     const navigation = useNavigation();
 
@@ -38,6 +38,12 @@ export default function TabLayout() {
             <NativeTabs.Trigger key="osu" name="osu">
                 <Label>OSU</Label>
                 <Icon sf="link" drawable="ic_menu_share" />
+            </NativeTabs.Trigger>
+        ) : null,
+        showReviewsTab ? (
+            <NativeTabs.Trigger key="reviews" name="reviews">
+                <Label>Reviews</Label>
+                <Icon sf="star.bubble.fill" drawable="ic_menu_edit" />
             </NativeTabs.Trigger>
         ) : null,
         <NativeTabs.Trigger key="account" name="account">

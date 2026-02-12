@@ -81,7 +81,7 @@ export default function Index() {
   const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { showPlaceholders, showBuildingImages } = useSettings();
+  const { showPlaceholders, showBuildingImages, lowPowerMode } = useSettings();
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
   const triggerHaptic = useHapticFeedback();
@@ -256,10 +256,10 @@ export default function Index() {
         key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
         columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
         renderItem={renderItem}
-        maxToRenderPerBatch={Platform.OS === 'android' ? 100 : 100}
-        updateCellsBatchingPeriod={Platform.OS === 'android' ? 30 : 30}
-        initialNumToRender={Platform.OS === 'android' ? 100 : 100}
-        windowSize={Platform.OS === 'android' ? 21 : 41}
+        maxToRenderPerBatch={lowPowerMode ? 10 : (Platform.OS === 'android' ? 100 : 100)}
+        updateCellsBatchingPeriod={lowPowerMode ? 50 : (Platform.OS === 'android' ? 30 : 30)}
+        initialNumToRender={lowPowerMode ? 8 : (Platform.OS === 'android' ? 100 : 100)}
+        windowSize={lowPowerMode ? 11 : (Platform.OS === 'android' ? 21 : 41)}
         removeClippedSubviews={false}
         extraData={expandedIds}
         onScrollToIndexFailed={(info) => {

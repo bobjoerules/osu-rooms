@@ -16,6 +16,10 @@ interface SettingsContextType {
     setShowSubmitTab: (value: boolean) => void;
     showDormTab: boolean;
     setShowDormTab: (value: boolean) => void;
+    showReviewsTab: boolean;
+    setShowReviewsTab: (value: boolean) => void;
+    lowPowerMode: boolean;
+    setLowPowerMode: (value: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -25,6 +29,8 @@ const HAPTICS_KEY = '@osu_rooms_use_haptics';
 const BUILDING_IMAGES_KEY = '@osu_rooms_show_building_images';
 const BETA_FEATURES_KEY = '@osu_rooms_use_beta_features';
 const SHOW_SUBMIT_TAB_KEY = '@osu_rooms_show_submit_tab';
+const SHOW_REVIEWS_TAB_KEY = '@osu_rooms_show_reviews_tab';
+const LOW_POWER_MODE_KEY = '@osu_rooms_low_power_mode';
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showPlaceholders, setShowPlaceholders] = useState(false);
@@ -33,17 +39,21 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [useBetaFeatures, setUseBetaFeatures] = useState(false);
     const [showSubmitTab, setShowSubmitTab] = useState(true);
     const [showDormTab, setShowDormTab] = useState(false);
+    const [showReviewsTab, setShowReviewsTab] = useState(true);
+    const [lowPowerMode, setLowPowerMode] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadSettings = async () => {
             try {
-                const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue] = await Promise.all([
+                const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue, showReviewsTabValue, lowPowerModeValue] = await Promise.all([
                     AsyncStorage.getItem(PLACEHOLDERS_KEY),
                     AsyncStorage.getItem(HAPTICS_KEY),
                     AsyncStorage.getItem(BUILDING_IMAGES_KEY),
                     AsyncStorage.getItem(BETA_FEATURES_KEY),
                     AsyncStorage.getItem(SHOW_SUBMIT_TAB_KEY),
+                    AsyncStorage.getItem(SHOW_REVIEWS_TAB_KEY),
+                    AsyncStorage.getItem(LOW_POWER_MODE_KEY),
                 ]);
 
                 if (placeholdersValue !== null) {
@@ -60,6 +70,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 }
                 if (showSubmitTabValue !== null) {
                     setShowSubmitTab(JSON.parse(showSubmitTabValue));
+                }
+                if (showReviewsTabValue !== null) {
+                    setShowReviewsTab(JSON.parse(showReviewsTabValue));
+                }
+                if (lowPowerModeValue !== null) {
+                    setLowPowerMode(JSON.parse(lowPowerModeValue));
                 }
             } catch (e) {
                 console.error('Failed to load settings', e);
@@ -121,6 +137,24 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setShowDormTab(false);
     };
 
+    const updateShowReviewsTab = async (value: boolean) => {
+        try {
+            setShowReviewsTab(value);
+            await AsyncStorage.setItem(SHOW_REVIEWS_TAB_KEY, JSON.stringify(value));
+        } catch (e) {
+            console.error('Failed to save settings', e);
+        }
+    };
+
+    const updateLowPowerMode = async (value: boolean) => {
+        try {
+            setLowPowerMode(value);
+            await AsyncStorage.setItem(LOW_POWER_MODE_KEY, JSON.stringify(value));
+        } catch (e) {
+            console.error('Failed to save settings', e);
+        }
+    };
+
     const value = React.useMemo(() => ({
         showPlaceholders,
         setShowPlaceholders: updateShowPlaceholders,
@@ -133,14 +167,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         showSubmitTab,
         setShowSubmitTab: updateShowSubmitTab,
         showDormTab,
-        setShowDormTab: updateShowDormTab
+        setShowDormTab: updateShowDormTab,
+        showReviewsTab,
+        setShowReviewsTab: updateShowReviewsTab,
+        lowPowerMode,
+        setLowPowerMode: updateLowPowerMode
     }), [
         showPlaceholders,
         useHaptics,
         showBuildingImages,
         useBetaFeatures,
         showSubmitTab,
-        showDormTab
+        showDormTab,
+        showReviewsTab,
+        lowPowerMode
     ]);
 
     return (

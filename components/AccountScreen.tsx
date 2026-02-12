@@ -53,7 +53,16 @@ const colours = { white: '#ffffff' };
 
 export default function Account() {
   const theme = useTheme();
-  const { showPlaceholders, setShowPlaceholders, useHaptics, setUseHaptics, showBuildingImages, setShowBuildingImages, useBetaFeatures, setUseBetaFeatures, showSubmitTab, setShowSubmitTab, showDormTab, setShowDormTab } = useSettings();
+  const {
+    showPlaceholders, setShowPlaceholders,
+    useHaptics, setUseHaptics,
+    showBuildingImages, setShowBuildingImages,
+    useBetaFeatures, setUseBetaFeatures,
+    showSubmitTab, setShowSubmitTab,
+    showDormTab, setShowDormTab,
+    showReviewsTab, setShowReviewsTab,
+    lowPowerMode, setLowPowerMode
+  } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -85,7 +94,7 @@ export default function Account() {
 
   const { buildings } = useBuildings();
 
-  const activeTabs = 2 + (showSubmitTab ? 1 : 0) + (useBetaFeatures ? 1 : 0) + (showDormTab ? 1 : 0);
+  const activeTabs = 2 + (showSubmitTab ? 1 : 0) + (useBetaFeatures ? 1 : 0) + (showDormTab ? 1 : 0) + (showReviewsTab ? 1 : 0);
   const isAtTabLimit = Platform.OS === 'android' && activeTabs >= 4;
   const isOSUVerified = userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu');
 
@@ -766,6 +775,40 @@ export default function Account() {
                   />
                 </View>
 
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Reviews Tab</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the your reviews tab in the menu bar</Text>
+                  </View>
+                  <Switch
+                    value={showReviewsTab}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowReviewsTab(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                    disabled={!showReviewsTab && isAtTabLimit}
+                  />
+                </View>
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Low Power Mode</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Optimize performance for slower devices by reducing list rendering (highly recommended for older Androids)</Text>
+                  </View>
+                  <Switch
+                    value={lowPowerMode}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setLowPowerMode(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                  />
+                </View>
 
               </View>
             </View>
@@ -903,7 +946,7 @@ export default function Account() {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 
