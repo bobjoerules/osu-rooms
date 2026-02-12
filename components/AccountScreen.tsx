@@ -778,7 +778,7 @@ export default function Account() {
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.settingLabel, { color: theme.text }]}>Reviews Tab</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display the your reviews tab in the menu bar</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display all of your reviews on a separate tab</Text>
                   </View>
                   <Switch
                     value={showReviewsTab}
@@ -1113,15 +1113,15 @@ function createStyles(theme: Theme) {
       marginBottom: 4,
     },
     adminBadge: {
-      backgroundColor: theme.primary + '22',
+      backgroundColor: '#FF0000' + '22',
       paddingHorizontal: 8,
       paddingVertical: 2,
       borderRadius: 6,
       borderWidth: 1,
-      borderColor: theme.primary + '44',
+      borderColor: '#FF0000' + '44',
     },
     adminBadgeText: {
-      color: theme.primary,
+      color: '#FF0000',
       fontSize: 10,
       fontWeight: '800',
       letterSpacing: 0.5,

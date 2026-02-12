@@ -130,7 +130,7 @@ export default function ReviewsScreen() {
                     {item.comment}
                 </Text>
             ) : (
-                <Text style={[styles.noCommentText, { color: theme.subtext }]}>No text review provided</Text>
+                <Text style={[styles.noCommentText, { color: theme.subtext }]}>No comment added</Text>
             )}
         </Pressable>
     );
