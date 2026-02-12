@@ -729,7 +729,7 @@ export default function RoomDetail() {
               <Ionicons name="chevron-back" size={28} color={theme.text} />
             </Pressable>
             <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
-              Room {roomData.name} - {roomData.building}
+              {/^[A-Za-z\s]+$/.test(roomData.name) ? roomData.name : `Room ${roomData.name}`} - {roomData.building}
             </Text>
             <View style={{ width: 40 }} />
           </View>

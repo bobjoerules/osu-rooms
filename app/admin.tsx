@@ -325,7 +325,7 @@ export default function AdminScreen() {
                 <View style={styles.cardInfo}>
                     <Text style={[styles.buildingName, { color: theme.text }]}>{item.building}</Text>
                     <Text style={[styles.roomInfo, { color: theme.subtext }]}>
-                        Room {item.roomNumber} • {item.roomType}
+                        {/^[A-Za-z\s]+$/.test(item.roomNumber) ? item.roomNumber : `Room ${item.roomNumber}`} • {item.roomType}
                     </Text>
                     {item.capacity && (
                         <Text style={[styles.roomInfo, { color: theme.subtext }]}>

@@ -54,7 +54,9 @@ export default function RoomList({ rooms }: RoomListProps) {
           )}
         </View>
         <View style={[styles.roomContent, isDesktopWeb && styles.roomContentGrid]}>
-          <Text style={[styles.roomName, { color: theme.text }]} numberOfLines={isDesktopWeb ? 2 : 1}>Room {roomName}</Text>
+          <Text style={[styles.roomName, { color: theme.text }]} numberOfLines={isDesktopWeb ? 2 : 1}>
+            {/^[A-Za-z\s]+$/.test(roomName) ? roomName : `Room ${roomName}`}
+          </Text>
           <RatingDisplay itemId={item.id} size={16} align={isDesktopWeb ? 'center' : 'flex-start'} />
         </View>
         {!isDesktopWeb && <Ionicons name="chevron-forward" size={20} color={theme.subtext} />}

@@ -113,7 +113,9 @@ export default function ReviewsScreen() {
         >
             <View style={styles.reviewHeader}>
                 <View style={{ flex: 1 }}>
-                    <Text style={[styles.roomName, { color: theme.text }]}>Room {item.roomName}</Text>
+                    <Text style={[styles.roomName, { color: theme.text }]}>
+                        {/^[A-Za-z\s]+$/.test(item.roomName || '') ? item.roomName : `Room ${item.roomName}`}
+                    </Text>
                     <Text style={[styles.buildingName, { color: theme.subtext }]}>{item.buildingName}</Text>
                 </View>
                 <View style={styles.ratingContainer}>
@@ -130,10 +132,6 @@ export default function ReviewsScreen() {
             ) : (
                 <Text style={[styles.noCommentText, { color: theme.subtext }]}>No text review provided</Text>
             )}
-            <View style={styles.footer}>
-                <Text style={[styles.viewMore, { color: theme.primary }]}>Go to Room</Text>
-                <Ionicons name="chevron-forward" size={16} color={theme.primary} />
-            </View>
         </Pressable>
     );
 
