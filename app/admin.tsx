@@ -156,11 +156,16 @@ export default function AdminScreen() {
                 const updatedRooms = [...buildingDoc.rooms];
 
                 if (existingRoomIndex > -1) {
-                    const existingImages = updatedRooms[existingRoomIndex].images || [];
+                    const existingRoom = updatedRooms[existingRoomIndex];
+                    const existingImages = existingRoom.images || [];
                     const isPlaceholder = (url: string) => url.includes('placeholder.png');
+                    const isImportant = existingRoom.imageUpdateImportant === true;
 
                     let mergedImages;
-                    if (newRoom.images.length > 0) {
+                    if (isImportant && newRoom.images.length > 0) {
+                        // Replace all images if marked as important
+                        mergedImages = newRoom.images;
+                    } else if (newRoom.images.length > 0) {
                         const realExistingImages = existingImages.filter((img: string) => !isPlaceholder(img));
                         mergedImages = [...realExistingImages, ...newRoom.images];
                     } else {
@@ -168,13 +173,17 @@ export default function AdminScreen() {
                     }
 
                     updatedRooms[existingRoomIndex] = {
-                        ...updatedRooms[existingRoomIndex],
-                        capacity: newRoom.capacity || updatedRooms[existingRoomIndex].capacity,
-                        roomType: newRoom.roomType || updatedRooms[existingRoomIndex].roomType,
-                        images: mergedImages
+                        ...existingRoom,
+                        capacity: newRoom.capacity || existingRoom.capacity,
+                        roomType: newRoom.roomType || existingRoom.roomType,
+                        images: mergedImages,
+                        imageUpdateImportant: false // Reset flag on successful update
                     };
                 } else {
-                    updatedRooms.push(newRoom);
+                    updatedRooms.push({
+                        ...newRoom,
+                        imageUpdateImportant: false
+                    });
                 }
 
                 await setDoc(doc(db, 'buildings', buildingId), {

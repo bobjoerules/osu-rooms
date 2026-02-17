@@ -12,6 +12,7 @@ export interface Room {
     capacity: string;
     roomType: string;
     searchAliases?: string[];
+    imageUpdateImportant?: boolean;
 }
 
 export interface Building {

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, Image as RNImage, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -248,7 +248,61 @@ export default function RoomDetail() {
         }
       ]
     );
-  }, [triggerHaptic, roomData.name, finalRoomId]);
+  }, [triggerHaptic, roomData.name, finalRoomId, db]);
+
+  const handleToggleImportant = useCallback(async () => {
+    triggerHaptic();
+    const isNowImportant = !roomData.imageUpdateImportant;
+    const confirmMsg = isNowImportant
+      ? "Label this room as 'Important for Image Updates'? This will notify users that better photos are needed, and the next approved photo will replace all current ones."
+      : "Remove the 'Important for Image Updates' label?";
+
+    if (Platform.OS === 'web') {
+      if (!window.confirm(confirmMsg)) return;
+    } else {
+      const result = await new Promise((resolve) => {
+        Alert.alert("Image Update Importance", confirmMsg, [
+          { text: "Cancel", onPress: () => resolve(false), style: "cancel" },
+          { text: isNowImportant ? "Label Important" : "Remove Label", onPress: () => resolve(true) }
+        ]);
+      });
+      if (!result) return;
+    }
+
+    try {
+      const buildingsRef = collection(db, 'buildings');
+      const q = query(buildingsRef, where('name', '==', roomData.building));
+      const buildingSnap = await getDocs(q);
+
+      if (!buildingSnap.empty) {
+        const buildingDoc = buildingSnap.docs[0];
+        const buildingData = buildingDoc.data();
+        const updatedRooms = buildingData.rooms.map((r: any) => {
+          if (r.id === finalRoomId) {
+            return { ...r, imageUpdateImportant: isNowImportant };
+          }
+          return r;
+        });
+
+        await updateDoc(doc(db, 'buildings', buildingDoc.id), {
+          rooms: updatedRooms
+        });
+
+        if (Platform.OS === 'web') {
+          window.alert(isNowImportant ? "Room labeled as important for updates." : "Label removed.");
+        } else {
+          Alert.alert("Success", isNowImportant ? "Room labeled as important for updates." : "Label removed.");
+        }
+      }
+    } catch (err) {
+      console.error("Failed to toggle importance:", err);
+      if (Platform.OS === 'web') {
+        window.alert("Failed to update room status.");
+      } else {
+        Alert.alert("Error", "Failed to update room status.");
+      }
+    }
+  }, [triggerHaptic, roomData.building, roomData.imageUpdateImportant, finalRoomId, db]);
 
   const isRoomValid = !!(getRoomById(finalRoomId as string));
 
@@ -427,7 +481,16 @@ export default function RoomDetail() {
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
-        {/* @ts-ignore */}
+        {roomData.imageUpdateImportant && (
+          <View style={[styles.importantNotice, { backgroundColor: theme.message + '15', borderColor: theme.message + '40' }]}>
+            <Ionicons name="alert-circle" size={32} color={theme.message} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.importantNoticeTitle, { color: theme.message }]}>Image Update Needed</Text>
+              <Text style={[styles.importantNoticeSub, { color: theme.text }]}>This room needs better photos. The next approved image submission will replace any current low-quality photos.</Text>
+            </View>
+          </View>
+        )}
+
         <View
           style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}
           {...(Platform.OS === 'web' ? {
@@ -683,7 +746,19 @@ export default function RoomDetail() {
 
           {isAdmin && (
             <TouchableOpacity
-              style={[styles.resetButton, { backgroundColor: theme.destructive + '15', borderColor: theme.destructive + '30' }]}
+              style={[styles.resetButton, { backgroundColor: theme.message + '15', borderColor: theme.message + '30', marginTop: 10 }]}
+              onPress={handleToggleImportant}
+            >
+              <Ionicons name={roomData.imageUpdateImportant ? "bookmark" : "bookmark-outline"} size={20} color={theme.message} />
+              <Text style={[styles.resetButtonText, { color: theme.message }]}>
+                {roomData.imageUpdateImportant ? "Remove Important Label" : "Mark Important for Photos"}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {isAdmin && (
+            <TouchableOpacity
+              style={[styles.resetButton, { backgroundColor: theme.destructive + '15', borderColor: theme.destructive + '40', marginTop: 10 }]}
               onPress={handleResetRoom}
               disabled={resetLoading}
             >
@@ -697,10 +772,8 @@ export default function RoomDetail() {
               )}
             </TouchableOpacity>
           )}
-
-
         </View>
-      </ScrollView >
+      </ScrollView>
 
       <View
         style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
@@ -735,7 +808,7 @@ export default function RoomDetail() {
           </View>
         </SafeAreaView>
       </View>
-    </View>
+    </View >
   );
 }
 
@@ -995,6 +1068,25 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
     columnLabel: {
       fontSize: 14,
       lineHeight: 20,
+    },
+    importantNotice: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      padding: 16,
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+    },
+    importantNoticeTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 2,
+    },
+    importantNoticeSub: {
+      fontSize: 13,
+      lineHeight: 18,
     }
   });
 }
