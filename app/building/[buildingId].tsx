@@ -38,21 +38,87 @@ export default function BuildingDetail() {
         });
     }, [building, showPlaceholders]);
 
+    const Header = ({ title = "Loading...", showRating = true }) => (
+        <View
+            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+            {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
+        >
+            <SafeAreaView edges={['top']}>
+                <View style={[
+                    styles.header,
+                    isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+                    { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
+                ]}>
+                    <Pressable
+                        onPress={() => {
+                            triggerHaptic();
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace('/');
+                            }
+                        }}
+                        style={styles.backButton}
+                    >
+                        <Ionicons name="chevron-back" size={28} color={theme.text} />
+                    </Pressable>
+                    <View style={styles.headerTitleContainer}>
+                        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+                            {title}
+                        </Text>
+                        {showRating && building && (
+                            <BuildingRating
+                                roomIds={building.rooms.map(r => r.id)}
+                                initialAvg={building.avgRating}
+                                initialCount={building.count}
+                            />
+                        )}
+                    </View>
+                    <View style={{ width: 40 }} />
+                </View>
+            </SafeAreaView>
+        </View>
+    );
+
     if (loading) {
         return (
-            <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color={theme.primary} />
+            <View style={[styles.container, { backgroundColor: theme.background }]}>
+                <Header title="Loading..." showRating={false} />
+                <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <ActivityIndicator size="large" color={theme.primary} />
+                </View>
             </View>
         );
     }
 
     if (!building) {
         return (
-            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                <Text style={{ color: theme.text }}>Building not found</Text>
-                <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 20 }}>
-                    <Text style={{ color: theme.primary }}>Go Back</Text>
-                </TouchableOpacity>
+            <View style={[styles.container, { backgroundColor: theme.background }]}>
+                <Header title="Not Found" showRating={false} />
+                <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+                    <Ionicons name="alert-circle-outline" size={64} color={theme.subtext} />
+                    <Text style={{ color: theme.text, fontSize: 18, fontWeight: '600', marginTop: 16 }}>Building not found</Text>
+                    <Text style={{ color: theme.subtext, textAlign: 'center', marginTop: 8 }}>We couldn't find the building you're looking for.</Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            triggerHaptic();
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace('/');
+                            }
+                        }}
+                        style={{
+                            marginTop: 24,
+                            backgroundColor: theme.primary,
+                            paddingHorizontal: 24,
+                            paddingVertical: 12,
+                            borderRadius: 12
+                        }}
+                    >
+                        <Text style={{ color: '#fff', fontWeight: 'bold' }}>Back to Home</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -81,43 +147,7 @@ export default function BuildingDetail() {
                     `}
                 </style>
             )}
-            <View
-                style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
-                {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
-            >
-                <SafeAreaView edges={['top']}>
-                    <View style={[
-                        styles.header,
-                        isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
-                        { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
-                    ]}>
-                        <Pressable
-                            onPress={() => {
-                                triggerHaptic();
-                                if (router.canGoBack()) {
-                                    router.back();
-                                } else {
-                                    router.push('/');
-                                }
-                            }}
-                            style={styles.backButton}
-                        >
-                            <Ionicons name="chevron-back" size={28} color={theme.text} />
-                        </Pressable>
-                        <View style={styles.headerTitleContainer}>
-                            <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
-                                {building.name}
-                            </Text>
-                            <BuildingRating
-                                roomIds={building.rooms.map(r => r.id)}
-                                initialAvg={building.avgRating}
-                                initialCount={building.count}
-                            />
-                        </View>
-                        <View style={{ width: 40 }} />
-                    </View>
-                </SafeAreaView>
-            </View>
+            <Header title={building.name} />
 
             <ScrollView
                 style={{ flex: 1 }}

@@ -48,7 +48,8 @@ export default function RateRoomModal() {
             if (snap.exists()) {
                 const data = snap.data();
                 setComment(prev => {
-                    if (prev === "" || initialLoad) {
+                    const isUnchanged = prev === (initialComment || "");
+                    if (prev === "" || (initialLoad && isUnchanged)) {
                         return data.comment || "";
                     }
                     return prev;

@@ -253,21 +253,6 @@ export default function RoomDetail() {
   const handleToggleImportant = useCallback(async () => {
     triggerHaptic();
     const isNowImportant = !roomData.imageUpdateImportant;
-    const confirmMsg = isNowImportant
-      ? "Label this room as 'Important for Image Updates'? This will notify users that better photos are needed, and the next approved photo will replace all current ones."
-      : "Remove the 'Important for Image Updates' label?";
-
-    if (Platform.OS === 'web') {
-      if (!window.confirm(confirmMsg)) return;
-    } else {
-      const result = await new Promise((resolve) => {
-        Alert.alert("Image Update Importance", confirmMsg, [
-          { text: "Cancel", onPress: () => resolve(false), style: "cancel" },
-          { text: isNowImportant ? "Label Important" : "Remove Label", onPress: () => resolve(true) }
-        ]);
-      });
-      if (!result) return;
-    }
 
     try {
       const buildingsRef = collection(db, 'buildings');
@@ -287,12 +272,6 @@ export default function RoomDetail() {
         await updateDoc(doc(db, 'buildings', buildingDoc.id), {
           rooms: updatedRooms
         });
-
-        if (Platform.OS === 'web') {
-          window.alert(isNowImportant ? "Room labeled as important for updates." : "Label removed.");
-        } else {
-          Alert.alert("Success", isNowImportant ? "Room labeled as important for updates." : "Label removed.");
-        }
       }
     } catch (err) {
       console.error("Failed to toggle importance:", err);
@@ -421,10 +400,49 @@ export default function RoomDetail() {
     handleMouseMove(e as any);
   };
 
+  const Header = ({ title = "Loading..." }) => (
+    <View
+      style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+      {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
+    >
+      <SafeAreaView edges={['top']}>
+        <View style={[
+          styles.header,
+          isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+          {
+            marginTop: Platform.OS === 'web' && isDesktopWeb ? 16 : 0,
+            marginBottom: 10
+          }
+        ]}>
+          <Pressable
+            onPress={() => {
+              triggerHaptic();
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                router.replace('/');
+              }
+            }}
+            style={styles.backButton}
+          >
+            <Ionicons name="chevron-back" size={28} color={theme.text} />
+          </Pressable>
+          <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+            {title}
+          </Text>
+          <View style={{ width: 40 }} />
+        </View>
+      </SafeAreaView>
+    </View>
+  );
+
   if (dbLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={theme.primary} />
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <Header />
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={theme.primary} />
+        </View>
       </View>
     );
   }
@@ -481,15 +499,6 @@ export default function RoomDetail() {
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
-        {roomData.imageUpdateImportant && (
-          <View style={[styles.importantNotice, { backgroundColor: theme.message + '15', borderColor: theme.message + '40' }]}>
-            <Ionicons name="alert-circle" size={32} color={theme.message} />
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.importantNoticeTitle, { color: theme.message }]}>Image Update Needed</Text>
-              <Text style={[styles.importantNoticeSub, { color: theme.text }]}>This room needs better photos. The next approved image submission will replace any current low-quality photos.</Text>
-            </View>
-          </View>
-        )}
 
         <View
           style={[styles.imageContainer, isDesktopWeb && { paddingHorizontal: 16 }]}
@@ -624,7 +633,7 @@ export default function RoomDetail() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.actionButton, { backgroundColor: theme.border }]}
+                  style={[styles.adminIconButton, { backgroundColor: theme.border, borderColor: theme.border }]}
                   onPress={() => {
                     triggerHaptic();
                     router.push({
@@ -636,9 +645,31 @@ export default function RoomDetail() {
                     });
                   }}
                 >
-                  <Ionicons name="camera" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
-                  <Text style={[styles.actionButtonText, { color: theme.subtext }]} numberOfLines={1} adjustsFontSizeToFit>Upload Photo(s)</Text>
+                  <Ionicons name="camera" size={20} color={theme.subtext} />
                 </TouchableOpacity>
+
+                {isAdmin && (
+                  <>
+                    <TouchableOpacity
+                      style={[styles.adminIconButton, { backgroundColor: theme.message + '15', borderColor: theme.message + '30' }]}
+                      onPress={handleToggleImportant}
+                    >
+                      <Ionicons name={roomData.imageUpdateImportant ? "bookmark" : "bookmark-outline"} size={20} color={theme.message} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.adminIconButton, { backgroundColor: theme.destructive + '15', borderColor: theme.destructive + '30' }]}
+                      onPress={handleResetRoom}
+                      disabled={resetLoading}
+                    >
+                      {resetLoading ? (
+                        <ActivityIndicator size="small" color={theme.destructive} />
+                      ) : (
+                        <Ionicons name="trash-outline" size={20} color={theme.destructive} />
+                      )}
+                    </TouchableOpacity>
+                  </>
+                )}
               </View>
             </View>
           </View>
@@ -744,70 +775,11 @@ export default function RoomDetail() {
             </View>
           )}
 
-          {isAdmin && (
-            <TouchableOpacity
-              style={[styles.resetButton, { backgroundColor: theme.message + '15', borderColor: theme.message + '30', marginTop: 10 }]}
-              onPress={handleToggleImportant}
-            >
-              <Ionicons name={roomData.imageUpdateImportant ? "bookmark" : "bookmark-outline"} size={20} color={theme.message} />
-              <Text style={[styles.resetButtonText, { color: theme.message }]}>
-                {roomData.imageUpdateImportant ? "Remove Important Label" : "Mark Important for Photos"}
-              </Text>
-            </TouchableOpacity>
-          )}
 
-          {isAdmin && (
-            <TouchableOpacity
-              style={[styles.resetButton, { backgroundColor: theme.destructive + '15', borderColor: theme.destructive + '40', marginTop: 10 }]}
-              onPress={handleResetRoom}
-              disabled={resetLoading}
-            >
-              {resetLoading ? (
-                <ActivityIndicator color={theme.destructive} />
-              ) : (
-                <>
-                  <Ionicons name="trash-outline" size={20} color={theme.destructive} />
-                  <Text style={[styles.resetButtonText, { color: theme.destructive }]}>Reset Room Ratings</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          )}
         </View>
       </ScrollView>
 
-      <View
-        style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
-        {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
-      >
-        <SafeAreaView edges={['top']}>
-          <View style={[
-            styles.header,
-            isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
-            {
-              marginTop: Platform.OS === 'web' && isDesktopWeb ? 16 : 0,
-              marginBottom: 10
-            }
-          ]}>
-            <Pressable
-              onPress={() => {
-                triggerHaptic();
-                if (router.canGoBack()) {
-                  router.back();
-                } else {
-                  router.push('/');
-                }
-              }}
-              style={styles.backButton}
-            >
-              <Ionicons name="chevron-back" size={28} color={theme.text} />
-            </Pressable>
-            <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
-              {/^[A-Za-z\s]+$/.test(roomData.name) ? roomData.name : `Room ${roomData.name}`} - {roomData.building}
-            </Text>
-            <View style={{ width: 40 }} />
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header title={`${/^[A-Za-z\s]+$/.test(roomData.name) ? roomData.name : `Room ${roomData.name}`} - ${roomData.building}`} />
     </View >
   );
 }
@@ -963,6 +935,7 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
     },
     actionButtonsContainer: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: 12,
       width: '100%',
       justifyContent: 'center',
@@ -982,32 +955,14 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
       fontSize: 14,
       fontWeight: '600',
     },
-    resetButton: {
-      flexDirection: 'row',
+    adminIconButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 8,
-      paddingVertical: 14,
-      borderRadius: 12,
-      marginTop: 10,
-      marginBottom: 30,
-    },
-    resetButtonText: {
-      fontSize: 16,
-      fontWeight: '600',
-    },
-    suggestButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      paddingVertical: 12,
-      borderRadius: 12,
       marginTop: 8,
-    },
-    suggestButtonText: {
-      fontSize: 14,
-      fontWeight: '600',
+      borderWidth: 1,
     },
     reviewSection: {
       gap: 12,
@@ -1068,25 +1023,6 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
     columnLabel: {
       fontSize: 14,
       lineHeight: 20,
-    },
-    importantNotice: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      padding: 16,
-      marginHorizontal: 16,
-      marginBottom: 16,
-      borderRadius: 16,
-      borderWidth: 1,
-    },
-    importantNoticeTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      marginBottom: 2,
-    },
-    importantNoticeSub: {
-      fontSize: 13,
-      lineHeight: 18,
     }
   });
 }
