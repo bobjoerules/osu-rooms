@@ -27,6 +27,13 @@ export default function BuildingDetail() {
     const { width } = useWindowDimensions();
     const isDesktopWeb = Platform.OS === 'web' && width >= 768;
     const styles = useMemo(() => createStyles(theme), [theme]);
+    const calculatedMaxWidth = useMemo(() => {
+        if (!isDesktopWeb) return undefined;
+        if (width >= 2400) return 2400;
+        if (width >= 2000) return 2000;
+        if (width >= 1600) return 1600;
+        return 1200;
+    }, [isDesktopWeb, width]);
 
     const building = useMemo(() =>
         buildings.find(b => b.id === buildingId),
@@ -49,7 +56,7 @@ export default function BuildingDetail() {
             <SafeAreaView edges={['top']}>
                 <View style={[
                     styles.header,
-                    isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+                    isDesktopWeb && { maxWidth: calculatedMaxWidth, alignSelf: 'center', width: '100%' },
                     { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
                 ]}>
                     <Pressable
@@ -157,7 +164,7 @@ export default function BuildingDetail() {
                 contentContainerStyle={[
                     styles.scrollContent,
                     { paddingTop: insets.top + (isDesktopWeb ? 100 : 80) },
-                    isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
+                    isDesktopWeb && { maxWidth: calculatedMaxWidth, alignSelf: 'center', width: '100%' }
                 ]}
             >
                 <View style={[isDesktopWeb ? styles.gridWrapper : undefined]}>

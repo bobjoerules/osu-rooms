@@ -231,6 +231,23 @@ export default function Index() {
     );
   }
 
+  const isSearching = searchQuery.trim().length > 0;
+  const calculatedColumns = useMemo(() => {
+    if (!isDesktopWeb || isSearching) return 1;
+    if (width >= 2400) return 6;
+    if (width >= 2000) return 5;
+    if (width >= 1600) return 4;
+    return 3;
+  }, [isDesktopWeb, isSearching, width]);
+
+  const calculatedMaxWidth = useMemo(() => {
+    if (!isDesktopWeb) return undefined;
+    if (width >= 2400) return 2400;
+    if (width >= 2000) return 2000;
+    if (width >= 1600) return 1600;
+    return 1200;
+  }, [isDesktopWeb, width]);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {Platform.OS === 'web' && (
@@ -284,9 +301,9 @@ export default function Index() {
         ref={flatListRef}
         data={filteredBuildings}
         keyExtractor={(item) => item.id}
-        numColumns={isDesktopWeb && !(searchQuery.trim().length > 0) ? 3 : 1}
-        key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
-        columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
+        numColumns={calculatedColumns}
+        key={`${calculatedColumns}-${isSearching ? 'search' : 'grid'}`}
+        columnWrapperStyle={calculatedColumns > 1 ? styles.columnWrapper : undefined}
         renderItem={renderItem}
         maxToRenderPerBatch={lowPowerMode ? 5 : 10}
         updateCellsBatchingPeriod={50}
@@ -300,7 +317,7 @@ export default function Index() {
             animated: true,
           });
         }}
-        style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
+        style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: calculatedMaxWidth, alignSelf: 'center' }]}
         contentContainerStyle={useMemo(() => [
           styles.scrollContent,
           {
@@ -332,7 +349,7 @@ export default function Index() {
           <View style={{ height: 75 }} />
         )}
         <SafeAreaView edges={['top']}>
-          <View style={[styles.header, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}>
+          <View style={[styles.header, isDesktopWeb && { width: '100%', maxWidth: calculatedMaxWidth, alignSelf: 'center' }]}>
             <View
               style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }, isDesktopWeb && { maxWidth: 600, alignSelf: 'center', width: '100%' }]}
               className="search-bar-inner"
@@ -398,11 +415,13 @@ function createStyles(theme: Theme) {
     columnWrapper: {
       gap: 16,
       paddingHorizontal: 16,
+      justifyContent: 'center',
     },
     gridItem: {
       flex: 1,
-      maxWidth: '31%',
-      marginVertical: 8,
+      maxWidth: 380,
+      marginVertical: 12,
+      marginHorizontal: 8,
     },
     listItemFullWidth: {
       flex: 1,

@@ -127,14 +127,15 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   roomCardGrid: {
-    width: '31%',
-    flexBasis: '31%',
+    width: 320,
+    flexShrink: 0,
     flexDirection: 'column',
-    marginHorizontal: '1%',
+    marginHorizontal: 12,
     marginVertical: 12,
     padding: 0,
     borderRadius: 16,
     overflow: 'hidden',
+    height: 280,
   },
   roomImageGridContainer: {
     width: '100%',
@@ -154,7 +155,8 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: '-1%',
+    marginHorizontal: -12,
+    justifyContent: 'center',
   },
   columnWrapper: {
     justifyContent: 'flex-start',
