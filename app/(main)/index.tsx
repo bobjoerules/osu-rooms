@@ -9,6 +9,7 @@ import RoomList from '../../components/RoomList';
 import { Building } from '../../data/rooms';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
+import { useUser } from '../../lib/UserContext';
 import { Theme, useTheme } from '../../theme';
 
 const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
@@ -90,6 +91,7 @@ export default function Index() {
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const flatListRef = useRef<FlatList>(null);
   const { buildings, loading } = useBuildings();
+  const { isAdmin } = useUser();
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
 
   const handleBuildingPress = useCallback((id: string, index: number) => {
@@ -140,6 +142,7 @@ export default function Index() {
       const allRoomIds = building.rooms.map(r => r.id);
 
       const matchingRooms = building.rooms?.filter(room => {
+        if (room.isHidden && !isAdmin) return false;
         const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
 
         if (isSearching) {
@@ -169,7 +172,7 @@ export default function Index() {
 
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  }, [searchQuery, showPlaceholders, buildings]);
+  }, [searchQuery, showPlaceholders, buildings, isAdmin]);
 
   const renderItem = useCallback(({ item, index }: { item: any, index: number }) => {
     const isSearching = searchQuery.trim().length > 0;

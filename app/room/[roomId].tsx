@@ -283,6 +283,39 @@ export default function RoomDetail() {
     }
   }, [triggerHaptic, roomData.building, roomData.imageUpdateImportant, finalRoomId, db]);
 
+  const handleToggleVisibility = useCallback(async () => {
+    triggerHaptic();
+    const isNowHidden = !roomData.isHidden;
+
+    try {
+      const buildingsRef = collection(db, 'buildings');
+      const q = query(buildingsRef, where('name', '==', roomData.building));
+      const buildingSnap = await getDocs(q);
+
+      if (!buildingSnap.empty) {
+        const buildingDoc = buildingSnap.docs[0];
+        const buildingData = buildingDoc.data();
+        const updatedRooms = buildingData.rooms.map((r: any) => {
+          if (r.id === finalRoomId) {
+            return { ...r, isHidden: isNowHidden };
+          }
+          return r;
+        });
+
+        await updateDoc(doc(db, 'buildings', buildingDoc.id), {
+          rooms: updatedRooms
+        });
+      }
+    } catch (err) {
+      console.error("Failed to toggle visibility:", err);
+      if (Platform.OS === 'web') {
+        window.alert("Failed to update room visibility.");
+      } else {
+        Alert.alert("Error", "Failed to update room visibility.");
+      }
+    }
+  }, [triggerHaptic, roomData.building, roomData.isHidden, finalRoomId, db]);
+
   const isRoomValid = !!(getRoomById(finalRoomId as string));
 
   const handleMouseDrag = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -593,7 +626,7 @@ export default function RoomDetail() {
 
               <View style={styles.actionButtonsContainer}>
                 <TouchableOpacity
-                  style={[styles.actionButton, { backgroundColor: theme.border }]}
+                  style={isAdmin ? [styles.adminIconButton, { backgroundColor: theme.border, borderColor: theme.border }] : [styles.actionButton, { backgroundColor: theme.border }]}
                   onPress={async () => {
                     try {
                       if (!auth.currentUser) {
@@ -628,8 +661,8 @@ export default function RoomDetail() {
                     }
                   }}
                 >
-                  <Ionicons name="pencil" size={18} color={theme.subtext} style={{ marginRight: 8 }} />
-                  <Text style={[styles.actionButtonText, { color: theme.subtext }]} numberOfLines={1} adjustsFontSizeToFit>Rate Room</Text>
+                  <Ionicons name="pencil" size={isAdmin ? 24 : 20} color={theme.subtext} style={!isAdmin ? { marginRight: 8 } : undefined} />
+                  {!isAdmin && <Text style={[styles.actionButtonText, { color: theme.subtext }]} numberOfLines={1} adjustsFontSizeToFit>Rate Room</Text>}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -645,16 +678,23 @@ export default function RoomDetail() {
                     });
                   }}
                 >
-                  <Ionicons name="camera" size={20} color={theme.subtext} />
+                  <Ionicons name="camera" size={24} color={theme.subtext} />
                 </TouchableOpacity>
 
                 {isAdmin && (
                   <>
                     <TouchableOpacity
+                      style={[styles.adminIconButton, { backgroundColor: theme.primary + '15', borderColor: theme.primary + '30' }]}
+                      onPress={handleToggleVisibility}
+                    >
+                      <Ionicons name={roomData.isHidden ? "eye-off" : "eye"} size={24} color={theme.primary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
                       style={[styles.adminIconButton, { backgroundColor: theme.message + '15', borderColor: theme.message + '30' }]}
                       onPress={handleToggleImportant}
                     >
-                      <Ionicons name={roomData.imageUpdateImportant ? "bookmark" : "bookmark-outline"} size={20} color={theme.message} />
+                      <Ionicons name={roomData.imageUpdateImportant ? "bookmark" : "bookmark-outline"} size={24} color={theme.message} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -665,7 +705,7 @@ export default function RoomDetail() {
                       {resetLoading ? (
                         <ActivityIndicator size="small" color={theme.destructive} />
                       ) : (
-                        <Ionicons name="trash-outline" size={20} color={theme.destructive} />
+                        <Ionicons name="arrow-undo" size={24} color={theme.destructive} />
                       )}
                     </TouchableOpacity>
                   </>
@@ -945,7 +985,7 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
       maxWidth: 185,
       flexDirection: 'row',
       marginTop: 8,
-      paddingVertical: 10,
+      paddingVertical: 12,
       paddingHorizontal: 16,
       borderRadius: 12,
       alignItems: 'center',
@@ -956,8 +996,8 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
       fontWeight: '600',
     },
     adminIconButton: {
-      width: 44,
-      height: 44,
+      width: 48,
+      height: 48,
       borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',

@@ -13,6 +13,7 @@ export interface Room {
     roomType: string;
     searchAliases?: string[];
     imageUpdateImportant?: boolean;
+    isHidden?: boolean;
 }
 
 export interface Building {

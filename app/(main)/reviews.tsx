@@ -175,7 +175,7 @@ export default function ReviewsScreen() {
             ]}>
                 <Text style={[styles.title, { color: theme.text }]}>Your Reviews</Text>
                 <Text style={[styles.subtitle, { color: theme.subtext }]}>
-                    {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'} shared
+                    {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
                 </Text>
             </View>
             <FlatList

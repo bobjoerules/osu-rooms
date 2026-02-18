@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { FlatList, Platform, Image as RNImage, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useHapticFeedback } from '../lib/SettingsContext';
+import { useUser } from '../lib/UserContext';
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
 
@@ -17,6 +18,7 @@ export default function RoomList({ rooms }: RoomListProps) {
   const theme = useTheme();
   const router = useRouter();
   const triggerHaptic = useHapticFeedback();
+  const { isAdmin } = useUser();
 
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
@@ -30,7 +32,12 @@ export default function RoomList({ rooms }: RoomListProps) {
     const roomName = item.id.split('-').pop() || '???';
     return (
       <TouchableOpacity
-        style={[styles.roomCard, isDesktopWeb && styles.roomCardGrid, { backgroundColor: theme.card }]}
+        style={[
+          styles.roomCard,
+          isDesktopWeb && styles.roomCardGrid,
+          { backgroundColor: theme.card },
+          item.isHidden && { opacity: 0.5 }
+        ]}
         onPress={() => handleRoomPress(item.id)}
         activeOpacity={0.7}
         {...(isDesktopWeb ? { dataSet: { 'grid-item': 'true' } } : {})}
@@ -56,6 +63,7 @@ export default function RoomList({ rooms }: RoomListProps) {
         <View style={[styles.roomContent, isDesktopWeb && styles.roomContentGrid]}>
           <Text style={[styles.roomName, { color: theme.text }]} numberOfLines={isDesktopWeb ? 2 : 1}>
             {/^[A-Za-z\s]+$/.test(roomName) ? roomName : `Room ${roomName}`}
+            {item.isHidden && <Ionicons name="eye-off" size={14} color={theme.primary} style={{ marginLeft: 4 }} />}
           </Text>
           <RatingDisplay itemId={item.id} size={16} align={isDesktopWeb ? 'center' : 'flex-start'} />
         </View>

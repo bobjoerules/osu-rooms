@@ -7,6 +7,7 @@ import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
+import { useUser } from '../../lib/UserContext';
 import { Theme, useTheme } from '../../theme';
 
 const isPlaceholderImage = (imageUrl: string | undefined): boolean => {
@@ -20,6 +21,7 @@ export default function BuildingDetail() {
     const router = useRouter();
     const theme = useTheme();
     const { showPlaceholders } = useSettings();
+    const { isAdmin } = useUser();
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
@@ -33,10 +35,11 @@ export default function BuildingDetail() {
     const filteredRooms = useMemo(() => {
         if (!building) return [];
         return building.rooms.filter(room => {
+            if (room.isHidden && !isAdmin) return false;
             const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
             return showPlaceholders || hasPhotos;
         });
-    }, [building, showPlaceholders]);
+    }, [building, showPlaceholders, isAdmin]);
 
     const Header = ({ title = "Loading...", showRating = true }) => (
         <View
