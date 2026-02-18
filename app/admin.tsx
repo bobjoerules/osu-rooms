@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActivityIndicator,
@@ -11,6 +11,7 @@ import {
     Platform,
     Pressable,
     Image as RNImage,
+    ScrollView,
     StyleSheet,
     Text,
     useWindowDimensions,
@@ -19,6 +20,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseImage } from '../data/rooms';
 import { db } from '../firebaseConfig';
+import { useBuildings } from '../lib/DatabaseContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
 
@@ -51,9 +53,12 @@ export default function AdminScreen() {
     const [approved, setApproved] = useState<Submission[]>([]);
     const [rejected, setRejected] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(true);
-    const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
+    const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected' | 'system'>('pending');
+    const { getRoomById, buildings } = useBuildings();
+    const [scanning, setScanning] = useState(false);
+    const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, ref: any }[]>([]);
 
-    const statuses = ['pending', 'approved', 'rejected'] as const;
+    const statuses = ['pending', 'approved', 'rejected', 'system'] as const;
 
     useEffect(() => {
         setLoading(true);
@@ -258,7 +263,7 @@ export default function AdminScreen() {
         );
     };
 
-    const handleTabPress = (status: 'pending' | 'approved' | 'rejected') => {
+    const handleTabPress = (status: 'pending' | 'approved' | 'rejected' | 'system') => {
         triggerHaptic();
         setStatusFilter(status);
         if (Platform.OS !== 'web') {
@@ -409,8 +414,123 @@ export default function AdminScreen() {
         <SubmissionItem item={item} />
     );
 
-    const renderPage = ({ item: status }: { item: 'pending' | 'approved' | 'rejected' }) => {
-        const pageSubmissions = groupedSubmissions[status];
+    const runHealthCheck = async () => {
+        setScanning(true);
+        triggerHaptic();
+        const issues: any[] = [];
+        try {
+            const ratingsQuery = query(collectionGroup(db, 'userRatings'));
+            const snapshot = await getDocs(ratingsQuery);
+
+            snapshot.forEach(docRef => {
+                const data = docRef.data() as any;
+                const roomId = docRef.ref.parent.parent?.id || 'unknown';
+                const roomInfo = getRoomById(roomId);
+
+                if (!data.rating || data.rating <= 0) {
+                    issues.push({ type: 'corrupt', id: docRef.id, roomId, details: 'Missing or invalid rating value', ref: docRef.ref });
+                } else if (!data.updatedAt) {
+                    issues.push({ type: 'corrupt', id: docRef.id, roomId, details: 'Missing updatedAt timestamp (prevents showing in lists)', ref: docRef.ref });
+                } else if (!roomInfo) {
+                    issues.push({ type: 'orphan', id: docRef.id, roomId, details: `Room ${roomId} no longer exists in database`, ref: docRef.ref });
+                }
+            });
+
+            const ratingsAggQuery = query(collection(db, 'ratings'));
+            const aggSnapshot = await getDocs(ratingsAggQuery);
+            for (const aggDoc of aggSnapshot.docs) {
+                const aggData = aggDoc.data();
+                if (aggData.count > 0) {
+                    const userRatingsSnap = await getDocs(collection(db, 'ratings', aggDoc.id, 'userRatings'));
+                    if (userRatingsSnap.size !== aggData.count) {
+                        issues.push({ type: 'mismatch', id: aggDoc.id, roomId: aggDoc.id, details: `Aggregate count (${aggData.count}) does not match actual ratings (${userRatingsSnap.size})`, ref: aggDoc.ref });
+                    }
+                }
+            }
+
+            setSystemResults(issues);
+            if (Platform.OS === 'web') {
+                window.alert(`Scan complete. Found ${issues.length} potential issues.`);
+            } else {
+                Alert.alert('Scan Complete', `Found ${issues.length} potential issues.`);
+            }
+        } catch (err) {
+            console.error("Health check failed:", err);
+            Alert.alert('Error', 'Failed to run health check.');
+        } finally {
+            setScanning(false);
+        }
+    };
+
+    const fixIssue = async (issue: any) => {
+        triggerHaptic();
+        try {
+            if (issue.type === 'corrupt' && !issue.ref.data()?.updatedAt && issue.ref.data()?.rating) {
+                await updateDoc(issue.ref, { updatedAt: new Date() });
+            } else if (issue.type === 'mismatch') {
+                const userRatingsSnap = await getDocs(collection(db, 'ratings', issue.id, 'userRatings'));
+                const ratings = userRatingsSnap.docs.map(d => d.data().rating).filter(r => typeof r === 'number');
+                const newCount = ratings.length;
+                const newAvg = newCount > 0 ? ratings.reduce((a, b) => a + b, 0) / newCount : 0;
+                await updateDoc(issue.ref, { count: newCount, avg: newAvg });
+            } else {
+                await deleteDoc(issue.ref);
+            }
+            setSystemResults(prev => prev.filter(i => i !== issue));
+        } catch (err) {
+            console.error("Failed to fix issue:", err);
+            Alert.alert('Error', 'Action failed.');
+        }
+    };
+
+    const renderPage = ({ item: status }: { item: 'pending' | 'approved' | 'rejected' | 'system' }) => {
+        if (status === 'system') {
+            return (
+                <ScrollView contentContainerStyle={styles.listContent}>
+                    <View style={[styles.card, { padding: 20, backgroundColor: theme.card, borderColor: theme.border }]}>
+                        <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 8 }]}>Database Health</Text>
+                        <Text style={[styles.emptyText, { color: theme.subtext, fontSize: 14, textAlign: 'left', marginBottom: 20 }]}>
+                            Scan for corrupted, orphaned, or mismatched ratings. Corrupted ratings usually stay hidden from the "Your Reviews" tab.
+                        </Text>
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.actionButton,
+                                { backgroundColor: theme.primary, borderColor: theme.primary, opacity: (pressed || scanning) ? 0.7 : 1 }
+                            ]}
+                            onPress={runHealthCheck}
+                            disabled={scanning}
+                        >
+                            {scanning ? <ActivityIndicator color="#fff" size="small" /> : <Ionicons name="scan-outline" size={20} color="#fff" />}
+                            <Text style={[styles.actionText, { color: '#fff' }]}>Run Health Check</Text>
+                        </Pressable>
+                    </View>
+
+                    {systemResults.length > 0 && (
+                        <View style={{ gap: 12 }}>
+                            <Text style={[styles.sectionTitle, { color: theme.text, marginTop: 12 }]}>Found Issues ({systemResults.length})</Text>
+                            {systemResults.map((issue, idx) => (
+                                <View key={idx} style={[styles.card, { padding: 16, backgroundColor: theme.card, borderColor: theme.border }]}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[styles.buildingName, { color: theme.text, fontSize: 16 }]}>{issue.type.toUpperCase()}: {issue.roomId}</Text>
+                                            <Text style={[styles.roomInfo, { color: theme.subtext }]}>{issue.details}</Text>
+                                        </View>
+                                        <Pressable
+                                            onPress={() => fixIssue(issue)}
+                                            style={{ padding: 8, backgroundColor: theme.primary + '11', borderRadius: 8 }}
+                                        >
+                                            <Text style={{ color: theme.primary, fontWeight: 'bold' }}>FIX</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </ScrollView>
+            );
+        }
+
+        const pageSubmissions = (groupedSubmissions as any)[status];
 
         return (
             <View style={{ width: Platform.OS === 'web' ? '100%' : windowWidth }}>
@@ -449,6 +569,7 @@ export default function AdminScreen() {
             case 'pending': return '#FFCC00';
             case 'approved': return '#34C759';
             case 'rejected': return '#FF3B30';
+            case 'system': return '#5856D6';
             default: return theme.primary;
         }
     };
@@ -571,6 +692,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 4,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     roomInfo: {
         fontSize: 14,
