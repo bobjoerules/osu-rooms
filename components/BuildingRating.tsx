@@ -30,7 +30,6 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
         let isActive = true;
         const unsubs: (() => void)[] = [];
 
-        // Reset state when roomIds change
         setRoomRatings(() => {
             const initial: Record<string, { avg: number; count: number }> = {};
             roomIds.forEach(id => {
@@ -41,8 +40,6 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
 
         const startListening = () => {
             if (!isActive) return;
-            // If we already have initial data and we're not in priority mode (detail page), 
-            // don't start the intensive room listeners.
             if (!priority && initialCount !== undefined && initialCount > 0) {
                 return;
             }
@@ -77,7 +74,6 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
     }, [roomIds, priority]);
 
     const { avg, count } = useMemo(() => {
-        // Use denormalized building data if available, but only if it's actually populated
         if (initialCount !== undefined && initialCount > 0 && initialAvg !== undefined) {
             return { avg: initialAvg, count: initialCount };
         }

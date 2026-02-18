@@ -14,8 +14,6 @@ interface SettingsContextType {
     setUseBetaFeatures: (value: boolean) => void;
     showSubmitTab: boolean;
     setShowSubmitTab: (value: boolean) => void;
-    showDormTab: boolean;
-    setShowDormTab: (value: boolean) => void;
     showReviewsTab: boolean;
     setShowReviewsTab: (value: boolean) => void;
     lowPowerMode: boolean;
@@ -38,7 +36,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showBuildingImages, setShowBuildingImages] = useState(true);
     const [useBetaFeatures, setUseBetaFeatures] = useState(false);
     const [showSubmitTab, setShowSubmitTab] = useState(true);
-    const [showDormTab, setShowDormTab] = useState(false);
     const [showReviewsTab, setShowReviewsTab] = useState(true);
     const [lowPowerMode, setLowPowerMode] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -132,11 +129,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const updateShowDormTab = async (value: boolean) => {
-        // No-op now as we want it hidden
-        setShowDormTab(false);
-    };
-
     const updateShowReviewsTab = async (value: boolean) => {
         try {
             setShowReviewsTab(value);
@@ -166,8 +158,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setUseBetaFeatures: updateUseBetaFeatures,
         showSubmitTab,
         setShowSubmitTab: updateShowSubmitTab,
-        showDormTab,
-        setShowDormTab: updateShowDormTab,
         showReviewsTab,
         setShowReviewsTab: updateShowReviewsTab,
         lowPowerMode,
@@ -178,7 +168,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         showBuildingImages,
         useBetaFeatures,
         showSubmitTab,
-        showDormTab,
         showReviewsTab,
         lowPowerMode
     ]);

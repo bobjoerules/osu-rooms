@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccordionItem } from '../../components/Accordion';
@@ -91,22 +92,32 @@ export default function Index() {
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const expandedRef = useRef<Record<string, boolean>>({});
   const flatListRef = useRef<FlatList>(null);
   const { buildings, loading } = useBuildings();
+  useEffect(() => {
+    if (!loading && buildings.length > 0) {
+      buildings.forEach(b => {
+        const img = b.rooms?.[0]?.images?.[0];
+        const target = b.images?.[0] || img;
+        if (target && typeof target === 'string' && target.startsWith('http')) {
+          Image.prefetch(target);
+        }
+      });
+    }
+  }, [loading, buildings]);
   const { isAdmin } = useUser();
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
 
   const handleBuildingPress = useCallback((id: string, index: number) => {
     triggerHaptic();
-    const isSearching = searchQuery.trim().length > 0;
+    const isSearching = deferredSearchQuery.trim().length > 0;
     if (isDesktopWeb && !isSearching) {
       router.push(`/building/${id}`);
       return;
     }
-
-    // LayoutAnimation is handled by the AccordionItem component to avoid conflicts
 
     setExpandedIds(prev => {
       const currentlyExpanded = prev[id];
@@ -121,7 +132,6 @@ export default function Index() {
           ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
           : insets.top + headerHeight;
 
-        // Perform scroll immediately or with minimal delay now that animation is faster
         requestAnimationFrame(() => {
           flatListRef.current?.scrollToIndex({
             index,
@@ -134,53 +144,59 @@ export default function Index() {
 
       return newState;
     });
-  }, [isDesktopWeb, router, triggerHaptic, searchQuery, insets.top, headerHeight, width]);
+  }, [isDesktopWeb, router, triggerHaptic, deferredSearchQuery, insets.top, headerHeight, width]);
+
+  const searchableBuildings = useMemo(() => {
+    return buildings.map(b => ({
+      ...b,
+      lowerName: b.name.toLowerCase(),
+      roomNames: b.rooms.map(r => ({
+        id: r.id,
+        lowerName: (r.id.split('-').pop() || '').toLowerCase(),
+        isHidden: !!r.isHidden,
+        hasPhotos: r.images?.length > 0 && !isPlaceholderImage(r.images?.[0]),
+        aliases: (r.searchAliases || []).map(a => a.toLowerCase())
+      }))
+    }));
+  }, [buildings]);
 
   const filteredBuildings = useMemo(() => {
-    const isSearching = searchQuery.trim().length > 0;
-    const lowerQuery = searchQuery.toLowerCase();
+    const isSearching = deferredSearchQuery.trim().length > 0;
+    const lowerQuery = deferredSearchQuery.toLowerCase();
 
-    const filtered = buildings.reduce<any[]>((acc, building) => {
-      const isHiddenByDefault = building.id === 'backrooms';
-      if (!isSearching && isHiddenByDefault) {
-        return acc;
-      }
+    const filtered = searchableBuildings.reduce<any[]>((acc, b) => {
+      const isHiddenByDefault = b.id === 'backrooms';
+      if (!isSearching && isHiddenByDefault) return acc;
 
-      const buildingNameMatch = building.name.toLowerCase().includes(lowerQuery);
-      const allRoomIds = building.rooms.map(r => r.id);
+      const buildingNameMatch = b.lowerName.includes(lowerQuery);
 
-      const matchingRooms = (building.rooms || []).filter(room => {
-        if (room.isHidden && !isAdmin) return false;
-        const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
+      const matchingRooms = b.roomNames.filter(rn => {
+        if (rn.isHidden && !isAdmin) return false;
 
         if (isSearching) {
-          const roomName = room.id.split('-').pop() || '';
-          const nameMatch = roomName.toLowerCase().includes(lowerQuery);
-          const aliasMatch = room.searchAliases?.some(alias =>
-            alias.toLowerCase().includes(lowerQuery)
-          );
+          const nameMatch = rn.lowerName.includes(lowerQuery);
+          const aliasMatch = rn.aliases.some(a => a.includes(lowerQuery));
           return nameMatch || aliasMatch;
         }
 
-        return showPlaceholders || hasPhotos;
+        return showPlaceholders || rn.hasPhotos;
       });
 
       if (isSearching) {
         if (matchingRooms.length > 0) {
-          acc.push({ ...building, rooms: matchingRooms, allRoomIds });
+          acc.push({ ...b, rooms: b.rooms.filter(r => matchingRooms.some(m => m.id === r.id)) });
         } else if (buildingNameMatch) {
-          acc.push({ ...building, allRoomIds });
+          acc.push(b);
         }
       } else if (matchingRooms.length > 0) {
-        acc.push({ ...building, rooms: matchingRooms, allRoomIds });
+        acc.push({ ...b, rooms: b.rooms.filter(r => matchingRooms.some(m => m.id === r.id)) });
       }
 
       return acc;
     }, []);
 
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-    return filtered;
-  }, [searchQuery, showPlaceholders, buildings, isAdmin]);
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }, [deferredSearchQuery, showPlaceholders, searchableBuildings, isAdmin]);
 
   const renderItem = useCallback(({ item, index }: { item: any, index: number }) => {
     const isSearching = searchQuery.trim().length > 0;
@@ -272,11 +288,11 @@ export default function Index() {
         key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
         columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
         renderItem={renderItem}
-        maxToRenderPerBatch={lowPowerMode ? 10 : 15}
+        maxToRenderPerBatch={lowPowerMode ? 5 : 10}
         updateCellsBatchingPeriod={50}
         initialNumToRender={lowPowerMode ? 8 : 12}
         windowSize={lowPowerMode ? 11 : 21}
-        removeClippedSubviews={false}
+        removeClippedSubviews={Platform.OS === 'android'}
         extraData={expandedIds}
         onScrollToIndexFailed={(info) => {
           flatListRef.current?.scrollToOffset({
@@ -306,7 +322,7 @@ export default function Index() {
             left: 0,
             right: 0,
             height: Platform.OS === 'web' ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16) : insets.top + headerHeight,
-            backgroundColor: theme.background, // Fallback for mobile web
+            backgroundColor: theme.background,
             paddingTop: Platform.OS === 'web' ? 16 : 0,
           }
         ], [styles.headerContainer, insets.top, headerHeight, width, theme.background])}

@@ -51,7 +51,6 @@ function RootContent() {
   const [isConnected, setIsConnected] = useState<boolean | null>(Platform.OS === 'web' ? true : null);
 
   useEffect(() => {
-    // Safety timeout: if we're still loading after 10 seconds, force show content
     const timer = setTimeout(() => {
       setLoadingTimeout(true);
     }, 10000);
@@ -111,7 +110,6 @@ function RootContent() {
     return <NoInternetScreen />;
   }
 
-  // Force show content after timeout even if some things (like NetInfo) haven't resolved
   const isActuallyLoading = (isLoggedIn === null || !localLoaded || isConnected === null) && !loadingTimeout;
 
   if (isActuallyLoading) {

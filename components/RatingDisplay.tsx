@@ -33,7 +33,6 @@ export default React.memo(function RatingDisplay({ itemId, initialMax = 5, size 
     let isActive = true;
     let unsub: (() => void) | undefined;
 
-    // Reset state immediately when itemId changes
     setAvg(ratingCache[itemId]?.avg ?? 0);
     setCount(ratingCache[itemId]?.count ?? 0);
 
@@ -52,7 +51,6 @@ export default React.memo(function RatingDisplay({ itemId, initialMax = 5, size 
       });
     };
 
-    // Delay listening to star ratings so the building expansion animation can finish smoothly
     const timer = setTimeout(startListening, 300);
 
     return () => {

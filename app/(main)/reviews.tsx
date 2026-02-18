@@ -60,7 +60,7 @@ export default function ReviewsScreen() {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetchedReviews: UserReview[] = snapshot.docs.map(doc => {
                 const data = doc.data();
-                const parentId = doc.ref.parent.parent?.id; // The itemId/roomId from 'ratings/{itemId}/userRatings/{userId}'
+                const parentId = doc.ref.parent.parent?.id;
 
                 return {
                     id: doc.id,
@@ -70,10 +70,6 @@ export default function ReviewsScreen() {
                     updatedAt: data.updatedAt,
                 };
             });
-
-            // Filter for only main room ratings (those that correspond to a real room)
-            // and maybe filter out those without a rating OR comment if we want to be strict.
-            // But usually every userRating doc has at least a rating or a comment.
 
             const processedReviews = fetchedReviews
                 .map(review => {
@@ -87,7 +83,7 @@ export default function ReviewsScreen() {
                     }
                     return review;
                 })
-                .filter(review => review.roomName); // Only show reviews for recognized rooms
+                .filter(review => review.roomName);
 
             setReviews(processedReviews);
             setLoading(false);

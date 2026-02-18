@@ -17,8 +17,6 @@ import { Theme, useTheme } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// firebaseImage imported from data/rooms
-
 export default function RoomDetail() {
   const { getRoomById, loading: dbLoading } = useBuildings();
   const { roomId } = useLocalSearchParams<{ roomId: string }>();

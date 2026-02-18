@@ -163,7 +163,6 @@ export default function AdminScreen() {
 
                     let mergedImages;
                     if (isImportant && newRoom.images.length > 0) {
-                        // Replace all images if marked as important
                         mergedImages = newRoom.images;
                     } else if (newRoom.images.length > 0) {
                         const realExistingImages = existingImages.filter((img: string) => !isPlaceholder(img));
@@ -177,7 +176,7 @@ export default function AdminScreen() {
                         capacity: newRoom.capacity || existingRoom.capacity,
                         roomType: newRoom.roomType || existingRoom.roomType,
                         images: mergedImages,
-                        imageUpdateImportant: false // Reset flag on successful update
+                        imageUpdateImportant: false
                     };
                 } else {
                     updatedRooms.push({

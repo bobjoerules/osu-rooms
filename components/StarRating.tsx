@@ -45,7 +45,6 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
   }
 
   useEffect(() => {
-    // Reset state when itemId changes
     setAvg(0);
     setCount(0);
 
@@ -66,7 +65,6 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
       setMyRating(0);
       return;
     }
-    // Reset state when itemId changes
     setMyRating(0);
 
     const userRef = doc(db, 'ratings', itemId, 'userRatings', user.uid);
@@ -114,7 +112,6 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
 
     try {
       await runTransaction(db, async (tx) => {
-        // 1. ALL READS FIRST
         const itemSnap = await tx.get(itemRef);
         const userSnap = await tx.get(userRef);
 
@@ -125,7 +122,6 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
           buildingSnap = await tx.get(buildingRef);
         }
 
-        // 2. LOGIC
         const currentAvg = (itemSnap.exists() ? (itemSnap.data() as any).avg : 0) || 0;
         const currentCount = (itemSnap.exists() ? (itemSnap.data() as any).count : 0) || 0;
         const oldRating = userSnap.exists() ? (userSnap.data() as any).rating : null;
@@ -139,10 +135,8 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
           newAvg = (currentAvg * currentCount - oldRating + value) / (currentCount || 1);
         }
 
-        // Final safety check for NaN
         if (isNaN(newAvg)) newAvg = value;
 
-        // 3. ALL WRITES LAST
         tx.set(userRef, { rating: value, userId: user.uid, updatedAt: serverTimestamp() }, { merge: true });
         tx.set(
           itemRef,

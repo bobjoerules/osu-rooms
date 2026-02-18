@@ -385,7 +385,6 @@ export default function Account() {
       await updateProfile(user, { photoURL: downloadURL });
       await updateDoc(doc(db, "users", user.uid), { photoURL: downloadURL });
 
-      // Sync new photo to all existing posts and submissions
       const batch = writeBatch(db);
 
       const dormPostsQuery = query(collection(db, 'dorm_posts'), where('userId', '==', user.uid));

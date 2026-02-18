@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
-    const { useBetaFeatures, showSubmitTab, showDormTab, showReviewsTab } = useSettings();
+    const { useBetaFeatures, showSubmitTab, showReviewsTab } = useSettings();
     const triggerHaptic = useHapticFeedback();
     const segments = useSegments();
     const lastTab = useRef(segments[segments.length - 1]);
@@ -14,7 +14,6 @@ export default function TabLayout() {
         const currentTab = segments[segments.length - 1];
         if (currentTab !== lastTab.current) {
             lastTab.current = currentTab;
-            // Immediate haptic on tab/segment change
             triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     }, [segments, triggerHaptic]);
@@ -29,12 +28,6 @@ export default function TabLayout() {
             <NativeTabs.Trigger key="add" name="add">
                 <Label>Add/Edit</Label>
                 <Icon sf="plus.circle.fill" drawable="ic_input_add" />
-            </NativeTabs.Trigger>
-        ) : null,
-        showDormTab ? (
-            <NativeTabs.Trigger key="dorm" name="dorm">
-                <Label>Dorms</Label>
-                <Icon sf="person.2.fill" drawable="ic_menu_allfriends" />
             </NativeTabs.Trigger>
         ) : null,
         useBetaFeatures ? (
