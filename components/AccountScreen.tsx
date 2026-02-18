@@ -77,7 +77,7 @@ export default function Account() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
-  const { isAdmin, userRole, user: currentUser } = useUser() as any;
+  const { isAdmin, userRole, user: currentUser, canComment } = useUser() as any;
   const userEmail = currentUser?.email ?? null;
   const userName = currentUser?.displayName ?? null;
 
@@ -689,23 +689,25 @@ export default function Account() {
                   />
                 </View>
 
-                <View style={styles.settingRow}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Reviews Tab</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display all of your reviews on a separate tab</Text>
+                {canComment && (
+                  <View style={styles.settingRow}>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={[styles.settingLabel, { color: theme.text }]}>Reviews Tab</Text>
+                      <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display all of your reviews on a separate tab</Text>
+                    </View>
+                    <Switch
+                      value={showReviewsTab}
+                      onValueChange={(val) => {
+                        triggerHaptic();
+                        setShowReviewsTab(val);
+                      }}
+                      trackColor={{ false: theme.border, true: theme.primary }}
+                      thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                      activeThumbColor={colours.white}
+                      disabled={!showReviewsTab && isAtTabLimit}
+                    />
                   </View>
-                  <Switch
-                    value={showReviewsTab}
-                    onValueChange={(val) => {
-                      triggerHaptic();
-                      setShowReviewsTab(val);
-                    }}
-                    trackColor={{ false: theme.border, true: theme.primary }}
-                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
-                    activeThumbColor={colours.white}
-                    disabled={!showReviewsTab && isAtTabLimit}
-                  />
-                </View>
+                )}
 
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
