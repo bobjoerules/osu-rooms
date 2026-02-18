@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   roomCardGrid: {
-    flex: 1,
-    maxWidth: '31%',
+    width: '31%',
+    flexBasis: '31%',
     flexDirection: 'column',
     marginHorizontal: '1%',
     marginVertical: 12,
@@ -150,6 +150,11 @@ const styles = StyleSheet.create({
   roomContentGrid: {
     padding: 16,
     alignItems: 'center',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: '-1%',
   },
   columnWrapper: {
     justifyContent: 'flex-start',

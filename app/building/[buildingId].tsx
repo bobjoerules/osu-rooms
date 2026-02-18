@@ -161,7 +161,7 @@ export default function BuildingDetail() {
                 ]}
             >
                 <View style={[isDesktopWeb ? styles.gridWrapper : undefined]}>
-                    <RoomList rooms={filteredRooms} />
+                    <RoomList rooms={filteredRooms} isAdmin={isAdmin} />
                 </View>
             </ScrollView>
         </View>
