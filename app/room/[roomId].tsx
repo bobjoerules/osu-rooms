@@ -1,27 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDocs, onSnapshot, orderBy, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, Platform, Pressable, Image as RNImage, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import RatingDisplay from '../../components/RatingDisplay';
 import StaticStarRating from '../../components/StaticStarRating';
 import TemperatureDisplay from '../../components/TemperatureDisplay';
+import { firebaseImage } from '../../data/rooms';
 import { auth, db } from '../../firebaseConfig';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
+import { useUser } from '../../lib/UserContext';
 import { Theme, useTheme } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const STORAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/osu-room-rates.firebasestorage.app/o';
-
-const firebaseImage = (path: string): string => {
-  const encodedPath = encodeURIComponent(path);
-  return `${STORAGE_URL}/${encodedPath}?alt=media`;
-};
+// firebaseImage imported from data/rooms
 
 export default function RoomDetail() {
   const { getRoomById, loading: dbLoading } = useBuildings();
@@ -33,7 +29,7 @@ export default function RoomDetail() {
   const isDesktopWeb = Platform.OS === 'web' && windowWidth >= 768;
   const styles = useMemo(() => createStyles(theme, isDesktopWeb), [theme, isDesktopWeb]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin } = useUser();
   const [resetLoading, setResetLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const [mouseDown, setMouseDown] = useState(false);
@@ -42,26 +38,6 @@ export default function RoomDetail() {
 
   const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && (userDoc.data().role === "admin" || userDoc.data().role === "owner")) {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
-        } catch (err) {
-          console.error("Error checking admin status:", err);
-          setIsAdmin(false);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-    });
-    return unsub;
-  }, []);
 
   useEffect(() => {
     const q = query(
@@ -116,18 +92,29 @@ export default function RoomDetail() {
 
   const roomData = useMemo(() => {
     const roomInfo = getRoomById(finalRoomId as string);
-    return roomInfo ? {
+    if (!roomInfo) {
+      return {
+        id: 'unknown',
+        name: '???',
+        building: 'Unknown Building',
+        images: [firebaseImage('placeholder.png')],
+        floor: 'Unknown',
+        capacity: 'Unknown',
+        roomType: 'Unknown',
+      };
+    }
+
+    const resolvedImages = (roomInfo.room.images || []).map((img: any) =>
+      typeof img === 'string' && !img.startsWith('http')
+        ? firebaseImage(img)
+        : img
+    );
+
+    return {
       ...roomInfo.room,
       building: roomInfo.buildingName,
-      name: roomInfo.room.id.split('-').pop() || '???'
-    } : {
-      id: 'unknown',
-      name: '???',
-      building: 'Unknown Building',
-      images: [firebaseImage('placeholder.png')],
-      floor: 'Unknown',
-      capacity: 'Unknown',
-      roomType: 'Unknown',
+      name: roomInfo.room.id.split('-').pop() || '???',
+      images: resolvedImages.length > 0 ? resolvedImages : [firebaseImage('placeholder.png')]
     };
   }, [getRoomById, finalRoomId]);
 
@@ -584,6 +571,7 @@ export default function RoomDetail() {
                       }
                     ]}
                     transition={200}
+                    cachePolicy="memory-disk"
                   />
                 )}
                 scrollEnabled={true}
@@ -614,6 +602,7 @@ export default function RoomDetail() {
                 }
               ]}
               transition={500}
+              cachePolicy="memory-disk"
             />
           )}
         </View>

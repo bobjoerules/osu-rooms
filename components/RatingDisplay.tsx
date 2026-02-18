@@ -1,6 +1,6 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { db } from '../firebaseConfig';
 import { Theme, useTheme } from '../theme';
@@ -15,7 +15,7 @@ export type RatingDisplayProps = {
 
 const ratingCache: Record<string, { avg: number; count: number }> = {};
 
-export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showMetaText = true, align = 'center' }: RatingDisplayProps) {
+export default React.memo(function RatingDisplay({ itemId, initialMax = 5, size = 40, showMetaText = true, align = 'center' }: RatingDisplayProps) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [avg, setAvg] = useState<number>(() => ratingCache[itemId]?.avg ?? 0);
@@ -30,21 +30,36 @@ export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showM
   }
 
   useEffect(() => {
+    let isActive = true;
+    let unsub: (() => void) | undefined;
+
     // Reset state immediately when itemId changes
     setAvg(ratingCache[itemId]?.avg ?? 0);
     setCount(ratingCache[itemId]?.count ?? 0);
 
-    const itemRef = doc(db, 'ratings', itemId);
-    const unsub = onSnapshot(itemRef, (snap) => {
-      const data = snap.data() as { avg?: number; count?: number } | undefined;
-      const newAvg = data?.avg ?? 0;
-      const newCount = data?.count ?? 0;
+    const startListening = () => {
+      if (!isActive) return;
+      const itemRef = doc(db, 'ratings', itemId);
+      unsub = onSnapshot(itemRef, (snap) => {
+        if (!isActive) return;
+        const data = snap.data() as { avg?: number; count?: number } | undefined;
+        const newAvg = data?.avg ?? 0;
+        const newCount = data?.count ?? 0;
 
-      ratingCache[itemId] = { avg: newAvg, count: newCount };
-      setAvg(newAvg);
-      setCount(newCount);
-    });
-    return unsub;
+        ratingCache[itemId] = { avg: newAvg, count: newCount };
+        setAvg(newAvg);
+        setCount(newCount);
+      });
+    };
+
+    // Delay listening to star ratings so the building expansion animation can finish smoothly
+    const timer = setTimeout(startListening, 300);
+
+    return () => {
+      isActive = false;
+      if (timer) clearTimeout(timer);
+      if (unsub) unsub();
+    };
   }, [itemId]);
 
   const activeStarColor = theme.starActive;
@@ -100,7 +115,7 @@ export default function RatingDisplay({ itemId, initialMax = 5, size = 40, showM
       )}
     </View>
   );
-}
+});
 
 function createStyles(theme: Theme) {
   return StyleSheet.create({

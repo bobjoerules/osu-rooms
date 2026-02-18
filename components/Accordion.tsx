@@ -11,11 +11,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const snapAnimation = {
-  duration: 200,
-  create: {
-    type: LayoutAnimation.Types.linear,
-    property: LayoutAnimation.Properties.opacity,
-  },
+  duration: 100,
   update: {
     type: LayoutAnimation.Types.easeInEaseOut,
   },
@@ -80,9 +76,11 @@ export const AccordionItem = React.memo<AccordionItemProps>(({ title, children, 
             />
           ) : (
             <Image
-              source={typeof image === 'string' ? { uri: image } : image}
+              source={image}
               style={styles.image}
               contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
             />
           )}
           <LinearGradient

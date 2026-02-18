@@ -1,24 +1,80 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import React, { useCallback } from 'react';
-import { FlatList, Platform, Image as RNImage, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useHapticFeedback } from '../lib/SettingsContext';
-import { useUser } from '../lib/UserContext';
 import { useTheme } from '../theme';
 import RatingDisplay from './RatingDisplay';
 
-import { Room } from '../data/rooms';
+import { Room, firebaseImage } from '../data/rooms';
 
 interface RoomListProps {
   rooms: Room[];
+  isAdmin?: boolean;
 }
 
-export default function RoomList({ rooms }: RoomListProps) {
+const RoomItem = React.memo(({
+  item,
+  theme,
+  isDesktopWeb,
+  onPress,
+  isAdmin,
+}: {
+  item: Room;
+  theme: any;
+  isDesktopWeb: boolean;
+  onPress: (id: string) => void;
+  isAdmin?: boolean;
+}) => {
+  const roomName = item.id.split('-').pop() || '???';
+  return (
+    <TouchableOpacity
+      style={[
+        styles.roomCard,
+        isDesktopWeb && styles.roomCardGrid,
+        { backgroundColor: theme.card },
+        item.isHidden && { opacity: 0.5 }
+      ]}
+      onPress={() => onPress(item.id)}
+      activeOpacity={0.7}
+      {...(isDesktopWeb ? { dataSet: { 'grid-item': 'true' } } : {})}
+    >
+      <View style={isDesktopWeb ? styles.roomImageGridContainer : undefined}>
+        {item.images && item.images.length > 0 && (
+          <Image
+            source={typeof item.images[0] === 'string' && !item.images[0].startsWith('http')
+              ? firebaseImage(item.images[0])
+              : item.images[0]
+            }
+            style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage}
+            contentFit="cover"
+            transition={0}
+            cachePolicy="memory-disk"
+          />
+        )}
+      </View>
+      <View style={[styles.roomContent, isDesktopWeb && styles.roomContentGrid]}>
+        <Text style={[styles.roomName, { color: theme.text }]} numberOfLines={isDesktopWeb ? 2 : 1}>
+          {/^[A-Za-z\s]+$/.test(roomName) ? roomName : `Room ${roomName}`}
+          {isAdmin && item.isHidden && (
+            <>
+              {" "}
+              <Ionicons name="eye-off" size={14} color={theme.primary} style={{ marginLeft: 6 }} />
+            </>
+          )}
+        </Text>
+        <RatingDisplay itemId={item.id} size={16} align={isDesktopWeb ? 'center' : 'flex-start'} />
+      </View>
+      {!isDesktopWeb && <Ionicons name="chevron-forward" size={20} color={theme.subtext} />}
+    </TouchableOpacity>
+  );
+});
+
+export default function RoomList({ rooms, isAdmin }: RoomListProps) {
   const theme = useTheme();
   const router = useRouter();
   const triggerHaptic = useHapticFeedback();
-  const { isAdmin } = useUser();
 
   const { width } = useWindowDimensions();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
@@ -28,65 +84,23 @@ export default function RoomList({ rooms }: RoomListProps) {
     router.push(`/room/${roomId}`);
   }, [router, triggerHaptic]);
 
-  const renderRoomItem = useCallback(({ item }: { item: Room }) => {
-    const roomName = item.id.split('-').pop() || '???';
-    return (
-      <TouchableOpacity
-        style={[
-          styles.roomCard,
-          isDesktopWeb && styles.roomCardGrid,
-          { backgroundColor: theme.card },
-          item.isHidden && { opacity: 0.5 }
-        ]}
-        onPress={() => handleRoomPress(item.id)}
-        activeOpacity={0.7}
-        {...(isDesktopWeb ? { dataSet: { 'grid-item': 'true' } } : {})}
-      >
-        <View style={isDesktopWeb ? styles.roomImageGridContainer : undefined}>
-          {item.images && item.images.length > 0 && (
-            Platform.OS === 'web' ? (
-              <RNImage
-                source={{ uri: item.images[0] as string }}
-                style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage}
-                resizeMode="cover"
-              />
-            ) : (
-              <Image
-                source={item.images[0]}
-                style={isDesktopWeb ? styles.roomImageGrid : styles.roomImage}
-                contentFit="cover"
-                transition={200}
-              />
-            )
-          )}
-        </View>
-        <View style={[styles.roomContent, isDesktopWeb && styles.roomContentGrid]}>
-          <Text style={[styles.roomName, { color: theme.text }]} numberOfLines={isDesktopWeb ? 2 : 1}>
-            {/^[A-Za-z\s]+$/.test(roomName) ? roomName : `Room ${roomName}`}
-            {item.isHidden && (
-              <>
-                {" "}
-                <Ionicons name="eye-off" size={14} color={theme.primary} style={{ marginLeft: 6 }} />
-              </>
-            )}
-          </Text>
-          <RatingDisplay itemId={item.id} size={16} align={isDesktopWeb ? 'center' : 'flex-start'} />
-        </View>
-        {!isDesktopWeb && <Ionicons name="chevron-forward" size={20} color={theme.subtext} />}
-      </TouchableOpacity>
-    );
-  }, [handleRoomPress, isDesktopWeb, theme.card, theme.text, theme.subtext]);
+  const renderRoom = (item: Room) => (
+    <RoomItem
+      key={item.id}
+      item={item}
+      theme={theme}
+      isDesktopWeb={isDesktopWeb}
+      onPress={handleRoomPress}
+      isAdmin={isAdmin}
+    />
+  );
+
+  const renderedRooms = useMemo(() => rooms.map(renderRoom), [rooms, theme, isDesktopWeb, handleRoomPress, isAdmin]);
 
   return (
-    <FlatList
-      data={rooms}
-      renderItem={renderRoomItem}
-      keyExtractor={(item) => item.id}
-      scrollEnabled={false}
-      numColumns={isDesktopWeb ? 3 : 1}
-      key={isDesktopWeb ? 'grid-3' : 'list-1'}
-      columnWrapperStyle={isDesktopWeb ? styles.columnWrapper : undefined}
-    />
+    <View style={isDesktopWeb ? styles.gridContainer : undefined}>
+      {renderedRooms}
+    </View>
   );
 }
 

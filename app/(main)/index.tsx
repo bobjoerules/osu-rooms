@@ -6,7 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AccordionItem } from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
-import { Building } from '../../data/rooms';
+import { Building, firebaseImage } from '../../data/rooms';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { useUser } from '../../lib/UserContext';
@@ -27,7 +27,9 @@ const BuildingListItem = React.memo(({
   showBuildingImages,
   theme,
   styles,
-  allRoomIds
+  allRoomIds,
+  buildingImage,
+  isAdmin
 }: {
   item: Building,
   index: number,
@@ -38,9 +40,10 @@ const BuildingListItem = React.memo(({
   showBuildingImages: boolean,
   theme: Theme,
   styles: any,
-  allRoomIds?: string[]
+  allRoomIds?: string[],
+  buildingImage?: any,
+  isAdmin: boolean
 }) => {
-  const buildingImage = item.images?.[0];
   const hasValidImage = buildingImage && !isPlaceholderImage(buildingImage);
 
   const title = (
@@ -54,7 +57,7 @@ const BuildingListItem = React.memo(({
     </View>
   );
 
-  const content = (isDesktopWeb && !isSearching) ? null : <RoomList rooms={item.rooms} />;
+  const content = (isDesktopWeb && !isSearching) ? null : <RoomList rooms={item.rooms} isAdmin={isAdmin} />;
 
   return (
     <View style={isDesktopWeb ? (isSearching ? styles.listItemFullWidth : styles.gridItem) : undefined}>
@@ -89,6 +92,7 @@ export default function Index() {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+  const expandedRef = useRef<Record<string, boolean>>({});
   const flatListRef = useRef<FlatList>(null);
   const { buildings, loading } = useBuildings();
   const { isAdmin } = useUser();
@@ -102,26 +106,30 @@ export default function Index() {
       return;
     }
 
+    // LayoutAnimation is handled by the AccordionItem component to avoid conflicts
+
     setExpandedIds(prev => {
       const currentlyExpanded = prev[id];
       const newState = {
         ...prev,
         [id]: !currentlyExpanded
       };
+      expandedRef.current = newState;
 
       if (!currentlyExpanded && !isDesktopWeb) {
         const headerOffset = Platform.OS === 'web'
           ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
           : insets.top + headerHeight;
 
-        setTimeout(() => {
+        // Perform scroll immediately or with minimal delay now that animation is faster
+        requestAnimationFrame(() => {
           flatListRef.current?.scrollToIndex({
             index,
             viewPosition: 0,
             viewOffset: headerOffset,
             animated: true,
           });
-        }, 100);
+        });
       }
 
       return newState;
@@ -141,7 +149,7 @@ export default function Index() {
       const buildingNameMatch = building.name.toLowerCase().includes(lowerQuery);
       const allRoomIds = building.rooms.map(r => r.id);
 
-      const matchingRooms = building.rooms?.filter(room => {
+      const matchingRooms = (building.rooms || []).filter(room => {
         if (room.isHidden && !isAdmin) return false;
         const hasPhotos = room.images?.length > 0 && !isPlaceholderImage(room.images[0]);
 
@@ -155,7 +163,7 @@ export default function Index() {
         }
 
         return showPlaceholders || hasPhotos;
-      }) || [];
+      });
 
       if (isSearching) {
         if (matchingRooms.length > 0) {
@@ -176,11 +184,16 @@ export default function Index() {
 
   const renderItem = useCallback(({ item, index }: { item: any, index: number }) => {
     const isSearching = searchQuery.trim().length > 0;
+    const buildingImage = item.images?.[0];
+    const resolvedImage = typeof buildingImage === 'string' && !buildingImage.startsWith('http')
+      ? firebaseImage(buildingImage)
+      : buildingImage;
+
     return (
       <BuildingListItem
         item={item}
         index={index}
-        isExpanded={isSearching || !!expandedIds[item.id]}
+        isExpanded={isSearching || !!expandedRef.current[item.id]}
         onPress={handleBuildingPress}
         isDesktopWeb={isDesktopWeb}
         isSearching={isSearching}
@@ -188,11 +201,11 @@ export default function Index() {
         theme={theme}
         styles={styles}
         allRoomIds={item.allRoomIds}
+        buildingImage={resolvedImage}
+        isAdmin={isAdmin}
       />
     );
-  }, [isDesktopWeb, searchQuery, expandedIds, handleBuildingPress, showBuildingImages, theme, styles]);
-
-
+  }, [isDesktopWeb, searchQuery, handleBuildingPress, showBuildingImages, theme, styles, isAdmin]);
 
   if (loading) {
     return (
@@ -259,10 +272,10 @@ export default function Index() {
         key={isDesktopWeb && !(searchQuery.trim().length > 0) ? 'web-grid' : 'list-one-col'}
         columnWrapperStyle={isDesktopWeb && !(searchQuery.trim().length > 0) ? styles.columnWrapper : undefined}
         renderItem={renderItem}
-        maxToRenderPerBatch={lowPowerMode ? 10 : (Platform.OS === 'android' ? 100 : 100)}
-        updateCellsBatchingPeriod={lowPowerMode ? 50 : (Platform.OS === 'android' ? 30 : 30)}
-        initialNumToRender={lowPowerMode ? 8 : (Platform.OS === 'android' ? 100 : 100)}
-        windowSize={lowPowerMode ? 11 : (Platform.OS === 'android' ? 21 : 41)}
+        maxToRenderPerBatch={lowPowerMode ? 10 : 15}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={lowPowerMode ? 8 : 12}
+        windowSize={lowPowerMode ? 11 : 21}
         removeClippedSubviews={false}
         extraData={expandedIds}
         onScrollToIndexFailed={(info) => {

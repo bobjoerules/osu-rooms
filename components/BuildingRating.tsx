@@ -41,6 +41,11 @@ export default function BuildingRating({ roomIds, size = 14, priority = false, i
 
         const startListening = () => {
             if (!isActive) return;
+            // If we already have initial data and we're not in priority mode (detail page), 
+            // don't start the intensive room listeners.
+            if (!priority && initialCount !== undefined && initialCount > 0) {
+                return;
+            }
 
             roomIds.forEach((id) => {
                 const unsub = onSnapshot(doc(db, 'ratings', id), (snap) => {

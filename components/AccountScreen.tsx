@@ -1,12 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  onAuthStateChanged,
   sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
@@ -27,7 +25,7 @@ import {
   writeBatch
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -47,6 +45,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { auth, db, storage } from "../firebaseConfig";
 import { useBuildings } from "../lib/DatabaseContext";
 import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
+import { useUser } from "../lib/UserContext";
 import { Theme, useTheme } from "../theme";
 
 const colours = { white: '#ffffff' };
@@ -78,20 +77,19 @@ export default function Account() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const { isAdmin, userRole, user: currentUser } = useUser() as any;
+  const userEmail = currentUser?.email ?? null;
+  const userName = currentUser?.displayName ?? null;
+
   const [message, setMessage] = useState<string | null>(null);
   const [userCount, setUserCount] = useState<number | null>(null);
   const [pendingCount, setPendingCount] = useState<number | null>(null);
   const [showAppStore, setShowAppStore] = useState(false);
   const [showPlayStore, setShowPlayStore] = useState(false);
-  const [photoURL, setPhotoURL] = useState<string | null>(null);
+  const [photoURL, setPhotoURL] = useState<string | null>(currentUser?.photoURL ?? null);
   const [uploading, setUploading] = useState(false);
 
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
-
   const { buildings } = useBuildings();
 
   const activeTabs = 2 + (showSubmitTab ? 1 : 0) + (useBetaFeatures ? 1 : 0) + (showDormTab ? 1 : 0) + (showReviewsTab ? 1 : 0);
@@ -99,118 +97,35 @@ export default function Account() {
   const isOSUVerified = userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu');
 
   const totalRooms = useMemo(() => {
-    return buildings.reduce((acc, building) => acc + (building.rooms?.length || 0), 0);
+    return buildings.reduce((acc: number, building: any) => acc + (building.rooms?.length || 0), 0);
   }, [buildings]);
 
   const version = Constants.expoConfig?.version || "1.0.0";
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setUserEmail(user?.email ?? null);
-      setUserName(user?.displayName ?? null);
+    if (isAdmin) {
+      const submissionsColl = collection(db, "submissions");
+      const q = query(submissionsColl, where("status", "==", "pending"));
+      const unsubSnap = onSnapshot(q, (snapshot) => {
+        setPendingCount(snapshot.size);
+      });
+      return unsubSnap;
+    }
+  }, [isAdmin]);
 
-      if (user) {
-        setPhotoURL(user.photoURL);
-        try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            if (userData.username) {
-              setUserName(userData.username);
-            }
-            if (userData.photoURL) {
-              setPhotoURL(userData.photoURL);
-            }
-
-            const role = userData.role;
-            setUserRole(role);
-
-            if (role === "admin" || role === "owner") {
-              setIsAdmin(true);
-
-              const submissionsColl = collection(db, "submissions");
-              const q = query(submissionsColl, where("status", "==", "pending"));
-              onSnapshot(q, (snapshot) => {
-                setPendingCount(snapshot.size);
-              });
-            } else {
-              setIsAdmin(false);
-              setPendingCount(null);
-            }
-          } else {
-            setIsAdmin(false);
-            setUserRole(null);
-            setPendingCount(null);
-          }
-        } catch (err) {
-          console.error("Error checking admin status:", err);
-          setIsAdmin(false);
-          setUserRole(null);
-          setPendingCount(null);
-        }
-
-        try {
-          const coll = collection(db, "users");
-          const snapshot = await getCountFromServer(coll);
-          setUserCount(snapshot.data().count);
-        } catch (err) {
-          console.error("Error fetching user count:", err);
-        }
-      } else {
-        setIsAdmin(false);
-        setUserRole(null);
-        setUserCount(null);
-        setPendingCount(null);
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const coll = collection(db, "users");
+        const snapshot = await getCountFromServer(coll);
+        setUserCount(snapshot.data().count);
+      } catch (err) {
+        console.error("Error fetching user count:", err);
       }
-    });
-    return unsub;
+    };
+    fetchUserCount();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        currentUser.reload().then(async () => {
-          setUserEmail(currentUser.email);
-          setUserName(currentUser.displayName);
-          setPhotoURL(currentUser.photoURL);
-          try {
-            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              if (userData.photoURL) {
-                setPhotoURL(userData.photoURL);
-              }
-              const role = userData.role;
-              setUserRole(role);
-
-              if (role === "admin" || role === "owner") {
-                setIsAdmin(true);
-                const submissionsColl = collection(db, "submissions");
-                const q = query(submissionsColl, where("status", "==", "pending"));
-                const snapshot = await getCountFromServer(q);
-                setPendingCount(snapshot.data().count);
-              } else {
-                setIsAdmin(false);
-                setPendingCount(null);
-              }
-            }
-          } catch (err) {
-            console.error("Error reloading admin status:", err);
-          }
-          try {
-            const coll = collection(db, "users");
-            const snapshot = await getCountFromServer(coll);
-            setUserCount(snapshot.data().count);
-          } catch (err) {
-            console.error("Error fetching user count:", err);
-          }
-        }).catch((error) => {
-          console.error("Error reloading user:", error);
-        });
-      }
-    }, [])
-  );
 
   async function handleSubmit() {
     const trimmedEmail = email.trim();
