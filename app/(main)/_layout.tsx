@@ -3,7 +3,6 @@ import { useSegments } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useEffect, useRef } from 'react';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
-import { useUser } from '../../lib/UserContext';
 
 export default function TabLayout() {
     const { useBetaFeatures, showSubmitTab, showReviewsTab } = useSettings();
@@ -19,8 +18,6 @@ export default function TabLayout() {
         }
     }, [segments, triggerHaptic]);
 
-
-    const { canComment } = useUser();
 
     const triggers = [
         <NativeTabs.Trigger key="index" name="index">
@@ -39,7 +36,7 @@ export default function TabLayout() {
                 <Icon sf="link" drawable="ic_menu_share" />
             </NativeTabs.Trigger>
         ) : null,
-        (showReviewsTab && canComment) ? (
+        showReviewsTab ? (
             <NativeTabs.Trigger key="reviews" name="reviews">
                 <Label>Reviews</Label>
                 <Icon sf="star.bubble.fill" drawable="ic_menu_edit" />

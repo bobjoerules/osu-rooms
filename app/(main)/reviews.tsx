@@ -125,9 +125,7 @@ export default function ReviewsScreen() {
                 <Text style={[styles.commentText, { color: theme.text }]} numberOfLines={3}>
                     {item.comment}
                 </Text>
-            ) : (
-                <Text style={[styles.noCommentText, { color: theme.subtext }]}>No comment added</Text>
-            )}
+            ) : null}
         </Pressable>
     );
 
