@@ -15,14 +15,15 @@ import {
     StyleSheet,
     Text,
     useWindowDimensions,
-    View
+    View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { firebaseImage } from '../data/rooms';
 import { db } from '../firebaseConfig';
 import { useBuildings } from '../lib/DatabaseContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
-import { useTheme } from '../theme';
+import { useUser } from '../lib/UserContext';
+import { Theme, useTheme } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -50,6 +51,8 @@ export default function AdminScreen() {
     const { width: windowWidth } = useWindowDimensions();
     const insets = useSafeAreaInsets();
     const isDesktopWeb = Platform.OS === 'web' && windowWidth >= 768;
+    const { isAdmin, loading: authLoading } = useUser();
+    const styles = useMemo(() => createStyles(theme), [theme]);
     const horizontalListRef = useRef<FlatList>(null);
     const [pending, setPending] = useState<Submission[]>([]);
     const [approved, setApproved] = useState<Submission[]>([]);
@@ -60,6 +63,45 @@ export default function AdminScreen() {
     const [scanning, setScanning] = useState(false);
     const [isFixingAll, setIsFixingAll] = useState(false);
     const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, actionDescription: string, actionType: 'delete' | 'repair' | 'sync', ref: any, data?: any }[]>([]);
+
+    const Header = ({ title = "Review Submissions" }) => (
+        <View
+            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+            {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
+        >
+            <SafeAreaView edges={['top']}>
+                <View style={[
+                    styles.header,
+                    isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
+                    { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
+                ]}>
+                    <Pressable
+                        onPress={() => {
+                            triggerHaptic();
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace('/');
+                            }
+                        }}
+                        style={styles.backButton}
+                    >
+                        <Ionicons name="chevron-back" size={28} color={theme.text} />
+                    </Pressable>
+                    <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+                        {title}
+                    </Text>
+                    <View style={{ width: 40 }} />
+                </View>
+            </SafeAreaView>
+        </View>
+    );
+
+    useEffect(() => {
+        if (!authLoading && !isAdmin) {
+            router.replace('/account');
+        }
+    }, [isAdmin, authLoading, router]);
 
     const statuses = ['pending', 'approved', 'rejected', 'system'] as const;
 
@@ -704,27 +746,18 @@ export default function AdminScreen() {
         }
     };
 
+    if (authLoading || (!isAdmin && !authLoading)) {
+        return (
+            <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+        );
+    }
+
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
-            {Platform.OS === 'web' && (
-                <View style={{ height: 75 }} />
-            )}
-            <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-                <View style={styles.header}>
-                    <Pressable onPress={() => {
-                        triggerHaptic();
-                        if (router.canGoBack()) {
-                            router.back();
-                        } else {
-                            router.replace('/');
-                        }
-                    }} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={28} color={theme.text} />
-                    </Pressable>
-                    <Text style={[styles.headerTitle, { color: theme.text }]}>Review Submissions</Text>
-                    <View style={{ width: 40 }} />
-                </View>
-
+            <Header />
+            <View style={{ flex: 1, marginTop: insets.top + (isDesktopWeb ? 85 : 75) }}>
                 <View style={styles.tabBar}>
                     {statuses.map((status) => {
                         const statusColor = getStatusColor(status);
@@ -771,154 +804,163 @@ export default function AdminScreen() {
                         })}
                     />
                 )}
-            </SafeAreaView>
+            </View>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    backButton: {
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-    },
-    centered: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 40,
-    },
-    listContent: {
-        padding: 16,
-        paddingBottom: 40,
-    },
-    card: {
-        borderRadius: 16,
-        borderWidth: 1,
-        marginBottom: 16,
-        overflow: 'hidden',
-    },
-    imageContainer: {
-        width: '100%',
-        height: 300,
-    },
-    image: {
-        height: 300,
-        maxWidth: 800,
-    },
-    cardInfo: {
-        padding: 16,
-    },
-    buildingName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    roomInfo: {
-        fontSize: 14,
-        marginBottom: 2,
-    },
-    userEmail: {
-        fontSize: 12,
-        marginTop: 8,
-        fontStyle: 'italic',
-    },
-    emptyText: {
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    actions: {
-        flexDirection: 'row',
-        marginTop: 16,
-        gap: 12,
-    },
-    actionButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 10,
-        borderRadius: 12,
-        gap: 6,
-        borderWidth: 1,
-    },
-    rejectButton: {
-        borderColor: '#ff453a22',
-        backgroundColor: '#ff453a11',
-    },
-    approveButton: {
-        borderColor: '#34c75922',
-        backgroundColor: '#34c75911',
-    },
-    deleteButton: {
-        borderColor: '#ff453a22',
-        backgroundColor: '#ff453a11',
-    },
-    actionText: {
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    tabBar: {
-        flexDirection: 'row',
-        paddingHorizontal: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#8882',
-        justifyContent: 'center',
-    },
-    tabItem: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderBottomWidth: 2,
-        borderBottomColor: 'transparent',
-    },
-    tabText: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    userInfoRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 12,
-        gap: 10,
-    },
-    userAvatar: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: '#8882',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'hidden',
-    },
-    userAvatarImage: {
-        width: '100%',
-        height: '100%',
-    },
-    userAvatarText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#888',
-    },
-    userName: {
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
-});
+function createStyles(theme: Theme) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        headerFloatingContainer: {
+            position: 'absolute',
+            zIndex: 10,
+            backgroundColor: theme.background,
+        },
+        header: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+        },
+        headerTitle: {
+            fontSize: 20,
+            fontWeight: 'bold',
+        },
+        backButton: {
+            width: 40,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        centered: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 40,
+        },
+        listContent: {
+            padding: 16,
+            paddingBottom: 40,
+        },
+        card: {
+            borderRadius: 16,
+            borderWidth: 1,
+            marginBottom: 16,
+            overflow: 'hidden',
+        },
+        imageContainer: {
+            width: '100%',
+            height: 300,
+        },
+        image: {
+            height: 300,
+            maxWidth: 800,
+        },
+        cardInfo: {
+            padding: 16,
+        },
+        buildingName: {
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginBottom: 4,
+        },
+        sectionTitle: {
+            fontSize: 18,
+            fontWeight: 'bold',
+        },
+        roomInfo: {
+            fontSize: 14,
+            marginBottom: 2,
+        },
+        userEmail: {
+            fontSize: 12,
+            marginTop: 8,
+            fontStyle: 'italic',
+        },
+        emptyText: {
+            fontSize: 18,
+            textAlign: 'center',
+        },
+        actions: {
+            flexDirection: 'row',
+            marginTop: 16,
+            gap: 12,
+        },
+        actionButton: {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 10,
+            borderRadius: 12,
+            gap: 6,
+            borderWidth: 1,
+        },
+        rejectButton: {
+            borderColor: '#ff453a22',
+            backgroundColor: '#ff453a11',
+        },
+        approveButton: {
+            borderColor: '#34c75922',
+            backgroundColor: '#34c75911',
+        },
+        deleteButton: {
+            borderColor: '#ff453a22',
+            backgroundColor: '#ff453a11',
+        },
+        actionText: {
+            fontWeight: 'bold',
+            fontSize: 14,
+        },
+        tabBar: {
+            flexDirection: 'row',
+            paddingHorizontal: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: '#8882',
+            justifyContent: 'center',
+        },
+        tabItem: {
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            borderBottomWidth: 2,
+            borderBottomColor: 'transparent',
+        },
+        tabText: {
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        userInfoRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 12,
+            gap: 10,
+        },
+        userAvatar: {
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: '#8882',
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'hidden',
+        },
+        userAvatarImage: {
+            width: '100%',
+            height: '100%',
+        },
+        userAvatarText: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: '#888',
+        },
+        userName: {
+            fontSize: 14,
+            fontWeight: 'bold',
+        },
+    });
+}
+
