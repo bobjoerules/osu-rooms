@@ -64,9 +64,9 @@ export default function AdminScreen() {
     const [isFixingAll, setIsFixingAll] = useState(false);
     const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, actionDescription: string, actionType: 'delete' | 'repair' | 'sync', ref: any, data?: any }[]>([]);
 
-    const Header = ({ title = "Review Submissions" }) => (
+    const Header = ({ title = "Review Submissions" }: { title?: string }) => (
         <View
-            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
             {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
         >
             <SafeAreaView edges={['top']}>
@@ -746,63 +746,63 @@ export default function AdminScreen() {
         }
     };
 
-    if (authLoading || (!isAdmin && !authLoading)) {
-        return (
-            <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color={theme.primary} />
-            </View>
-        );
-    }
-
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
             <Header />
             <View style={{ flex: 1, marginTop: insets.top + (isDesktopWeb ? 85 : 75) }}>
-                <View style={styles.tabBar}>
-                    {statuses.map((status) => {
-                        const statusColor = getStatusColor(status);
-                        const isActive = statusFilter === status;
-
-                        return (
-                            <Pressable
-                                key={status}
-                                onPress={() => handleTabPress(status)}
-                                style={[
-                                    styles.tabItem,
-                                    isActive && { borderBottomColor: statusColor }
-                                ]}
-                            >
-                                <Text style={[
-                                    styles.tabText,
-                                    { color: isActive ? statusColor : theme.subtext }
-                                ]}>
-                                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                                </Text>
-                            </Pressable>
-                        );
-                    })}
-                </View>
-
-                {Platform.OS === 'web' ? (
-                    <View style={{ flex: 1 }}>
-                        {renderPage({ item: statusFilter })}
+                {authLoading || (!isAdmin && !authLoading) ? (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <ActivityIndicator size="large" color={theme.primary} />
                     </View>
                 ) : (
-                    <FlatList
-                        ref={horizontalListRef}
-                        data={statuses}
-                        renderItem={renderPage}
-                        horizontal
-                        pagingEnabled
-                        showsHorizontalScrollIndicator={false}
-                        onMomentumScrollEnd={onMomentumScrollEnd}
-                        keyExtractor={item => item}
-                        getItemLayout={(_, index) => ({
-                            length: windowWidth,
-                            offset: windowWidth * index,
-                            index,
-                        })}
-                    />
+                    <>
+                        <View style={styles.tabBar}>
+                            {statuses.map((status) => {
+                                const statusColor = getStatusColor(status);
+                                const isActive = statusFilter === status;
+
+                                return (
+                                    <Pressable
+                                        key={status}
+                                        onPress={() => handleTabPress(status)}
+                                        style={[
+                                            styles.tabItem,
+                                            isActive && { borderBottomColor: statusColor }
+                                        ]}
+                                    >
+                                        <Text style={[
+                                            styles.tabText,
+                                            { color: isActive ? statusColor : theme.subtext }
+                                        ]}>
+                                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                                        </Text>
+                                    </Pressable>
+                                );
+                            })}
+                        </View>
+
+                        {Platform.OS === 'web' ? (
+                            <View style={{ flex: 1 }}>
+                                {renderPage({ item: statusFilter })}
+                            </View>
+                        ) : (
+                            <FlatList
+                                ref={horizontalListRef}
+                                data={statuses}
+                                renderItem={renderPage}
+                                horizontal
+                                pagingEnabled
+                                showsHorizontalScrollIndicator={false}
+                                onMomentumScrollEnd={onMomentumScrollEnd}
+                                keyExtractor={item => item}
+                                getItemLayout={(_, index) => ({
+                                    length: windowWidth,
+                                    offset: windowWidth * index,
+                                    index,
+                                })}
+                            />
+                        )}
+                    </>
                 )}
             </View>
         </View>
@@ -816,6 +816,9 @@ function createStyles(theme: Theme) {
         },
         headerFloatingContainer: {
             position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
             zIndex: 10,
             backgroundColor: theme.background,
         },
@@ -824,11 +827,11 @@ function createStyles(theme: Theme) {
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingHorizontal: 16,
-            paddingVertical: 12,
+            paddingVertical: 8,
         },
         headerTitle: {
-            fontSize: 20,
-            fontWeight: 'bold',
+            fontSize: 18,
+            fontWeight: '600',
         },
         backButton: {
             width: 40,
