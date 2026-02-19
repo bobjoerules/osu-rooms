@@ -17,7 +17,7 @@ import {
     useWindowDimensions,
     View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { firebaseImage } from '../data/rooms';
 import { db } from '../firebaseConfig';
 import { useBuildings } from '../lib/DatabaseContext';
@@ -48,6 +48,8 @@ export default function AdminScreen() {
     const router = useRouter();
     const triggerHaptic = useHapticFeedback();
     const { width: windowWidth } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
+    const isDesktopWeb = Platform.OS === 'web' && windowWidth >= 768;
     const horizontalListRef = useRef<FlatList>(null);
     const [pending, setPending] = useState<Submission[]>([]);
     const [approved, setApproved] = useState<Submission[]>([]);
@@ -56,7 +58,8 @@ export default function AdminScreen() {
     const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected' | 'system'>('pending');
     const { getRoomById, buildings } = useBuildings();
     const [scanning, setScanning] = useState(false);
-    const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, ref: any }[]>([]);
+    const [isFixingAll, setIsFixingAll] = useState(false);
+    const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, actionDescription: string, actionType: 'delete' | 'repair' | 'sync', ref: any, data?: any }[]>([]);
 
     const statuses = ['pending', 'approved', 'rejected', 'system'] as const;
 
@@ -268,7 +271,7 @@ export default function AdminScreen() {
         setStatusFilter(status);
         if (Platform.OS !== 'web') {
             const index = statuses.indexOf(status);
-            horizontalListRef.current?.scrollToIndex({ index, animated: true });
+            horizontalListRef.current?.scrollToIndex({ index, animated: false });
         }
     };
 
@@ -428,11 +431,38 @@ export default function AdminScreen() {
                 const roomInfo = getRoomById(roomId);
 
                 if (!data.rating || data.rating <= 0) {
-                    issues.push({ type: 'corrupt', id: docRef.id, roomId, details: 'Missing or invalid rating value', ref: docRef.ref });
+                    issues.push({
+                        type: 'corrupt',
+                        id: docRef.id,
+                        roomId,
+                        details: 'Rating entry exists but value is empty or 0',
+                        actionDescription: 'Delete invalid rating entry',
+                        actionType: 'delete',
+                        ref: docRef.ref,
+                        data
+                    });
                 } else if (!data.updatedAt) {
-                    issues.push({ type: 'corrupt', id: docRef.id, roomId, details: 'Missing updatedAt timestamp (prevents showing in lists)', ref: docRef.ref });
+                    issues.push({
+                        type: 'corrupt',
+                        id: docRef.id,
+                        roomId,
+                        details: 'Rating exists but has no timestamp (hides it from lists)',
+                        actionDescription: 'Add missing timestamp to restore visibility',
+                        actionType: 'repair',
+                        ref: docRef.ref,
+                        data
+                    });
                 } else if (!roomInfo) {
-                    issues.push({ type: 'orphan', id: docRef.id, roomId, details: `Room ${roomId} no longer exists in database`, ref: docRef.ref });
+                    issues.push({
+                        type: 'orphan',
+                        id: docRef.id,
+                        roomId,
+                        details: `Rating for room ${roomId} which no longer exists`,
+                        actionDescription: 'Delete orphaned rating data',
+                        actionType: 'delete',
+                        ref: docRef.ref,
+                        data
+                    });
                 }
             });
 
@@ -443,7 +473,15 @@ export default function AdminScreen() {
                 if (aggData.count > 0) {
                     const userRatingsSnap = await getDocs(collection(db, 'ratings', aggDoc.id, 'userRatings'));
                     if (userRatingsSnap.size !== aggData.count) {
-                        issues.push({ type: 'mismatch', id: aggDoc.id, roomId: aggDoc.id, details: `Aggregate count (${aggData.count}) does not match actual ratings (${userRatingsSnap.size})`, ref: aggDoc.ref });
+                        issues.push({
+                            type: 'mismatch',
+                            id: aggDoc.id,
+                            roomId: aggDoc.id,
+                            details: `Aggregator says ${aggData.count} ratings, but actually found ${userRatingsSnap.size}`,
+                            actionDescription: 'Recalculate and sync aggregate totals',
+                            actionType: 'sync',
+                            ref: aggDoc.ref
+                        });
                     }
                 }
             }
@@ -462,10 +500,10 @@ export default function AdminScreen() {
         }
     };
 
-    const fixIssue = async (issue: any) => {
-        triggerHaptic();
+    const fixIssue = async (issue: any, silent = false) => {
+        if (!silent) triggerHaptic();
         try {
-            if (issue.type === 'corrupt' && !issue.ref.data()?.updatedAt && issue.ref.data()?.rating) {
+            if (issue.type === 'corrupt' && !issue.data?.updatedAt && issue.data?.rating) {
                 await updateDoc(issue.ref, { updatedAt: new Date() });
             } else if (issue.type === 'mismatch') {
                 const userRatingsSnap = await getDocs(collection(db, 'ratings', issue.id, 'userRatings'));
@@ -479,14 +517,60 @@ export default function AdminScreen() {
             setSystemResults(prev => prev.filter(i => i !== issue));
         } catch (err) {
             console.error("Failed to fix issue:", err);
-            Alert.alert('Error', 'Action failed.');
+            if (!silent) Alert.alert('Error', 'Action failed.');
+            throw err;
+        }
+    };
+
+    const fixAllIssues = async () => {
+        if (systemResults.length === 0) return;
+
+        const confirmMsg = `Are you sure you want to fix all ${systemResults.length} issues? This will perform bulk deletes and updates.`;
+        if (Platform.OS === 'web') {
+            if (!window.confirm(confirmMsg)) return;
+        } else {
+            const confirmed = await new Promise(resolve => {
+                Alert.alert('Confirm Bulk Fix', confirmMsg, [
+                    { text: 'Cancel', onPress: () => resolve(false), style: 'cancel' },
+                    { text: 'Fix All', onPress: () => resolve(true), style: 'destructive' }
+                ]);
+            });
+            if (!confirmed) return;
+        }
+
+        setIsFixingAll(true);
+        triggerHaptic();
+
+        try {
+            // Process in sequence to avoid hitting rate limits or causing race conditions on aggregates
+            for (const issue of [...systemResults]) {
+                await fixIssue(issue, true);
+            }
+
+            if (Platform.OS === 'web') {
+                window.alert('Successfully processed all issues.');
+            } else {
+                Alert.alert('Success', 'Successfully processed all issues.');
+            }
+        } catch (err) {
+            console.error("Bulk fix failed segment:", err);
+            Alert.alert('Incomplete', 'Some issues could not be fixed. Please run health check again.');
+        } finally {
+            setIsFixingAll(false);
         }
     };
 
     const renderPage = ({ item: status }: { item: 'pending' | 'approved' | 'rejected' | 'system' }) => {
+        let content;
         if (status === 'system') {
-            return (
-                <ScrollView contentContainerStyle={styles.listContent}>
+            content = (
+                <ScrollView
+                    style={{ flex: 1 }}
+                    contentContainerStyle={[
+                        styles.listContent,
+                        Platform.OS === 'web' && { maxWidth: 800, alignSelf: 'center', width: '100%' }
+                    ]}
+                >
                     <View style={[styles.card, { padding: 20, backgroundColor: theme.card, borderColor: theme.border }]}>
                         <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 8 }]}>Database Health</Text>
                         <Text style={[styles.emptyText, { color: theme.subtext, fontSize: 14, textAlign: 'left', marginBottom: 20 }]}>
@@ -495,31 +579,71 @@ export default function AdminScreen() {
                         <Pressable
                             style={({ pressed }) => [
                                 styles.actionButton,
-                                { backgroundColor: theme.primary, borderColor: theme.primary, opacity: (pressed || scanning) ? 0.7 : 1 }
+                                { backgroundColor: getStatusColor('system'), borderColor: getStatusColor('system'), opacity: (pressed || scanning) ? 0.7 : 1 }
                             ]}
                             onPress={runHealthCheck}
                             disabled={scanning}
                         >
-                            {scanning ? <ActivityIndicator color="#fff" size="small" /> : <Ionicons name="scan-outline" size={20} color="#fff" />}
+                            {scanning ? <ActivityIndicator color="#fff" size="small" /> : <Ionicons name="pulse" size={20} color="#fff" />}
                             <Text style={[styles.actionText, { color: '#fff' }]}>Run Health Check</Text>
                         </Pressable>
                     </View>
 
                     {systemResults.length > 0 && (
                         <View style={{ gap: 12 }}>
-                            <Text style={[styles.sectionTitle, { color: theme.text, marginTop: 12 }]}>Found Issues ({systemResults.length})</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+                                <Text style={[styles.sectionTitle, { color: theme.text }]}>Found Issues ({systemResults.length})</Text>
+                                <Pressable
+                                    onPress={fixAllIssues}
+                                    disabled={isFixingAll}
+                                    style={({ pressed }) => [
+                                        {
+                                            paddingVertical: 6,
+                                            paddingHorizontal: 12,
+                                            backgroundColor: getStatusColor('system'),
+                                            borderRadius: 8,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            gap: 6,
+                                            opacity: (pressed || isFixingAll) ? 0.7 : 1
+                                        }
+                                    ]}
+                                >
+                                    {isFixingAll ? <ActivityIndicator size="small" color="#fff" /> : <Ionicons name="flash" size={16} color="#fff" />}
+                                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>Fix All</Text>
+                                </Pressable>
+                            </View>
                             {systemResults.map((issue, idx) => (
                                 <View key={idx} style={[styles.card, { padding: 16, backgroundColor: theme.card, borderColor: theme.border }]}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={[styles.buildingName, { color: theme.text, fontSize: 16 }]}>{issue.type.toUpperCase()}: {issue.roomId}</Text>
-                                            <Text style={[styles.roomInfo, { color: theme.subtext }]}>{issue.details}</Text>
+                                        <View style={{ flex: 1, gap: 4 }}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                                                <Text style={[styles.buildingName, { color: theme.text, fontSize: 16, marginBottom: 0 }]}>{issue.roomId}</Text>
+                                                <View style={{ backgroundColor: issue.actionType === 'delete' ? theme.destructive + '22' : '#5856D622', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                                                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: issue.actionType === 'delete' ? theme.destructive : '#5856D6' }}>{issue.type.toUpperCase()}</Text>
+                                                </View>
+                                            </View>
+                                            <Text style={[styles.roomInfo, { color: theme.text, fontSize: 13, marginBottom: 0 }]}>{issue.details}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                                <Ionicons name="construct-outline" size={12} color={theme.subtext} />
+                                                <Text style={{ color: theme.subtext, fontSize: 12, fontStyle: 'italic' }}>{issue.actionDescription}</Text>
+                                            </View>
                                         </View>
                                         <Pressable
                                             onPress={() => fixIssue(issue)}
-                                            style={{ padding: 8, backgroundColor: theme.primary + '11', borderRadius: 8 }}
+                                            style={({ pressed }) => [
+                                                {
+                                                    paddingHorizontal: 16,
+                                                    paddingVertical: 8,
+                                                    backgroundColor: issue.actionType === 'delete' ? theme.destructive + '15' : getStatusColor('system') + '15',
+                                                    borderRadius: 8,
+                                                    opacity: pressed ? 0.7 : 1
+                                                }
+                                            ]}
                                         >
-                                            <Text style={{ color: theme.primary, fontWeight: 'bold' }}>FIX</Text>
+                                            <Text style={{ color: issue.actionType === 'delete' ? theme.destructive : getStatusColor('system'), fontWeight: 'bold' }}>
+                                                {issue.actionType === 'delete' ? 'DELETE' : issue.actionType === 'sync' ? 'SYNC' : 'FIX'}
+                                            </Text>
                                         </Pressable>
                                     </View>
                                 </View>
@@ -528,38 +652,44 @@ export default function AdminScreen() {
                     )}
                 </ScrollView>
             );
+        } else {
+            const pageSubmissions = (groupedSubmissions as any)[status];
+
+            content = (
+                <>
+                    {loading ? (
+                        <View style={styles.centered}>
+                            <ActivityIndicator size="large" color={theme.primary} />
+                        </View>
+                    ) : pageSubmissions.length === 0 ? (
+                        <View style={styles.centered}>
+                            <Ionicons name="documents-outline" size={64} color={theme.subtext} style={{ marginBottom: 16 }} />
+                            <Text style={[styles.emptyText, { color: theme.subtext }]}>
+                                No {status} submissions
+                            </Text>
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={pageSubmissions}
+                            renderItem={renderSubmissionItem}
+                            keyExtractor={item => item.id}
+                            initialNumToRender={5}
+                            windowSize={5}
+                            removeClippedSubviews={Platform.OS === 'android'}
+                            maxToRenderPerBatch={5}
+                            contentContainerStyle={[
+                                styles.listContent,
+                                Platform.OS === 'web' && { maxWidth: 800, alignSelf: 'center', width: '100%' }
+                            ]}
+                        />
+                    )}
+                </>
+            );
         }
 
-        const pageSubmissions = (groupedSubmissions as any)[status];
-
         return (
-            <View style={{ width: Platform.OS === 'web' ? '100%' : windowWidth }}>
-                {loading ? (
-                    <View style={styles.centered}>
-                        <ActivityIndicator size="large" color={theme.primary} />
-                    </View>
-                ) : pageSubmissions.length === 0 ? (
-                    <View style={styles.centered}>
-                        <Ionicons name="documents-outline" size={64} color={theme.subtext} style={{ marginBottom: 16 }} />
-                        <Text style={[styles.emptyText, { color: theme.subtext }]}>
-                            No {status} submissions
-                        </Text>
-                    </View>
-                ) : (
-                    <FlatList
-                        data={pageSubmissions}
-                        renderItem={renderSubmissionItem}
-                        keyExtractor={item => item.id}
-                        initialNumToRender={5}
-                        windowSize={5}
-                        removeClippedSubviews={Platform.OS === 'android'}
-                        maxToRenderPerBatch={5}
-                        contentContainerStyle={[
-                            styles.listContent,
-                            Platform.OS === 'web' && { maxWidth: 800, alignSelf: 'center', width: '100%' }
-                        ]}
-                    />
-                )}
+            <View style={{ width: Platform.OS === 'web' ? '100%' : windowWidth, height: '100%' }}>
+                {content}
             </View>
         );
     };
@@ -575,69 +705,74 @@ export default function AdminScreen() {
     };
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
-            <View style={styles.header}>
-                <Pressable onPress={() => {
-                    triggerHaptic();
-                    if (router.canGoBack()) {
-                        router.back();
-                    } else {
-                        router.replace('/');
-                    }
-                }} style={styles.backButton}>
-                    <Ionicons name="chevron-back" size={28} color={theme.text} />
-                </Pressable>
-                <Text style={[styles.headerTitle, { color: theme.text }]}>Review Submissions</Text>
-                <View style={{ width: 40 }} />
-            </View>
-
-            <View style={styles.tabBar}>
-                {statuses.map((status) => {
-                    const statusColor = getStatusColor(status);
-                    const isActive = statusFilter === status;
-
-                    return (
-                        <Pressable
-                            key={status}
-                            onPress={() => handleTabPress(status)}
-                            style={[
-                                styles.tabItem,
-                                isActive && { borderBottomColor: statusColor }
-                            ]}
-                        >
-                            <Text style={[
-                                styles.tabText,
-                                { color: isActive ? statusColor : theme.subtext }
-                            ]}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                            </Text>
-                        </Pressable>
-                    );
-                })}
-            </View>
-
-            {Platform.OS === 'web' ? (
-                <View style={{ flex: 1 }}>
-                    {renderPage({ item: statusFilter })}
-                </View>
-            ) : (
-                <FlatList
-                    ref={horizontalListRef}
-                    data={statuses}
-                    renderItem={renderPage}
-                    horizontal
-                    pagingEnabled
-                    showsHorizontalScrollIndicator={false}
-                    onMomentumScrollEnd={onMomentumScrollEnd}
-                    keyExtractor={item => item}
-                    getItemLayout={(_, index) => ({
-                        length: windowWidth,
-                        offset: windowWidth * index,
-                        index,
-                    })}
-                />
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            {Platform.OS === 'web' && (
+                <View style={{ height: 75 }} />
             )}
-        </SafeAreaView>
+            <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+                <View style={styles.header}>
+                    <Pressable onPress={() => {
+                        triggerHaptic();
+                        if (router.canGoBack()) {
+                            router.back();
+                        } else {
+                            router.replace('/');
+                        }
+                    }} style={styles.backButton}>
+                        <Ionicons name="chevron-back" size={28} color={theme.text} />
+                    </Pressable>
+                    <Text style={[styles.headerTitle, { color: theme.text }]}>Review Submissions</Text>
+                    <View style={{ width: 40 }} />
+                </View>
+
+                <View style={styles.tabBar}>
+                    {statuses.map((status) => {
+                        const statusColor = getStatusColor(status);
+                        const isActive = statusFilter === status;
+
+                        return (
+                            <Pressable
+                                key={status}
+                                onPress={() => handleTabPress(status)}
+                                style={[
+                                    styles.tabItem,
+                                    isActive && { borderBottomColor: statusColor }
+                                ]}
+                            >
+                                <Text style={[
+                                    styles.tabText,
+                                    { color: isActive ? statusColor : theme.subtext }
+                                ]}>
+                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
+
+                {Platform.OS === 'web' ? (
+                    <View style={{ flex: 1 }}>
+                        {renderPage({ item: statusFilter })}
+                    </View>
+                ) : (
+                    <FlatList
+                        ref={horizontalListRef}
+                        data={statuses}
+                        renderItem={renderPage}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        onMomentumScrollEnd={onMomentumScrollEnd}
+                        keyExtractor={item => item}
+                        getItemLayout={(_, index) => ({
+                            length: windowWidth,
+                            offset: windowWidth * index,
+                            index,
+                        })}
+                    />
+                )}
+            </SafeAreaView>
+        </View>
     );
 }
 

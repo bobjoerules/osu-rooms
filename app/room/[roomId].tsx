@@ -111,6 +111,7 @@ export default function RoomDetail() {
     return {
       ...roomInfo.room,
       building: roomInfo.buildingName,
+      buildingId: roomInfo.buildingId,
       name: roomInfo.room.id.split('-').pop() || '???',
       images: resolvedImages.length > 0 ? resolvedImages : [firebaseImage('placeholder.png')]
     };
@@ -437,6 +438,8 @@ export default function RoomDetail() {
               triggerHaptic();
               if (router.canGoBack()) {
                 router.back();
+              } else if (roomData.buildingId) {
+                router.replace(`/building/${roomData.buildingId}`);
               } else {
                 router.replace('/');
               }

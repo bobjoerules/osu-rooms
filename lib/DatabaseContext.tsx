@@ -7,7 +7,7 @@ interface DatabaseContextType {
     buildings: Building[];
     loading: boolean;
     error: Error | null;
-    getRoomById: (roomId: string) => { room: any, buildingName: string } | null;
+    getRoomById: (roomId: string) => { room: any, buildingName: string, buildingId: string } | null;
 }
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -41,7 +41,7 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
         for (const building of buildings) {
             const room = building.rooms?.find(r => r.id === roomId);
             if (room) {
-                return { room, buildingName: building.name };
+                return { room, buildingName: building.name, buildingId: building.id };
             }
         }
         return null;
