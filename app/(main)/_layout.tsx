@@ -1,7 +1,9 @@
 import * as Haptics from 'expo-haptics';
-import { useSegments } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
+import CustomTabBar from '../../components/CustomTabBar';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
@@ -18,6 +20,22 @@ export default function TabLayout() {
         }
     }, [segments, triggerHaptic]);
 
+    if (Platform.OS === 'android') {
+        return (
+            <Tabs
+                screenOptions={{
+                    headerShown: false,
+                }}
+                tabBar={() => <CustomTabBar />}
+            >
+                <Tabs.Screen name="index" />
+                <Tabs.Screen name="add" />
+                <Tabs.Screen name="osu" />
+                <Tabs.Screen name="reviews" />
+                <Tabs.Screen name="account" />
+            </Tabs>
+        );
+    }
 
     const triggers = [
         <NativeTabs.Trigger key="index" name="index">

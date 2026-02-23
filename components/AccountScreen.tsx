@@ -58,7 +58,6 @@ export default function Account() {
     showBuildingImages, setShowBuildingImages,
     useBetaFeatures, setUseBetaFeatures,
     showSubmitTab, setShowSubmitTab,
-    showDormTab, setShowDormTab,
     showReviewsTab, setShowReviewsTab,
     lowPowerMode, setLowPowerMode
   } = useSettings();
@@ -92,8 +91,6 @@ export default function Account() {
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
   const { buildings } = useBuildings();
 
-  const activeTabs = 2 + (showSubmitTab ? 1 : 0) + (useBetaFeatures ? 1 : 0) + (showDormTab ? 1 : 0) + (showReviewsTab ? 1 : 0);
-  const isAtTabLimit = Platform.OS === 'android' && activeTabs >= 4;
   const isOSUVerified = userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu');
 
   const totalRooms = useMemo(() => {
@@ -667,7 +664,7 @@ export default function Account() {
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
                     activeThumbColor={colours.white}
-                    disabled={!useBetaFeatures && isAtTabLimit}
+                    disabled={false}
                   />
                 </View>
 
@@ -685,7 +682,7 @@ export default function Account() {
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
                     activeThumbColor={colours.white}
-                    disabled={!showSubmitTab && isAtTabLimit}
+                    disabled={false}
                   />
                 </View>
 
@@ -703,7 +700,7 @@ export default function Account() {
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
                     activeThumbColor={colours.white}
-                    disabled={!showReviewsTab && isAtTabLimit}
+                    disabled={false}
                   />
                 </View>
 

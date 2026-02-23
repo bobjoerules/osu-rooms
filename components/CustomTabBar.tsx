@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { usePathname, useRouter } from 'expo-router';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useHapticFeedback } from '../lib/SettingsContext';
+import { useHapticFeedback, useSettings } from '../lib/SettingsContext';
 import { useTheme } from '../theme';
 
 export default function CustomTabBar() {
@@ -11,85 +13,186 @@ export default function CustomTabBar() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
+  const colorScheme = useColorScheme();
+  const { useBetaFeatures, showSubmitTab, showReviewsTab } = useSettings();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const normalizedPath = pathname.replace(/^\//, '');
+  const isHome = normalizedPath === '' || normalizedPath === 'index';
+  const isAccount = normalizedPath === 'account';
+  const isAdd = normalizedPath === 'add';
+  const isReviews = normalizedPath === 'reviews';
+  const isOSU = normalizedPath === 'osu';
+  if (Platform.OS !== 'android') {
+    return null;
+  }
 
-  const isHome = pathname === '/' || pathname === '/index';
-  const isAccount = pathname === '/account';
-  const isSubmit = pathname === '/submit';
+  const TabButton = ({
+    icon,
+    activeIcon,
+    label,
+    isActive,
+    onPress,
+    route
+  }: {
+    icon: any,
+    activeIcon: any,
+    label: string,
+    isActive: boolean,
+    onPress: () => void,
+    route: string
+  }) => {
+    const scale = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+      Animated.spring(scale, {
+        toValue: isActive ? 1.1 : 1,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 40
+      }).start();
+    }, [isActive]);
+
+    return (
+      <TouchableOpacity
+        style={styles.tab}
+        onPress={() => {
+          triggerHaptic();
+          onPress();
+        }}
+        activeOpacity={0.7}
+      >
+        <Animated.View style={{ transform: [{ scale }], alignItems: 'center' }}>
+          <Ionicons
+            name={isActive ? activeIcon : icon}
+            size={24}
+            color={isActive ? theme.primary : theme.subtext}
+          />
+          <Text style={[
+            styles.label,
+            {
+              color: isActive ? theme.primary : theme.subtext,
+              fontWeight: isActive ? '700' : '500'
+            }
+          ]}>
+            {label}
+          </Text>
+        </Animated.View>
+        {isActive && (
+          <View style={[styles.activeIndicator, { backgroundColor: theme.primary }]} />
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={[styles.container, {
-      paddingBottom: insets.bottom,
-      backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.8)' : theme.background,
-      borderTopColor: theme.border,
-    }]}>
-      <TouchableOpacity
-        style={styles.tab}
-        onPress={() => {
-          triggerHaptic();
-          router.push('/submit');
-        }}
+    <View style={[styles.absoluteContainer, { bottom: Math.max(insets.bottom, 16) }]}>
+      <BlurView
+        intensity={90}
+        tint={colorScheme === 'dark' ? 'dark' : 'extraLight'}
+        style={styles.blurWrapper}
       >
-        <Ionicons
-          name={isSubmit ? 'add-circle' : 'add-circle-outline'}
-          size={24}
-          color={isSubmit ? '#D73F09' : theme.subtext}
-        />
-        <Text style={[styles.label, { color: isSubmit ? '#D73F09' : theme.subtext }]}>Add Room</Text>
-      </TouchableOpacity>
+        <View style={[styles.container, {
+          backgroundColor: colorScheme === 'dark' ? 'rgba(28, 28, 30, 0.5)' : 'rgba(255, 255, 255, 0.4)',
+        }]}>
+          <TabButton
+            icon="grid-outline"
+            activeIcon="grid"
+            label="Rooms"
+            isActive={isHome}
+            route="/"
+            onPress={() => router.push('/')}
+          />
 
-      <TouchableOpacity
-        style={styles.tab}
-        onPress={() => {
-          triggerHaptic();
-          router.push('/');
-        }}
-      >
-        <Ionicons
-          name={isHome ? 'grid' : 'grid-outline'}
-          size={24}
-          color={isHome ? '#D73F09' : theme.subtext}
-        />
-        <Text style={[styles.label, { color: isHome ? '#D73F09' : theme.subtext }]}>Rooms</Text>
-      </TouchableOpacity>
+          {showSubmitTab && (
+            <TabButton
+              icon="add-circle-outline"
+              activeIcon="add-circle"
+              label="Add"
+              isActive={isAdd}
+              route="/add"
+              onPress={() => router.push('/add')}
+            />
+          )}
 
-      <TouchableOpacity
-        style={styles.tab}
-        onPress={() => {
-          triggerHaptic();
-          router.push('/account');
-        }}
-      >
-        <Ionicons
-          name={isAccount ? 'person' : 'person-outline'}
-          size={24}
-          color={isAccount ? '#D73F09' : theme.subtext}
-        />
-        <Text style={[styles.label, { color: isAccount ? '#D73F09' : theme.subtext }]}>Account</Text>
-      </TouchableOpacity>
+          {useBetaFeatures && (
+            <TabButton
+              icon="link-outline"
+              activeIcon="link"
+              label="OSU"
+              isActive={isOSU}
+              route="/osu"
+              onPress={() => router.push('/osu')}
+            />
+          )}
+
+          {showReviewsTab && (
+            <TabButton
+              icon="star-outline"
+              activeIcon="star"
+              label="Reviews"
+              isActive={isReviews}
+              route="/reviews"
+              onPress={() => router.push('/reviews')}
+            />
+          )}
+
+          <TabButton
+            icon="person-outline"
+            activeIcon="person"
+            label="Account"
+            isActive={isAccount}
+            route="/account"
+            onPress={() => router.push('/account')}
+          />
+        </View>
+      </BlurView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  absoluteContainer: {
+    position: 'absolute',
+    left: '4%',
+    right: '4%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  blurWrapper: {
+    borderRadius: 40,
+    overflow: 'hidden',
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+  },
   container: {
     flexDirection: 'row',
-    borderTopWidth: 0.5,
-    ...(Platform.OS === 'ios' && {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backdropFilter: 'blur(10px)',
-    }),
+    height: 75,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingHorizontal: 8,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 8,
-    paddingBottom: 4,
+    justifyContent: 'center',
+    height: '100%',
   },
   label: {
     fontSize: 10,
     marginTop: 4,
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: 8,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
   },
 });
