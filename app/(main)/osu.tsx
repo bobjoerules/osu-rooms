@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OSU_LINKS } from '../../data/osuLinks';
+import { useApp } from '../../lib/AppContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
 import { useTheme } from '../../theme';
 
@@ -21,6 +22,7 @@ export default function OsuScreen() {
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
+    const { bannerHeight } = useApp();
     const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
     const handleOpenLink = async (item: typeof OSU_LINKS[0]) => {
@@ -100,10 +102,9 @@ export default function OsuScreen() {
     );
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background, marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? 75 + bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
             <View style={[
                 styles.header,
-                Platform.OS === 'web' && { paddingTop: 75 + 16 },
                 isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
             ]}>
                 <Text style={[styles.title, { color: theme.text }]}>OSU Resources</Text>

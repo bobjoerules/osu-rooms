@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { auth, db, storage } from '../firebaseConfig';
+import { useApp } from '../lib/AppContext';
 import { useBuildings } from '../lib/DatabaseContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
@@ -30,11 +31,12 @@ export default function SubmitScreen() {
     const theme = useTheme();
     const router = useRouter();
     const { buildings, loading: dbLoading } = useBuildings();
+    const { bannerHeight } = useApp();
     const triggerHaptic = useHapticFeedback();
     const { width } = useWindowDimensions();
     const insets = useSafeAreaInsets();
     const isDesktop = Platform.OS === 'web' && width > 768;
-    const styles = useMemo(() => createStyles(theme, isDesktop), [theme, isDesktop]);
+    const styles = useMemo(() => createStyles(theme, isDesktop, bannerHeight), [theme, isDesktop, bannerHeight]);
 
     const { initialBuilding, initialRoomNumber } = useLocalSearchParams<{ initialBuilding?: string, initialRoomNumber?: string }>();
 
@@ -214,7 +216,7 @@ export default function SubmitScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={[styles.container, { marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? 75 + bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
             <View style={[
                 styles.headerContainer,
                 isDesktop && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
@@ -384,7 +386,7 @@ export default function SubmitScreen() {
     );
 }
 
-function createStyles(theme: Theme, isDesktop: boolean = false) {
+function createStyles(theme: Theme, isDesktop: boolean = false, bannerHeight: number = 0) {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -401,7 +403,6 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
         headerContainer: {
             paddingHorizontal: 20,
             paddingVertical: 16,
-            paddingTop: Platform.OS === 'web' ? 75 + 16 : 16,
         },
         title: {
             fontSize: 28,
@@ -523,10 +524,7 @@ function createStyles(theme: Theme, isDesktop: boolean = false) {
             marginTop: 4,
             zIndex: 1000,
             elevation: 5,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.15,
-            shadowRadius: 8,
+            boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
             overflow: 'hidden',
         },
         inlinePickerItem: {

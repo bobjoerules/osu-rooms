@@ -166,10 +166,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
     elevation: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
+    boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
   },
   container: {
     flexDirection: 'row',

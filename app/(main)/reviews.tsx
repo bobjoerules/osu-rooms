@@ -15,6 +15,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import StaticStarRating from '../../components/StaticStarRating';
 import { db } from '../../firebaseConfig';
+import { useApp } from '../../lib/AppContext';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
 import { useUser } from '../../lib/UserContext';
@@ -38,6 +39,7 @@ export default function ReviewsScreen() {
     const triggerHaptic = useHapticFeedback();
     const { width } = useWindowDimensions();
     const insets = useSafeAreaInsets();
+    const { bannerHeight } = useApp();
     const isDesktopWeb = Platform.OS === 'web' && width >= 768;
     const styles = useMemo(() => createStyles(theme, isDesktopWeb), [theme, isDesktopWeb]);
 
@@ -162,7 +164,7 @@ export default function ReviewsScreen() {
 
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={[styles.container, { marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? 75 + bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
             <View style={[
                 styles.header,
                 isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
@@ -226,7 +228,6 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
             paddingHorizontal: 20,
             paddingVertical: 16,
             backgroundColor: theme.background,
-            ...(Platform.OS === 'web' && { paddingTop: 75 + 16 }),
         },
         title: {
             fontSize: 28,
@@ -248,10 +249,7 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
             marginBottom: 16,
             borderWidth: 1,
             elevation: 2,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
         },
         reviewHeader: {
             flexDirection: 'row',

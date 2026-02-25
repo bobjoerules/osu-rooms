@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { auth, db, storage } from '../firebaseConfig';
+import { useApp } from '../lib/AppContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
@@ -29,6 +30,7 @@ export default function MultiPhotoSubmit() {
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
     const { buildingID, roomNumber } = useLocalSearchParams<{ buildingID: string, roomNumber: string }>();
+    const { bannerHeight } = useApp();
 
     const [images, setImages] = useState<string[]>([]);
     const [submitting, setSubmitting] = useState(false);
@@ -147,7 +149,7 @@ export default function MultiPhotoSubmit() {
     );
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={[styles.container, { marginTop: bannerHeight }]} edges={bannerHeight > 0 ? [] : ['top']}>
             <View style={styles.header}>
                 <Pressable onPress={() => { triggerHaptic(); router.back(); }} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={28} color={theme.text} />

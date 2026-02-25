@@ -43,6 +43,7 @@ import {
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { auth, db, storage } from "../firebaseConfig";
+import { useApp } from "../lib/AppContext";
 import { useBuildings } from "../lib/DatabaseContext";
 import { useHapticFeedback, useSettings } from "../lib/SettingsContext";
 import { useUser } from "../lib/UserContext";
@@ -66,6 +67,7 @@ export default function Account() {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+  const { bannerHeight } = useApp();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -421,7 +423,6 @@ export default function Account() {
       styles.header,
       isSticky && { maxWidth: isDesktopWeb ? 1200 : '100%', paddingHorizontal: 20, alignSelf: 'center' },
       !isSticky && { marginBottom: 12, alignSelf: 'center' },
-      Platform.OS === 'web' && { paddingTop: 75 + 16 }
     ]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Text style={styles.headerTitle}>
@@ -456,7 +457,7 @@ export default function Account() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? 75 + bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
       {userEmail && renderHeader(true)}
       <ScrollView
         style={[{ flex: 1, width: '100%' }, (isDesktopWeb && userEmail) && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
@@ -882,7 +883,9 @@ function createStyles(theme: Theme) {
       justifyContent: "center",
     },
     header: {
-      paddingVertical: 16,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+      paddingBottom: 16,
       width: "100%",
       maxWidth: 400,
     },
@@ -903,10 +906,7 @@ function createStyles(theme: Theme) {
       borderRadius: 16,
       padding: 20,
       gap: 16,
-      shadowColor: "#000",
-      shadowOpacity: theme.shadowOpacity,
-      shadowRadius: theme.shadowRadius,
-      shadowOffset: { width: 0, height: 8 },
+      boxShadow: theme.boxShadow,
     },
     section: {
       gap: 10,

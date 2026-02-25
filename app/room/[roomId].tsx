@@ -10,6 +10,7 @@ import StaticStarRating from '../../components/StaticStarRating';
 import TemperatureDisplay from '../../components/TemperatureDisplay';
 import { firebaseImage } from '../../data/rooms';
 import { auth, db } from '../../firebaseConfig';
+import { useApp } from '../../lib/AppContext';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
 import { useUser } from '../../lib/UserContext';
@@ -28,6 +29,7 @@ export default function RoomDetail() {
   const styles = useMemo(() => createStyles(theme, isDesktopWeb), [theme, isDesktopWeb]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { isAdmin } = useUser();
+  const { bannerHeight } = useApp();
   const [resetLoading, setResetLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const [mouseDown, setMouseDown] = useState(false);
@@ -421,15 +423,21 @@ export default function RoomDetail() {
 
   const Header = ({ title = "Loading..." }) => (
     <View
-      style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+      style={[styles.headerFloatingContainer, {
+        top: 0,
+        left: 0,
+        right: isDesktopWeb ? 12 : 0,
+        height: isDesktopWeb ? (bannerHeight || 0) + insets.top + 90 : (bannerHeight > Math.max(0, insets.top) ? (bannerHeight + 75) : insets.top + 75),
+        backgroundColor: (bannerHeight > 0 && Platform.OS !== 'web') ? 'transparent' : theme.background,
+      }]}
       {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
     >
-      <SafeAreaView edges={['top']}>
+      <SafeAreaView edges={bannerHeight > 0 ? [] : ['top']}>
         <View style={[
           styles.header,
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
           {
-            marginTop: Platform.OS === 'web' && isDesktopWeb ? 16 : 0,
+            marginTop: Platform.OS === 'web' ? (bannerHeight || 0) + (isDesktopWeb ? 16 : 0) : (bannerHeight > 0 ? bannerHeight : 0),
             marginBottom: 10
           }
         ]}>
@@ -516,7 +524,7 @@ export default function RoomDetail() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={[
-          { paddingTop: insets.top + (isDesktopWeb ? 100 : 85) },
+          { paddingTop: isDesktopWeb ? (bannerHeight + insets.top + 90) : (Math.max(bannerHeight, insets.top) + 75) + 10 },
           isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' }
         ]}
       >
@@ -899,10 +907,7 @@ function createStyles(theme: Theme, isDesktopWeb: boolean) {
       alignItems: 'center',
       justifyContent: 'center',
       marginTop: -14,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 8,
+      boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
       elevation: 4,
     },
     ratingLabel: {

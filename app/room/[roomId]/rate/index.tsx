@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StarRating from '../../../../components/StarRating';
 import TemperatureRating from '../../../../components/TemperatureRating';
 import { auth, db } from '../../../../firebaseConfig';
+import { useApp } from '../../../../lib/AppContext';
 import { useBuildings } from '../../../../lib/DatabaseContext';
 import { checkProfanity } from '../../../../lib/profanity';
 import { useHapticFeedback } from '../../../../lib/SettingsContext';
@@ -23,6 +24,7 @@ export default function RateRoomModal() {
     const { roomId, initialComment } = useLocalSearchParams<{ roomId: string, initialComment?: string }>();
     const router = useRouter();
     const theme = useTheme();
+    const { bannerHeight } = useApp();
     const triggerHaptic = useHapticFeedback();
     const styles = useMemo(() => createStyles(theme), [theme]);
     const [comment, setComment] = useState(initialComment || '');
@@ -130,7 +132,7 @@ export default function RateRoomModal() {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={0}
             >
-                <View style={[styles.container, { paddingTop: insets.top }]}>
+                <View style={[styles.container, { paddingTop: bannerHeight > 0 ? bannerHeight : insets.top }]}>
                     <View style={styles.popup}>
 
 
@@ -242,10 +244,7 @@ function createStyles(theme: Theme) {
             borderRadius: 16,
             overflow: 'hidden',
             elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
         },
         content: {
             padding: 24,
@@ -273,10 +272,7 @@ function createStyles(theme: Theme) {
             alignItems: 'center',
             width: '90%',
             elevation: 4,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.2,
-            shadowRadius: 4,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
         },
         doneButtonText: {
             color: '#fff',

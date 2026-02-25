@@ -17,8 +17,7 @@ export type Theme = {
   buttonText: string;
   starActive: string;
   starInactive: string;
-  shadowOpacity: number;
-  shadowRadius: number;
+  boxShadow: string;
 };
 
 export const lightTheme: Theme = {
@@ -37,8 +36,7 @@ export const lightTheme: Theme = {
   buttonText: "#ffffff",
   starActive: "#f5c518",
   starInactive: "#c7c7cc",
-  shadowOpacity: 0.08,
-  shadowRadius: 16,
+  boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
 };
 
 export const darkTheme: Theme = {
@@ -57,8 +55,7 @@ export const darkTheme: Theme = {
   buttonText: "#ffffff",
   starActive: "#f5c518",
   starInactive: "#5c5c62",
-  shadowOpacity: 0.25,
-  shadowRadius: 18,
+  boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
 };
 
 const ThemeContext = createContext<Theme | undefined>(undefined);

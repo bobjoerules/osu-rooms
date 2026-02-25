@@ -3,12 +3,14 @@ import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useApp } from '../lib/AppContext';
 import { useTheme } from '../theme';
 
 export default function PrivacyPolicy() {
     const theme = useTheme();
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const { bannerHeight } = useApp();
     const isDesktopWeb = Platform.OS === 'web' && width >= 768;
 
     const styles = StyleSheet.create({
@@ -76,7 +78,7 @@ export default function PrivacyPolicy() {
     });
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <SafeAreaView style={[styles.container, { marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
             <Stack.Screen options={{ headerShown: false }} />
 
             <View style={[styles.header, isDesktopWeb && styles.webContainer]}>

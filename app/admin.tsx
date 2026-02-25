@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -8,18 +9,22 @@ import {
     Alert,
     Dimensions,
     FlatList,
+    PanResponder,
     Platform,
     Pressable,
     Image as RNImage,
     ScrollView,
     StyleSheet,
+    Switch,
     Text,
+    TextInput,
     useWindowDimensions,
-    View,
+    View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { firebaseImage } from '../data/rooms';
 import { db } from '../firebaseConfig';
+import { useApp } from '../lib/AppContext';
 import { useBuildings } from '../lib/DatabaseContext';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { useUser } from '../lib/UserContext';
@@ -44,6 +49,38 @@ interface Submission {
 
 import { sendPushNotification } from '../lib/notifications';
 
+function hexToHue(hex: string): number {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0;
+    const d = max - min;
+
+    if (d === 0) h = 0;
+    else {
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    return Math.round(h * 360);
+}
+
+function hueToHex(h: number): string {
+    const s = 0.9, l = 0.5;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+}
+
 export default function AdminScreen() {
     const theme = useTheme();
     const router = useRouter();
@@ -52,8 +89,12 @@ export default function AdminScreen() {
     const insets = useSafeAreaInsets();
     const isDesktopWeb = Platform.OS === 'web' && windowWidth >= 768;
     const { isAdmin, loading: authLoading } = useUser();
+    const { bannerHeight } = useApp();
     const styles = useMemo(() => createStyles(theme), [theme]);
     const horizontalListRef = useRef<FlatList>(null);
+    const sliderRef = useRef<View>(null);
+    const sliderX = useRef<number>(0);
+    const sliderWidth = useRef<number>(0);
     const [pending, setPending] = useState<Submission[]>([]);
     const [approved, setApproved] = useState<Submission[]>([]);
     const [rejected, setRejected] = useState<Submission[]>([]);
@@ -64,16 +105,72 @@ export default function AdminScreen() {
     const [isFixingAll, setIsFixingAll] = useState(false);
     const [systemResults, setSystemResults] = useState<{ type: 'corrupt' | 'orphan' | 'mismatch', id: string, roomId: string, details: string, actionDescription: string, actionType: 'delete' | 'repair' | 'sync', ref: any, data?: any }[]>([]);
 
+    const { bannerConfig, updateBannerConfig } = useApp();
+    const [bannerTitle, setBannerTitle] = useState(bannerConfig?.title || '');
+    const [bannerDescription, setBannerDescription] = useState(bannerConfig?.description || '');
+    const [bannerIcon, setBannerIcon] = useState(bannerConfig?.icon || 'information-circle');
+    const [bannerColor, setBannerColor] = useState(bannerConfig?.borderColor || '#D73F09');
+    const [bannerHue, setBannerHue] = useState(() => hexToHue(bannerConfig?.borderColor || '#D73F09'));
+    const [bannerActive, setBannerActive] = useState(bannerConfig?.active || false);
+    const [isSavingBanner, setIsSavingBanner] = useState(false);
+    const [isSliding, setIsSliding] = useState(false);
+
+    useEffect(() => {
+        if (bannerConfig) {
+            setBannerTitle(bannerConfig.title);
+            setBannerDescription(bannerConfig.description);
+            setBannerIcon(bannerConfig.icon);
+            setBannerColor(bannerConfig.borderColor);
+            setBannerHue(hexToHue(bannerConfig.borderColor));
+            setBannerActive(bannerConfig.active);
+        }
+    }, [bannerConfig]);
+
+    const handleHueChange = (h: number) => {
+        setBannerHue(h);
+        setBannerColor(hueToHex(h));
+    };
+
+    const saveBanner = async () => {
+        setIsSavingBanner(true);
+        triggerHaptic();
+        try {
+            await updateBannerConfig({
+                title: bannerTitle,
+                description: bannerDescription,
+                icon: bannerIcon,
+                borderColor: bannerColor,
+                active: bannerActive,
+            });
+            if (Platform.OS === 'web') {
+                window.alert('Banner configuration saved!');
+            } else {
+                Alert.alert('Success', 'Banner configuration saved!');
+            }
+        } catch (err) {
+            console.error('Failed to save banner:', err);
+            Alert.alert('Error', 'Failed to save banner settings.');
+        } finally {
+            setIsSavingBanner(false);
+        }
+    };
+
     const Header = ({ title = "Review Submissions" }: { title?: string }) => (
         <View
-            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+            style={[styles.headerFloatingContainer, {
+                top: 0,
+                left: 0,
+                right: isDesktopWeb ? 12 : 0,
+                height: isDesktopWeb ? (bannerHeight || 0) + insets.top + 90 : (bannerHeight > 0 ? (bannerHeight + 75) : insets.top + 75),
+                backgroundColor: (bannerHeight > 0 && Platform.OS !== 'web') ? 'transparent' : theme.background,
+            }]}
             {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
         >
-            <SafeAreaView edges={['top']}>
+            <SafeAreaView edges={bannerHeight > 0 ? [] : ['top']}>
                 <View style={[
                     styles.header,
                     isDesktopWeb && { maxWidth: 1200, alignSelf: 'center', width: '100%' },
-                    { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
+                    { marginTop: isDesktopWeb ? (bannerHeight || 0) + 16 : (bannerHeight > 0 ? bannerHeight : 0), marginBottom: 10 }
                 ]}>
                     <Pressable
                         onPress={() => {
@@ -613,6 +710,191 @@ export default function AdminScreen() {
                         Platform.OS === 'web' && { maxWidth: 800, alignSelf: 'center', width: '100%' }
                     ]}
                 >
+                    <View style={[styles.card, { padding: 20, backgroundColor: theme.card, borderColor: theme.border, marginBottom: 20 }]}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>App Notification Banner</Text>
+                            <Switch
+                                value={bannerActive}
+                                onValueChange={setBannerActive}
+                                trackColor={{ false: theme.border, true: theme.primary }}
+                                thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                            />
+                        </View>
+
+                        <View style={{ gap: 12 }}>
+                            <View>
+                                <Text style={[styles.label, { color: theme.subtext, marginBottom: 8 }]}>Quick Templates</Text>
+                                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                                    {[
+                                        { label: 'Maint', title: 'Scheduled Maintenance', icon: 'build', color: '#FF9500' },
+                                        { label: 'Alert', title: 'System Alert', icon: 'alert-circle', color: '#FF3B30' },
+                                        { label: 'Update', title: 'New App Version Available', icon: 'megaphone', color: '#007AFF' },
+                                        { label: 'OSU', title: 'OSU Campus Update', icon: 'information-circle', color: '#D73F09' },
+                                    ].map((template) => (
+                                        <Pressable
+                                            key={template.label}
+                                            style={[styles.presetButton, { backgroundColor: theme.inputBg, borderColor: theme.border }]}
+                                            onPress={() => {
+                                                triggerHaptic();
+                                                setBannerTitle(template.title);
+                                                setBannerIcon(template.icon);
+                                                handleHueChange(hexToHue(template.color));
+                                            }}
+                                        >
+                                            <Ionicons name={template.icon as any} size={14} color={theme.primary} />
+                                            <Text style={[styles.presetText, { color: theme.text }]}>{template.label}</Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            </View>
+
+                            <View>
+                                <Text style={[styles.label, { color: theme.subtext, marginBottom: 4 }]}>Banner Title</Text>
+                                <TextInput
+                                    style={[styles.adminInput, { backgroundColor: theme.inputBg, color: theme.text, borderColor: theme.border }]}
+                                    value={bannerTitle}
+                                    onChangeText={setBannerTitle}
+                                    placeholder="e.g. Server Maintenance"
+                                    placeholderTextColor={theme.subtext + '88'}
+                                />
+                            </View>
+
+                            <View>
+                                <Text style={[styles.label, { color: theme.subtext, marginBottom: 4 }]}>Description</Text>
+                                <TextInput
+                                    style={[styles.adminInput, { backgroundColor: theme.inputBg, color: theme.text, borderColor: theme.border, height: 80, textAlignVertical: 'top' }]}
+                                    value={bannerDescription}
+                                    onChangeText={setBannerDescription}
+                                    placeholder="Tell the users what's happening..."
+                                    placeholderTextColor={theme.subtext + '88'}
+                                    multiline
+                                />
+                            </View>
+
+                            <View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <Text style={[styles.label, { color: theme.subtext }]}>Border Color</Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                        <View style={[styles.colorPreview, { backgroundColor: bannerColor }]} />
+                                        <Text style={[styles.value, { color: theme.text, fontSize: 13, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' }]}>{bannerColor}</Text>
+                                    </View>
+                                </View>
+
+                                <View
+                                    ref={sliderRef}
+                                    style={styles.sliderContainer}
+                                    onLayout={(e) => {
+                                        const { width } = e.nativeEvent.layout;
+                                        sliderWidth.current = width;
+                                        sliderRef.current?.measureInWindow((x) => {
+                                            if (x > 0) sliderX.current = x;
+                                        });
+                                    }}
+                                >
+                                    <LinearGradient
+                                        colors={['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ff0000']}
+                                        start={{ x: 0, y: 0.5 }}
+                                        end={{ x: 1, y: 0.5 }}
+                                        style={styles.sliderTrack}
+                                    />
+                                    <View
+                                        style={styles.sliderInteractive}
+                                        {...PanResponder.create({
+                                            onStartShouldSetPanResponder: () => true,
+                                            onMoveShouldSetPanResponder: () => true,
+                                            onPanResponderTerminationRequest: () => false,
+                                            onPanResponderGrant: (evt) => {
+                                                setIsSliding(true);
+                                                const x = evt.nativeEvent.locationX;
+                                                const hue = Math.max(0, Math.min(360, (x / (sliderWidth.current || 1)) * 360));
+                                                handleHueChange(hue);
+                                            },
+                                            onPanResponderMove: (evt) => {
+                                                const x = evt.nativeEvent.locationX;
+                                                const hue = Math.max(0, Math.min(360, (x / (sliderWidth.current || 1)) * 360));
+                                                handleHueChange(hue);
+                                            },
+                                            onPanResponderRelease: () => {
+                                                setIsSliding(false);
+                                            },
+                                            onPanResponderTerminate: () => {
+                                                setIsSliding(false);
+                                            }
+                                        }).panHandlers}
+                                    >
+                                        <View
+                                            pointerEvents="none"
+                                            style={[styles.sliderThumb, { left: `${(bannerHue / 360) * 100}%`, backgroundColor: bannerColor }]}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', gap: 6, marginTop: 12 }}>
+                                    {[
+                                        { label: 'Red', color: '#FF3B30' },
+                                        { label: 'Yellow', color: '#FFCC00' },
+                                        { label: 'Green', color: '#34C759' },
+                                        { label: 'Blue', color: '#007AFF' },
+                                        { label: 'OSU', color: '#D73F09' }
+                                    ].map((preset) => (
+                                        <Pressable
+                                            key={preset.color}
+                                            style={[styles.presetButton, { flex: 1, paddingHorizontal: 4, justifyContent: 'center', backgroundColor: preset.color + '15', borderColor: preset.color + '30' }]}
+                                            onPress={() => handleHueChange(hexToHue(preset.color))}
+                                        >
+                                            <View style={[styles.presetDot, { backgroundColor: preset.color }]} />
+                                            <Text style={[styles.presetText, { color: preset.color, fontSize: 11 }]} numberOfLines={1}>{preset.label}</Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            </View>
+
+                            <View>
+                                <Text style={[styles.label, { color: theme.subtext, marginBottom: 4 }]}>Icon (Ionicons)</Text>
+                                <TextInput
+                                    style={[styles.adminInput, { backgroundColor: theme.inputBg, color: theme.text, borderColor: theme.border }]}
+                                    value={bannerIcon}
+                                    onChangeText={setBannerIcon}
+                                    placeholder="information-circle"
+                                    placeholderTextColor={theme.subtext + '88'}
+                                />
+                                <View style={{ flexDirection: 'row', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                                    {[
+                                        { icon: 'warning', label: 'Warning' },
+                                        { icon: 'information-circle', label: 'Info' },
+                                        { icon: 'alert-circle', label: 'Alert' },
+                                        { icon: 'megaphone', label: 'News' },
+                                        { icon: 'calendar', label: 'Event' },
+                                        { icon: 'build', label: 'Maint.' }
+                                    ].map((preset) => (
+                                        <Pressable
+                                            key={preset.icon}
+                                            style={[styles.presetButton, { backgroundColor: theme.inputBg, borderColor: theme.border }]}
+                                            onPress={() => {
+                                                triggerHaptic();
+                                                setBannerIcon(preset.icon);
+                                            }}
+                                        >
+                                            <Ionicons name={preset.icon as any} size={14} color={theme.text} />
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            </View>
+
+                            <Pressable
+                                style={({ pressed }) => [
+                                    styles.actionButton,
+                                    { backgroundColor: theme.primary, borderColor: theme.primary, marginTop: 8, opacity: (pressed || isSavingBanner) ? 0.7 : 1 }
+                                ]}
+                                onPress={saveBanner}
+                                disabled={isSavingBanner}
+                            >
+                                {isSavingBanner ? <ActivityIndicator color="#fff" size="small" /> : <Ionicons name="save-outline" size={20} color="#fff" />}
+                                <Text style={[styles.actionText, { color: '#fff' }]}>Save Banner Settings</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+
                     <View style={[styles.card, { padding: 20, backgroundColor: theme.card, borderColor: theme.border }]}>
                         <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 8 }]}>Database Health</Text>
                         <Text style={[styles.emptyText, { color: theme.subtext, fontSize: 14, textAlign: 'left', marginBottom: 20 }]}>
@@ -749,7 +1031,7 @@ export default function AdminScreen() {
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
             <Header />
-            <View style={{ flex: 1, marginTop: insets.top + (isDesktopWeb ? 85 : 75) }}>
+            <View style={{ flex: 1, marginTop: isDesktopWeb ? (bannerHeight + insets.top + 90) : (bannerHeight > 0 ? (bannerHeight + 75) : insets.top + 75) }}>
                 {authLoading || (!isAdmin && !authLoading) ? (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <ActivityIndicator size="large" color={theme.primary} />
@@ -792,6 +1074,7 @@ export default function AdminScreen() {
                                 renderItem={renderPage}
                                 horizontal
                                 pagingEnabled
+                                scrollEnabled={!isSliding}
                                 showsHorizontalScrollIndicator={false}
                                 onMomentumScrollEnd={onMomentumScrollEnd}
                                 keyExtractor={item => item}
@@ -919,6 +1202,21 @@ function createStyles(theme: Theme) {
             fontWeight: 'bold',
             fontSize: 14,
         },
+        value: {
+            fontSize: 16,
+            fontWeight: "600",
+        },
+        adminInput: {
+            borderWidth: 1,
+            borderRadius: 12,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            fontSize: 16,
+        },
+        label: {
+            fontSize: 14,
+            fontWeight: '600',
+        },
         tabBar: {
             flexDirection: 'row',
             paddingHorizontal: 16,
@@ -963,6 +1261,58 @@ function createStyles(theme: Theme) {
         userName: {
             fontSize: 14,
             fontWeight: 'bold',
+        },
+        colorPreview: {
+            width: 24,
+            height: 24,
+            borderRadius: 6,
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.1)',
+        },
+        sliderContainer: {
+            height: 44,
+            width: '100%',
+            justifyContent: 'center',
+            position: 'relative',
+        },
+        sliderTrack: {
+            height: 12,
+            borderRadius: 6,
+            width: '100%',
+        },
+        sliderInteractive: {
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: 'center',
+            zIndex: 2,
+        },
+        sliderThumb: {
+            width: 28,
+            height: 28,
+            borderRadius: 14,
+            borderWidth: 3,
+            borderColor: '#fff',
+            position: 'absolute',
+            marginLeft: -14,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            elevation: 4,
+        },
+        presetButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 8,
+            borderWidth: 1,
+            gap: 6,
+        },
+        presetDot: {
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+        },
+        presetText: {
+            fontSize: 12,
+            fontWeight: '600',
         },
     });
 }

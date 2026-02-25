@@ -9,21 +9,17 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, LogBox, Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, useColorScheme, View } from 'react-native';
 import AccountScreen from '../components/AccountScreen';
 import NoInternetScreen from '../components/NoInternetScreen';
+import NotificationBanner from '../components/NotificationBanner';
 import { auth } from '../firebaseConfig';
+import { AppProvider } from '../lib/AppContext';
 import { DatabaseProvider } from '../lib/DatabaseContext';
 import { SettingsProvider } from '../lib/SettingsContext';
 import { UserProvider } from '../lib/UserContext';
 import { ThemeProvider, useTheme } from '../theme';
 
-LogBox.ignoreLogs([
-  'functionality is not fully supported in Expo Go',
-  'Android Push notifications (remote notifications) functionality provided by expo-notifications was removed',
-  'Listening to push token changes is not yet fully supported on web',
-  '`expo-notifications` functionality is not fully supported in Expo Go',
-]);
 
 if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
@@ -120,7 +116,12 @@ function RootContent() {
     return <AccountScreen />;
   }
 
-  return <AuthenticatedStack />;
+  return (
+    <>
+      <NotificationBanner />
+      <AuthenticatedStack />
+    </>
+  );
 }
 
 export default function RootLayout() {
@@ -129,10 +130,12 @@ export default function RootLayout() {
       <SettingsProvider>
         <UserProvider>
           <DatabaseProvider>
-            <ThemeProvider>
-              <ThemeManager />
-              <RootContent />
-            </ThemeProvider>
+            <AppProvider>
+              <ThemeProvider>
+                <ThemeManager />
+                <RootContent />
+              </ThemeProvider>
+            </AppProvider>
           </DatabaseProvider>
         </UserProvider>
       </SettingsProvider>

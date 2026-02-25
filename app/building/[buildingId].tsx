@@ -5,6 +5,7 @@ import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, T
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
+import { useApp } from '../../lib/AppContext';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { useUser } from '../../lib/UserContext';
@@ -22,6 +23,7 @@ export default function BuildingDetail() {
     const theme = useTheme();
     const { showPlaceholders } = useSettings();
     const { isAdmin } = useUser();
+    const { bannerHeight } = useApp();
     const triggerHaptic = useHapticFeedback();
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
@@ -50,14 +52,20 @@ export default function BuildingDetail() {
 
     const Header = ({ title = "Loading...", showRating = true }) => (
         <View
-            style={[styles.headerFloatingContainer, { top: 0, left: 0, right: isDesktopWeb ? 12 : 0, height: insets.top + (isDesktopWeb ? 85 : 75) }]}
+            style={[styles.headerFloatingContainer, {
+                top: 0,
+                left: 0,
+                right: isDesktopWeb ? 12 : 0,
+                height: isDesktopWeb ? (bannerHeight || 0) + insets.top + 90 : (bannerHeight > 0 ? (bannerHeight + 75) : insets.top + 75),
+                backgroundColor: (bannerHeight > 0 && Platform.OS !== 'web') ? 'transparent' : theme.background,
+            }]}
             {...(isDesktopWeb ? { dataSet: { 'glass-header': 'true' } } : {})}
         >
-            <SafeAreaView edges={['top']}>
+            <SafeAreaView edges={bannerHeight > 0 ? [] : ['top']}>
                 <View style={[
                     styles.header,
                     isDesktopWeb && { maxWidth: calculatedMaxWidth, alignSelf: 'center', width: '100%' },
-                    { marginTop: isDesktopWeb ? 16 : 0, marginBottom: 10 }
+                    { marginTop: isDesktopWeb ? (bannerHeight || 0) + 16 : (bannerHeight > 0 ? bannerHeight : 0), marginBottom: 10 }
                 ]}>
                     <Pressable
                         onPress={() => {
@@ -163,7 +171,7 @@ export default function BuildingDetail() {
                 style={{ flex: 1 }}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + (isDesktopWeb ? 100 : 80) },
+                    { paddingTop: isDesktopWeb ? (bannerHeight + insets.top + 90) : (Math.max(bannerHeight, insets.top) + 75) + 10 },
                     isDesktopWeb && { maxWidth: calculatedMaxWidth, alignSelf: 'center', width: '100%' }
                 ]}
             >

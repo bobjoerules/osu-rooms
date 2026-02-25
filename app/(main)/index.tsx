@@ -8,6 +8,7 @@ import { AccordionItem } from '../../components/Accordion';
 import BuildingRating from '../../components/BuildingRating';
 import RoomList from '../../components/RoomList';
 import { Building, firebaseImage } from '../../data/rooms';
+import { useApp } from '../../lib/AppContext';
 import { useBuildings } from '../../lib/DatabaseContext';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 import { useUser } from '../../lib/UserContext';
@@ -109,6 +110,7 @@ export default function Index() {
     }
   }, [loading, buildings]);
   const { isAdmin } = useUser();
+  const { bannerHeight } = useApp();
   const headerHeight = Platform.OS === 'ios' ? 60 : 75;
 
   const handleBuildingPress = useCallback((id: string, index: number) => {
@@ -129,8 +131,8 @@ export default function Index() {
 
       if (!currentlyExpanded && !isDesktopWeb) {
         const headerOffset = Platform.OS === 'web'
-          ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
-          : insets.top + headerHeight;
+          ? insets.top + headerHeight + (width < 768 ? 8 : 16) + 75
+          : (bannerHeight > 0 ? bannerHeight : insets.top) + headerHeight;
 
         requestAnimationFrame(() => {
           flatListRef.current?.scrollToIndex({
@@ -223,14 +225,6 @@ export default function Index() {
     );
   }, [isDesktopWeb, searchQuery, handleBuildingPress, showBuildingImages, theme, styles, isAdmin]);
 
-  if (loading) {
-    return (
-      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-    );
-  }
-
   const isSearching = searchQuery.trim().length > 0;
   const calculatedColumns = useMemo(() => {
     if (!isDesktopWeb || isSearching) return 1;
@@ -247,6 +241,40 @@ export default function Index() {
     if (width >= 1600) return 1600;
     return 1200;
   }, [isDesktopWeb, width]);
+
+  const contentContainerStyle = useMemo(() => [
+    styles.scrollContent,
+    {
+      paddingTop: (
+        Platform.OS === 'web'
+          ? insets.top + headerHeight + (width < 768 ? 8 : 16) + 75
+          : (bannerHeight > 0 ? bannerHeight + headerHeight : (insets.top || (Platform.OS === 'ios' ? 20 : 0)) + headerHeight)
+      ),
+      paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 16),
+    }
+  ], [styles.scrollContent, insets.top, insets.bottom, headerHeight, width, bannerHeight]);
+
+  const headerContainerStyle = useMemo(() => [
+    styles.headerContainer,
+    {
+      top: 0,
+      left: 0,
+      right: 0,
+      height: Platform.OS === 'web'
+        ? 75 + insets.top + headerHeight + (width < 768 ? 8 : 16)
+        : (bannerHeight > 0 ? bannerHeight + headerHeight : insets.top + headerHeight),
+      backgroundColor: (bannerHeight > 0 && Platform.OS !== 'web') ? 'transparent' : theme.background,
+      paddingTop: Platform.OS === 'web' ? 75 + 16 : (bannerHeight > 0 ? bannerHeight : 0),
+    }
+  ], [styles.headerContainer, insets.top, headerHeight, width, theme.background, bannerHeight]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -318,37 +346,14 @@ export default function Index() {
           });
         }}
         style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: calculatedMaxWidth, alignSelf: 'center' }]}
-        contentContainerStyle={useMemo(() => [
-          styles.scrollContent,
-          {
-            paddingTop: (
-              Platform.OS === 'web'
-                ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16)
-                : (insets.top || (Platform.OS === 'ios' ? 20 : 0)) + headerHeight
-            ),
-            paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 16),
-          }
-        ], [styles.scrollContent, insets.top, insets.bottom, headerHeight, width])}
+        contentContainerStyle={contentContainerStyle}
       />
 
       <View
-        style={useMemo(() => [
-          styles.headerContainer,
-          {
-            top: 0,
-            left: 0,
-            right: 0,
-            height: Platform.OS === 'web' ? insets.top + headerHeight + 75 + (width < 768 ? 8 : 16) : insets.top + headerHeight,
-            backgroundColor: theme.background,
-            paddingTop: Platform.OS === 'web' ? 16 : 0,
-          }
-        ], [styles.headerContainer, insets.top, headerHeight, width, theme.background])}
+        style={headerContainerStyle}
         {...(Platform.OS === 'web' ? { dataSet: { 'glass-header': 'true' } } : {})}
       >
-        {Platform.OS === 'web' && (
-          <View style={{ height: 75 }} />
-        )}
-        <SafeAreaView edges={['top']}>
+        <SafeAreaView edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
           <View style={[styles.header, isDesktopWeb && { width: '100%', maxWidth: calculatedMaxWidth, alignSelf: 'center' }]}>
             <View
               style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }, isDesktopWeb && { maxWidth: 600, alignSelf: 'center', width: '100%' }]}
