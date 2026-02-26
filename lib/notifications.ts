@@ -1,10 +1,20 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
-import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
-if (!isExpoGo && Platform.OS !== 'web') {
+const getNotifications = () => {
+    if (isExpoGo || Platform.OS === 'web') return null;
+    try {
+        return require('expo-notifications');
+    } catch (e) {
+        console.warn('Failed to load expo-notifications:', e);
+        return null;
+    }
+};
+
+const Notifications = getNotifications();
+if (Notifications && !isExpoGo && Platform.OS !== 'web') {
     Notifications.setNotificationHandler({
         handleNotification: async () => ({
             shouldShowAlert: true,
@@ -16,9 +26,39 @@ if (!isExpoGo && Platform.OS !== 'web') {
     });
 }
 
+export function useNotificationResponse() {
+    const Notifications = getNotifications();
+    if (!Notifications || isExpoGo) return null;
+    try {
+        return Notifications.useLastNotificationResponse();
+    } catch (e) {
+        return null;
+    }
+}
+
 function handleRegistrationError(errorMessage: string) {
     alert(errorMessage);
     throw new Error(errorMessage);
+}
+
+export async function requestNotificationPermissions() {
+    const Notifications = getNotifications();
+    if (!Notifications || isExpoGo) return false;
+
+    try {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+
+        return finalStatus === 'granted';
+    } catch (e) {
+        console.warn('Error requesting permissions:', e);
+        return false;
+    }
 }
 
 export async function registerForPushNotificationsAsync() {
@@ -26,6 +66,9 @@ export async function registerForPushNotificationsAsync() {
         console.log("[Notifications] Skipped registration (Expo Go)");
         return null;
     }
+
+    const Notifications = getNotifications();
+    if (!Notifications) return null;
 
     if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default', {
@@ -40,17 +83,8 @@ export async function registerForPushNotificationsAsync() {
         return null;
     }
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-    }
-
-    if (finalStatus !== 'granted') {
-        return null;
-    }
+    const hasPermission = await requestNotificationPermissions();
+    if (!hasPermission) return null;
 
     const projectId =
         Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;

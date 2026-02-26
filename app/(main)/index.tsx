@@ -263,7 +263,7 @@ export default function Index() {
       height: Platform.OS === 'web'
         ? 75 + insets.top + headerHeight + (width < 768 ? 8 : 16)
         : (bannerHeight > 0 ? bannerHeight + headerHeight : insets.top + headerHeight),
-      backgroundColor: (bannerHeight > 0 && Platform.OS !== 'web') ? 'transparent' : theme.background,
+      backgroundColor: theme.background,
       paddingTop: Platform.OS === 'web' ? 75 + 16 : (bannerHeight > 0 ? bannerHeight : 0),
     }
   ], [styles.headerContainer, insets.top, headerHeight, width, theme.background, bannerHeight]);

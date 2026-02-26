@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import * as Notifications from 'expo-notifications';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -25,6 +24,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { auth, db, storage } from '../firebaseConfig';
 import { useApp } from '../lib/AppContext';
 import { useBuildings } from '../lib/DatabaseContext';
+import { requestNotificationPermissions } from '../lib/notifications';
 import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
@@ -184,10 +184,7 @@ export default function SubmitScreen() {
             const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
             if (!isExpoGo) {
                 try {
-                    const { status } = await Notifications.getPermissionsAsync();
-                    if (status !== 'granted') {
-                        await Notifications.requestPermissionsAsync();
-                    }
+                    await requestNotificationPermissions();
                 } catch (ignore) {
                 }
             }

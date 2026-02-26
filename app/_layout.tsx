@@ -3,7 +3,6 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@rea
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useFonts } from 'expo-font';
 import * as NavigationBar from 'expo-navigation-bar';
-import * as Notifications from 'expo-notifications';
 import { Stack, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import * as SplashScreen from 'expo-splash-screen';
@@ -17,6 +16,7 @@ import NotificationBanner from '../components/NotificationBanner';
 import { auth } from '../firebaseConfig';
 import { AppProvider } from '../lib/AppContext';
 import { DatabaseProvider } from '../lib/DatabaseContext';
+import { useNotificationResponse } from '../lib/notifications';
 import { SettingsProvider } from '../lib/SettingsContext';
 import { UserProvider } from '../lib/UserContext';
 import { ThemeProvider, useTheme } from '../theme';
@@ -24,21 +24,11 @@ import { ThemeProvider, useTheme } from '../theme';
 
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
-if (!isExpoGo && Platform.OS !== 'web') {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true
-    }),
-  });
-}
+
 
 SplashScreen.preventAutoHideAsync();
 
-const useNotificationResponse = (Platform.OS === 'web' || isExpoGo) ? () => null : Notifications.useLastNotificationResponse;
+
 
 function RootContent() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -121,8 +111,8 @@ function RootContent() {
 
   return (
     <>
-      <NotificationBanner />
       <AuthenticatedStack />
+      <NotificationBanner />
     </>
   );
 }

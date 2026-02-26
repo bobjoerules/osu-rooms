@@ -52,11 +52,10 @@ export default function NotificationBanner() {
 
     return (
         <>
-            {/* Hidden measurement view */}
             <View
                 style={{
                     position: 'absolute',
-                    top: -1000,
+                    top: -2000,
                     left: 0,
                     right: 0,
                     opacity: 0,
@@ -87,7 +86,6 @@ export default function NotificationBanner() {
                 </View>
             </View>
 
-            {/* Visible animated banner */}
             <Animated.View
                 style={[
                     styles.container,
@@ -137,9 +135,20 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1000,
-        paddingHorizontal: 16,
-        boxShadow: '0 -4px 12px rgba(0,0,0,0.1)',
-        elevation: 5,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 -4px 12px rgba(0,0,0,0.1)',
+            },
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: -2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 10,
+            },
+        }),
     },
     content: {
         flexDirection: 'row',
