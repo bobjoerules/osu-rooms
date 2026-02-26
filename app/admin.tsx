@@ -142,11 +142,6 @@ export default function AdminScreen() {
                 borderColor: bannerColor,
                 active: bannerActive,
             });
-            if (Platform.OS === 'web') {
-                window.alert('Banner configuration saved!');
-            } else {
-                Alert.alert('Success', 'Banner configuration saved!');
-            }
         } catch (err) {
             console.error('Failed to save banner:', err);
             Alert.alert('Error', 'Failed to save banner settings.');
@@ -681,7 +676,6 @@ export default function AdminScreen() {
         triggerHaptic();
 
         try {
-            // Process in sequence to avoid hitting rate limits or causing race conditions on aggregates
             for (const issue of [...systemResults]) {
                 await fixIssue(issue, true);
             }
@@ -715,9 +709,13 @@ export default function AdminScreen() {
                             <Text style={[styles.sectionTitle, { color: theme.text }]}>App Notification Banner</Text>
                             <Switch
                                 value={bannerActive}
-                                onValueChange={setBannerActive}
+                                onValueChange={(val) => {
+                                    triggerHaptic();
+                                    setBannerActive(val);
+                                }}
                                 trackColor={{ false: theme.border, true: theme.primary }}
                                 thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                                activeThumbColor="#fff"
                             />
                         </View>
 
@@ -1313,6 +1311,22 @@ function createStyles(theme: Theme) {
         presetText: {
             fontSize: 12,
             fontWeight: '600',
+        },
+        settingRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            paddingVertical: 12,
+            marginBottom: 8,
+        },
+        settingLabel: {
+            fontSize: 15,
+            fontWeight: '600',
+        },
+        settingDescription: {
+            fontSize: 12,
+            opacity: 0.8,
         },
     });
 }
