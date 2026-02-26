@@ -85,7 +85,7 @@ export default function ReviewsScreen() {
                     }
                     return review;
                 })
-                .filter(review => review.roomName);
+                .filter(review => review.roomName && review.rating > 0);
 
             setReviews(processedReviews);
             setLoading(false);

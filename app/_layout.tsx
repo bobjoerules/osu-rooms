@@ -1,5 +1,6 @@
 import NetInfo from '@react-native-community/netinfo';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@react-navigation/native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useFonts } from 'expo-font';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as Notifications from 'expo-notifications';
@@ -21,7 +22,9 @@ import { UserProvider } from '../lib/UserContext';
 import { ThemeProvider, useTheme } from '../theme';
 
 
-if (Platform.OS !== 'web') {
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+if (!isExpoGo && Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -35,7 +38,7 @@ if (Platform.OS !== 'web') {
 
 SplashScreen.preventAutoHideAsync();
 
-const useNotificationResponse = Platform.OS === 'web' ? () => null : Notifications.useLastNotificationResponse;
+const useNotificationResponse = (Platform.OS === 'web' || isExpoGo) ? () => null : Notifications.useLastNotificationResponse;
 
 function RootContent() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -68,7 +71,7 @@ function RootContent() {
   }, []);
 
   useEffect(() => {
-    if (response && 'notification' in response) {
+    if (!isExpoGo && response && 'notification' in response) {
       const roomId = response.notification.request.content.data.roomId;
       if (roomId) {
         router.push(`/room/${roomId}`);

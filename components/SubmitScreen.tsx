@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
@@ -180,12 +181,15 @@ export default function SubmitScreen() {
                 createdAt: serverTimestamp(),
             });
 
-            try {
-                const { status } = await Notifications.getPermissionsAsync();
-                if (status !== 'granted') {
-                    await Notifications.requestPermissionsAsync();
+            const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+            if (!isExpoGo) {
+                try {
+                    const { status } = await Notifications.getPermissionsAsync();
+                    if (status !== 'granted') {
+                        await Notifications.requestPermissionsAsync();
+                    }
+                } catch (ignore) {
                 }
-            } catch (ignore) {
             }
 
             const resetForm = () => {

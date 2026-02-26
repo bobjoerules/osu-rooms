@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { Auth, getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
-import { Firestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import { Firestore, initializeFirestore, memoryLocalCache, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { FirebaseStorage, getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
 
@@ -36,11 +36,12 @@ let db: Firestore;
 try {
   db = initializeFirestore(app, {
     localCache: Platform.OS === 'web'
-      ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-      : persistentLocalCache({}) // Standard persistent cache for native without tab manager
+      ? (typeof window !== 'undefined' && window.indexedDB
+        ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+        : memoryLocalCache())
+      : persistentLocalCache({})
   });
 } catch (e) {
-  // If already initialized, use getFirestore instead
   const { getFirestore } = require('firebase/firestore');
   db = getFirestore(app);
 }

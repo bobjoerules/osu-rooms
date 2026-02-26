@@ -1,8 +1,10 @@
-import Constants from 'expo-constants';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-if (Platform.OS !== 'web') {
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+if (!isExpoGo && Platform.OS !== 'web') {
     Notifications.setNotificationHandler({
         handleNotification: async () => ({
             shouldShowAlert: true,
@@ -20,6 +22,11 @@ function handleRegistrationError(errorMessage: string) {
 }
 
 export async function registerForPushNotificationsAsync() {
+    if (isExpoGo) {
+        console.log("[Notifications] Skipped registration (Expo Go)");
+        return null;
+    }
+
     if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default', {
             name: 'default',
@@ -66,6 +73,11 @@ export async function registerForPushNotificationsAsync() {
 }
 
 export async function sendPushNotification(expoPushToken: string, title: string, body: string, data: any = {}) {
+    if (isExpoGo) {
+        console.log("[Notifications] Skipped send (Expo Go)");
+        return;
+    }
+
     const message = {
         to: expoPushToken,
         sound: 'default',
