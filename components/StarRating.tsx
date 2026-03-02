@@ -17,11 +17,9 @@ export type StarRatingProps = {
   initialMax?: number;
   size?: number;
   showMetaText?: boolean;
-  comment?: string;
-  onCommentChange?: (comment: string) => void;
 };
 
-export default function StarRating({ itemId, buildingId, initialMax = 5, size = 40, showMetaText = false, onCommentChange }: StarRatingProps) {
+export default function StarRating({ itemId, buildingId, initialMax = 5, size = 40, showMetaText = false }: StarRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);

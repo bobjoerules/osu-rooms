@@ -38,7 +38,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showSubmitTab, setShowSubmitTab] = useState(true);
     const [showReviewsTab, setShowReviewsTab] = useState(true);
     const [lowPowerMode, setLowPowerMode] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadSettings = async () => {
@@ -76,8 +75,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 }
             } catch (e) {
                 console.error('Failed to load settings', e);
-            } finally {
-                setIsLoading(false);
             }
         };
 

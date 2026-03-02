@@ -93,7 +93,6 @@ export default function Account() {
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
   const { buildings } = useBuildings();
 
-  const isOSUVerified = userEmail && auth.currentUser?.emailVerified && userEmail.toLowerCase().endsWith('@oregonstate.edu');
 
   const totalRooms = useMemo(() => {
     return buildings.reduce((acc: number, building: any) => acc + (building.rooms?.length || 0), 0);
