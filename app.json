@@ -63,7 +63,6 @@
     "owner": "bobjoerules",
     "extra": {
       "router": {},
-      "discordWebhookUrl": "https://discord.com/api/webhooks/1478232097717096531/SI_qWNuBrZvPjyJbYIagOjNLPz6Sx2MKtjQ5S1Cl_T__oOJ7wc11rEMl0uHftnrGeuc-",
       "eas": {
         "projectId": "3fd11666-0320-468c-bdfe-deebe18ee4c5"
       }
