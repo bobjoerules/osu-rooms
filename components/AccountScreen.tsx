@@ -561,6 +561,14 @@ export default function Account() {
                 >
                   <Text style={{ color: theme.subtext, fontSize: 13, textDecorationLine: 'underline' }}>Account Deletion Info</Text>
                 </Pressable>
+
+                <Text style={{ color: theme.subtext, fontSize: 13 }}>•</Text>
+
+                <Pressable
+                  onPress={() => router.push('https://discord.gg/gxsyWVpJRr' as any)}
+                >
+                  <Text style={{ color: theme.subtext, fontSize: 13, textDecorationLine: 'underline' }}>Support/Suggestions</Text>
+                </Pressable>
               </View>
 
               {isAdmin && (
