@@ -107,6 +107,25 @@ export default function RateRoomModal() {
                 }
 
                 await setDoc(userRef, updateData, { merge: true });
+
+                // Send Discord Notification
+                try {
+                    const { sendDiscordNotification } = require('../../../../lib/discord');
+                    await sendDiscordNotification({
+                        title: `💬 New Review: ${building?.name || 'Unknown Building'} ${finalRoomId}`,
+                        description: comment.trim() ? `"${comment.trim()}"` : "_No comment provided._",
+                        fields: [
+                            { name: 'User', value: user.displayName || 'Anonymous', inline: true },
+                            { name: 'Email', value: user.email || 'N/A', inline: true },
+                            { name: 'Building', value: building?.name || 'N/A', inline: true },
+                            { name: 'Room', value: finalRoomId || 'N/A', inline: true },
+                        ],
+                        color: 0xf39c12, // Orange color
+                        url: `https://osu-rooms.pages.dev/room/${finalRoomId}`, // Assuming this is the web URL
+                    });
+                } catch (discordErr) {
+                    console.error('Failed to send Discord notification:', discordErr);
+                }
             }
             handleClose(false);
         } catch (err) {

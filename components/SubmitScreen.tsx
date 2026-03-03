@@ -181,6 +181,27 @@ export default function SubmitScreen() {
                 createdAt: serverTimestamp(),
             });
 
+            // Send Discord Notification
+            try {
+                const { sendDiscordNotification } = require('../lib/discord');
+                await sendDiscordNotification({
+                    title: `🆕 New Room Submission: ${building.trim()} ${roomNumber.trim()}`,
+                    description: `A user has submitted a new room or update for review.`,
+                    fields: [
+                        { name: 'User', value: auth.currentUser?.displayName || 'Anonymous', inline: true },
+                        { name: 'Email', value: auth.currentUser?.email || 'N/A', inline: true },
+                        { name: 'Building', value: building.trim(), inline: true },
+                        { name: 'Room', value: roomNumber.trim(), inline: true },
+                        { name: 'Type', value: roomType.trim() || 'N/A', inline: true },
+                        { name: 'Capacity', value: capacity.trim() || 'N/A', inline: true },
+                    ],
+                    color: 0x2ecc71, // Green color
+                    imageUrls: imageUrl ? [imageUrl] : undefined,
+                });
+            } catch (discordErr) {
+                console.error('Failed to send Discord notification:', discordErr);
+            }
+
             const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
             if (!isExpoGo) {
                 try {

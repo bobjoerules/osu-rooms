@@ -126,6 +126,26 @@ export default function MultiPhotoSubmit() {
                 createdAt: serverTimestamp(),
             });
 
+            // Send Discord Notification
+            try {
+                const { sendDiscordNotification } = require('../lib/discord');
+                await sendDiscordNotification({
+                    title: `📸 New Photo Submission: ${buildingID} ${roomNumber}`,
+                    description: `A user has submitted ${uploadedUrls.length} new photo(s) for ${buildingID} ${roomNumber}.`,
+                    fields: [
+                        { name: 'User', value: auth.currentUser?.displayName || 'Anonymous', inline: true },
+                        { name: 'Email', value: auth.currentUser?.email || 'N/A', inline: true },
+                        { name: 'Building', value: buildingID || 'N/A', inline: true },
+                        { name: 'Room', value: roomNumber || 'N/A', inline: true },
+                    ],
+                    color: 0x3498db, // Blue color
+                    imageUrls: uploadedUrls,
+                });
+            } catch (discordErr) {
+                console.error('Failed to send Discord notification:', discordErr);
+                // We don't want to block the user if the notification fails
+            }
+
             router.back();
         } catch (error: any) {
             console.error('Upload Error:', error);
