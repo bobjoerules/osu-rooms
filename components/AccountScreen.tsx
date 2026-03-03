@@ -567,7 +567,7 @@ export default function Account() {
                 <Pressable
                   onPress={() => router.push('https://discord.gg/gxsyWVpJRr' as any)}
                 >
-                  <Text style={{ color: theme.subtext, fontSize: 13, textDecorationLine: 'underline' }}>Support/Suggestions</Text>
+                  <Text style={{ color: theme.subtext, fontSize: 13, textDecorationLine: 'underline' }}>Support</Text>
                 </Pressable>
               </View>
 
