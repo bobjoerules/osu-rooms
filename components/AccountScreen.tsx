@@ -6,9 +6,11 @@ import {
   createUserWithEmailAndPassword,
   deleteUser,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile
+  updateProfile,
+  verifyBeforeUpdateEmail
 } from "firebase/auth";
 import {
   collection,
@@ -73,7 +75,11 @@ export default function Account() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const isSignup = mode === "signup";
   const [loading, setLoading] = useState(false);
+  const isDisabled = isSignup
+    ? !email.trim() || !password.trim() || !username.trim()
+    : !email.trim() || !password.trim();
 
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -89,6 +95,8 @@ export default function Account() {
   const [showPlayStore, setShowPlayStore] = useState(false);
   const [photoURL, setPhotoURL] = useState<string | null>(currentUser?.photoURL ?? null);
   const [uploading, setUploading] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
 
   const centerLoginMobile = Platform.OS !== 'web' && !userEmail;
   const { buildings } = useBuildings();
@@ -213,6 +221,78 @@ export default function Account() {
         setPasswordError("Password is too weak (min 6 characters).");
       } else {
         setMessage(`${context} failed${code ? ` (${code})` : ""}: ${friendly} `);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    const targetEmail = auth.currentUser?.email || email.trim();
+    console.log("Forgot password requested for:", targetEmail);
+
+    if (!targetEmail) {
+      const msg = "Enter your email to reset your password.";
+      setEmailError(msg);
+      if (Platform.OS === 'web') window.alert(msg);
+      else Alert.alert("Error", msg);
+      return;
+    }
+
+    setLoading(true);
+    triggerHaptic();
+    try {
+      await sendPasswordResetEmail(auth, targetEmail);
+      const successMsg = "Password reset email sent to " + targetEmail;
+      setMessage(successMsg);
+      if (Platform.OS === 'web') window.alert(successMsg);
+      else Alert.alert("Success", successMsg);
+    } catch (err: any) {
+      console.error("Forgot password error:", err);
+      const friendly = (err.message || err.code);
+      const errorMsg = "Failed to send reset email: " + friendly;
+      setMessage(errorMsg);
+      if (Platform.OS === 'web') window.alert(errorMsg);
+      else Alert.alert("Error", errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleUpdateEmail() {
+    const trimmedEmail = newEmail.trim();
+    if (!trimmedEmail) {
+      Alert.alert("Error", "Email cannot be empty.");
+      return;
+    }
+    if (trimmedEmail === userEmail) {
+      setIsEditingEmail(false);
+      return;
+    }
+
+    setLoading(true);
+    triggerHaptic();
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("No user logged in");
+
+      await verifyBeforeUpdateEmail(user, trimmedEmail);
+
+      await updateDoc(doc(db, "users", user.uid), {
+        email: trimmedEmail
+      });
+
+      Alert.alert(
+        "Verification Sent",
+        "A verification email has been sent to your new email address. Please verify it to complete the update."
+      );
+      setIsEditingEmail(false);
+    } catch (error: any) {
+      console.error("Update email error:", error);
+      if (error.code === 'auth/requires-recent-login') {
+        Alert.alert("Security Check", "For security, please sign out and sign back in before changing your email.");
+      } else {
+        Alert.alert("Error", "Failed to update email: " + (error.message || error.code));
       }
     } finally {
       setLoading(false);
@@ -409,11 +489,6 @@ export default function Account() {
     }
   };
 
-  const isSignup = mode === "signup";
-  const isDisabled = isSignup
-    ? !email.trim() || !password.trim() || !username.trim()
-    : !email.trim() || !password.trim();
-
   const APP_STORE_URL = 'https://apps.apple.com/app/idXXXXXXXXX';
   const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=XXXXXXXX';
 
@@ -512,6 +587,54 @@ export default function Account() {
                 <Ionicons name="mail-outline" size={24} color={theme.subtext} />
               </View>
 
+              {isEditingEmail ? (
+                <View style={{ gap: 8, marginTop: 8 }}>
+                  <Text style={styles.label}>New Email</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={newEmail}
+                    onChangeText={setNewEmail}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    placeholder="Enter new email"
+                    placeholderTextColor={theme.placeholder}
+                  />
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <Pressable
+                      style={[styles.button, { flex: 1, paddingVertical: 8, height: 40, justifyContent: 'center' }]}
+                      onPress={handleUpdateEmail}
+                    >
+                      <Text style={[styles.buttonText, { fontSize: 14 }]}>Save</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.buttonSecondary, { flex: 1, paddingVertical: 8, height: 40, justifyContent: 'center' }]}
+                      onPress={() => setIsEditingEmail(false)}
+                    >
+                      <Text style={[styles.buttonText, { color: theme.text, fontSize: 14 }]}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+                  <Pressable
+                    style={[styles.buttonSecondary, { flex: 1 }]}
+                    onPress={() => {
+                      triggerHaptic();
+                      setNewEmail("");
+                      setIsEditingEmail(true);
+                    }}
+                  >
+                    <Text style={[styles.buttonText, { color: theme.text }]}>Change Email</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.buttonSecondary, { flex: 1 }]}
+                    onPress={handleForgotPassword}
+                  >
+                    <Text style={[styles.buttonText, { color: theme.text }]}>Change Password</Text>
+                  </Pressable>
+                </View>
+              )}
+
               {auth.currentUser && !auth.currentUser.emailVerified && (
                 <View style={{ marginTop: 8 }}>
                   <Text style={[styles.errorText, { marginBottom: 8 }]}>Email not verified</Text>
@@ -534,7 +657,7 @@ export default function Account() {
                 </View>
               )}
 
-              <Pressable style={[styles.buttonSecondary, { marginTop: 20, width: '100%' }]} onPress={handleSignOut}>
+              <Pressable style={[styles.buttonSecondary, { marginTop: 12, width: '100%' }]} onPress={handleSignOut}>
                 <Text style={[styles.buttonText, { color: theme.text }]}>Sign out</Text>
               </Pressable>
 
@@ -789,23 +912,37 @@ export default function Account() {
                 )}
               </Pressable>
 
-              <Pressable
-                style={styles.linkButton}
-                onPress={() => {
-                  triggerHaptic();
-                  setMode(isSignup ? "login" : "signup");
-                  setMessage(null);
-                  setEmailError(null);
-                  setPasswordError(null);
-                  setUsernameError(null);
-                }}
-              >
-                <Text style={styles.linkText}>
-                  {isSignup
-                    ? "Have an account? Sign in"
-                    : "Need an account? Sign up"}
-                </Text>
-              </Pressable>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 12 }}>
+                <Pressable
+                  style={styles.linkButton}
+                  onPress={() => {
+                    triggerHaptic();
+                    setMode(isSignup ? "login" : "signup");
+                    setMessage(null);
+                    setEmailError(null);
+                    setPasswordError(null);
+                    setUsernameError(null);
+                  }}
+                >
+                  <Text style={styles.linkText}>
+                    {isSignup
+                      ? "Have an account? Sign in"
+                      : "Create an account"}
+                  </Text>
+                </Pressable>
+
+                {!isSignup && (
+                  <>
+                    <Text style={{ color: theme.subtext, fontSize: 13 }}>•</Text>
+                    <Pressable
+                      style={styles.linkButton}
+                      onPress={handleForgotPassword}
+                    >
+                      <Text style={styles.linkText}>Forgot password?</Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
 
               {Platform.OS === 'web' && !userEmail && (showAppStore || showPlayStore) && (
                 <View style={styles.storeLinks}>
@@ -856,7 +993,7 @@ export default function Account() {
             </View>
           )}
 
-          {message && <Text style={styles.message}>{message}</Text>}
+
         </View>
 
         <View style={styles.footer}>
