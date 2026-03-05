@@ -24,7 +24,7 @@ export const OSU_LINKS: OsuLink[] = [
         androidUrl: 'https://play.google.com/store/apps/details?id=com.osuhonorsapp',
         websiteUrl: 'https://events.oregonstate.edu',
         icon: 'calendar',
-        appScheme: 'osuhonorsapp://',
+        appScheme: 'https://osu-honors-backend.web.app/viewevent',
         category: 'Apps',
     },
     {
@@ -61,9 +61,9 @@ export const OSU_LINKS: OsuLink[] = [
         category: 'Websites',
     },
     {
-        title: 'OSU Rooms (Web)',
-        url: 'https://osurooms.bobjoerules.com',
-        icon: 'star',
+        title: 'OSU VPN',
+        url: 'https://technology.oregonstate.edu/services/vpn',
+        icon: 'lock-closed',
         category: 'Websites',
     },
 ];
