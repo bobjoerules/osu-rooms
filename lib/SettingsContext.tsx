@@ -18,6 +18,9 @@ interface SettingsContextType {
     setShowReviewsTab: (value: boolean) => void;
     lowPowerMode: boolean;
     setLowPowerMode: (value: boolean) => void;
+    defaultLandingTab: 'rooms' | 'osu';
+    setDefaultLandingTab: (value: 'rooms' | 'osu') => void;
+    settingsLoaded: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -29,6 +32,7 @@ const BETA_FEATURES_KEY = '@osu_rooms_use_beta_features';
 const SHOW_SUBMIT_TAB_KEY = '@osu_rooms_show_submit_tab';
 const SHOW_REVIEWS_TAB_KEY = '@osu_rooms_show_reviews_tab';
 const LOW_POWER_MODE_KEY = '@osu_rooms_low_power_mode';
+const DEFAULT_LANDING_TAB_KEY = '@osu_rooms_default_landing_tab';
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showPlaceholders, setShowPlaceholders] = useState(false);
@@ -38,11 +42,22 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [showSubmitTab, setShowSubmitTab] = useState(true);
     const [showReviewsTab, setShowReviewsTab] = useState(true);
     const [lowPowerMode, setLowPowerMode] = useState(false);
+    const [defaultLandingTab, setDefaultLandingTab] = useState<'rooms' | 'osu'>('rooms');
+    const [settingsLoaded, setSettingsLoaded] = useState(false);
 
     useEffect(() => {
         const loadSettings = async () => {
             try {
-                const [placeholdersValue, hapticsValue, buildingImagesValue, betaFeaturesValue, showSubmitTabValue, showReviewsTabValue, lowPowerModeValue] = await Promise.all([
+                const [
+                    placeholdersValue,
+                    hapticsValue,
+                    buildingImagesValue,
+                    betaFeaturesValue,
+                    showSubmitTabValue,
+                    showReviewsTabValue,
+                    lowPowerModeValue,
+                    defaultLandingTabValue
+                ] = await Promise.all([
                     AsyncStorage.getItem(PLACEHOLDERS_KEY),
                     AsyncStorage.getItem(HAPTICS_KEY),
                     AsyncStorage.getItem(BUILDING_IMAGES_KEY),
@@ -50,6 +65,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                     AsyncStorage.getItem(SHOW_SUBMIT_TAB_KEY),
                     AsyncStorage.getItem(SHOW_REVIEWS_TAB_KEY),
                     AsyncStorage.getItem(LOW_POWER_MODE_KEY),
+                    AsyncStorage.getItem(DEFAULT_LANDING_TAB_KEY),
                 ]);
 
                 if (placeholdersValue !== null) {
@@ -73,8 +89,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 if (lowPowerModeValue !== null) {
                     setLowPowerMode(JSON.parse(lowPowerModeValue));
                 }
+                if (defaultLandingTabValue !== null) {
+                    setDefaultLandingTab(JSON.parse(defaultLandingTabValue));
+                }
             } catch (e) {
                 console.error('Failed to load settings', e);
+            } finally {
+                setSettingsLoaded(true);
             }
         };
 
@@ -144,6 +165,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const updateDefaultLandingTab = async (value: 'rooms' | 'osu') => {
+        try {
+            setDefaultLandingTab(value);
+            await AsyncStorage.setItem(DEFAULT_LANDING_TAB_KEY, JSON.stringify(value));
+        } catch (e) {
+            console.error('Failed to save settings', e);
+        }
+    };
+
     const value = React.useMemo(() => ({
         showPlaceholders,
         setShowPlaceholders: updateShowPlaceholders,
@@ -158,7 +188,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         showReviewsTab,
         setShowReviewsTab: updateShowReviewsTab,
         lowPowerMode,
-        setLowPowerMode: updateLowPowerMode
+        setLowPowerMode: updateLowPowerMode,
+        defaultLandingTab,
+        setDefaultLandingTab: updateDefaultLandingTab,
+        settingsLoaded
     }), [
         showPlaceholders,
         useHaptics,
@@ -166,7 +199,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         useBetaFeatures,
         showSubmitTab,
         showReviewsTab,
-        lowPowerMode
+        lowPowerMode,
+        defaultLandingTab,
+        settingsLoaded
     ]);
 
     return (

@@ -62,7 +62,8 @@ export default function Account() {
     useBetaFeatures, setUseBetaFeatures,
     showSubmitTab, setShowSubmitTab,
     showReviewsTab, setShowReviewsTab,
-    lowPowerMode, setLowPowerMode
+    lowPowerMode, setLowPowerMode,
+    defaultLandingTab, setDefaultLandingTab
   } = useSettings();
   const triggerHaptic = useHapticFeedback();
   const router = useRouter();
@@ -845,6 +846,23 @@ export default function Account() {
                     onValueChange={(val) => {
                       triggerHaptic();
                       setLowPowerMode(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                  />
+                </View>
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Default to OSU Tab</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>The app will open to the OSU Resources tab instead of the rooms list by default</Text>
+                  </View>
+                  <Switch
+                    value={defaultLandingTab === 'osu'}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setDefaultLandingTab(val ? 'osu' : 'rooms');
                     }}
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}

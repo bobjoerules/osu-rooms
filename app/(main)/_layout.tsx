@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { Tabs, useSegments } from 'expo-router';
+import { Tabs, useRouter, useSegments } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
@@ -7,10 +7,25 @@ import CustomTabBar from '../../components/CustomTabBar';
 import { useHapticFeedback, useSettings } from '../../lib/SettingsContext';
 
 export default function TabLayout() {
-    const { useBetaFeatures, showSubmitTab, showReviewsTab } = useSettings();
+    const { defaultLandingTab, settingsLoaded, useBetaFeatures, showSubmitTab, showReviewsTab } = useSettings();
     const triggerHaptic = useHapticFeedback();
     const segments = useSegments();
     const lastTab = useRef(segments[segments.length - 1]);
+    const router = useRouter();
+    const hasRedirected = useRef(false);
+
+    useEffect(() => {
+        if (!settingsLoaded || hasRedirected.current) return;
+
+        const isAtRoot = segments.length === 1 && segments[0] === '(main)';
+
+        if (isAtRoot && defaultLandingTab === 'osu' && useBetaFeatures) {
+            hasRedirected.current = true;
+            router.replace('/osu');
+        } else {
+            hasRedirected.current = true;
+        }
+    }, [defaultLandingTab, settingsLoaded, useBetaFeatures, segments, router]);
 
     useEffect(() => {
         const currentTab = segments[segments.length - 1];
