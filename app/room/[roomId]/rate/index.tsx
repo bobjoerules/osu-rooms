@@ -34,6 +34,13 @@ export default function RateRoomModal() {
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
     const { buildings } = useBuildings();
+    const [ratings, setRatings] = useState({
+        overall: 0,
+        chairs: 0,
+        lighting: 0,
+        projector: 0,
+        temperature: 0,
+    });
 
     const finalRoomId = Array.isArray(roomId) ? roomId[0] : roomId;
     const building = useMemo(() => {
@@ -108,9 +115,16 @@ export default function RateRoomModal() {
 
                 await setDoc(userRef, updateData, { merge: true });
 
-                // Send Discord Notification
                 try {
                     const { sendDiscordNotification } = require('../../../../lib/discord');
+
+                    const tempLabel = (v: number) => {
+                        if (v === 1) return '❄️ Cold';
+                        if (v === 2) return '✅ Just Right';
+                        if (v === 3) return '🔥 Hot';
+                        return '❓ Unknown';
+                    };
+
                     await sendDiscordNotification({
                         title: `💬 New Review: ${building?.name || 'Unknown Building'} ${finalRoomId}`,
                         description: comment.trim() ? `"${comment.trim()}"` : "_No comment provided._",
@@ -118,10 +132,15 @@ export default function RateRoomModal() {
                             { name: 'User', value: user.displayName || 'Anonymous', inline: true },
                             { name: 'Email', value: user.email || 'N/A', inline: true },
                             { name: 'Building', value: building?.name || 'N/A', inline: true },
+                            { name: 'Rating', value: `${ratings.overall} / 5`, inline: true },
+                            { name: 'Chairs', value: `${ratings.chairs} / 5`, inline: true },
+                            { name: 'Lighting', value: `${ratings.lighting} / 5`, inline: true },
+                            { name: 'Projector', value: `${ratings.projector} / 5`, inline: true },
+                            { name: 'Temperature', value: tempLabel(ratings.temperature), inline: true },
                             { name: 'Room', value: finalRoomId || 'N/A', inline: true },
                         ],
-                        color: 0xf39c12, // Orange color
-                        url: `https://osu-rooms.pages.dev/room/${finalRoomId}`, // Assuming this is the web URL
+                        color: 0xf39c12,
+                        url: `https://osu-rooms.pages.dev/room/${finalRoomId}`,
                     });
                 } catch (discordErr) {
                     console.error('Failed to send Discord notification:', discordErr);
@@ -167,27 +186,44 @@ export default function RateRoomModal() {
                                     itemId={finalRoomId as string}
                                     buildingId={building?.id}
                                     size={STAR_SIZE}
+                                    onRatingChange={(r) => setRatings(prev => ({ ...prev, overall: r }))}
                                 />
                             </View>
 
                             <View style={styles.ratingGroup}>
                                 <Text style={[styles.label, { color: theme.text }]}>Chairs</Text>
-                                <MemoStarRating itemId={`${finalRoomId}_chairs`} size={STAR_SIZE} />
+                                <MemoStarRating
+                                    itemId={`${finalRoomId}_chairs`}
+                                    size={STAR_SIZE}
+                                    onRatingChange={(r) => setRatings(prev => ({ ...prev, chairs: r }))}
+                                />
                             </View>
 
                             <View style={styles.ratingGroup}>
                                 <Text style={[styles.label, { color: theme.text }]}>Lighting</Text>
-                                <MemoStarRating itemId={`${finalRoomId}_lighting`} size={STAR_SIZE} />
+                                <MemoStarRating
+                                    itemId={`${finalRoomId}_lighting`}
+                                    size={STAR_SIZE}
+                                    onRatingChange={(r) => setRatings(prev => ({ ...prev, lighting: r }))}
+                                />
                             </View>
 
                             <View style={styles.ratingGroup}>
                                 <Text style={[styles.label, { color: theme.text }]}>Projector/Screen Visibility</Text>
-                                <MemoStarRating itemId={`${finalRoomId}_projector`} size={STAR_SIZE} />
+                                <MemoStarRating
+                                    itemId={`${finalRoomId}_projector`}
+                                    size={STAR_SIZE}
+                                    onRatingChange={(r) => setRatings(prev => ({ ...prev, projector: r }))}
+                                />
                             </View>
 
                             <View style={styles.ratingGroup}>
                                 <Text style={[styles.label, { color: theme.text }]}>Temperature</Text>
-                                <TemperatureRating itemId={`${finalRoomId}_temperature`} width={starWidth} />
+                                <TemperatureRating
+                                    itemId={`${finalRoomId}_temperature`}
+                                    width={starWidth}
+                                    onRatingChange={(r) => setRatings(prev => ({ ...prev, temperature: r }))}
+                                />
                             </View>
 
                             {canComment && (

@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { doc, onSnapshot, runTransaction, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, runTransaction, serverTimestamp } from 'firebase/firestore';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { auth, db } from '../firebaseConfig';
@@ -7,9 +7,9 @@ import { useHapticFeedback } from '../lib/SettingsContext';
 import { Theme, useTheme } from '../theme';
 
 type TemperatureValue = 1 | 2 | 3;
-type TemperatureRatingProps = { itemId: string; width?: number };
+type TemperatureRatingProps = { itemId: string; width?: number; onRatingChange?: (rating: TemperatureValue) => void };
 
-export default function TemperatureRating({ itemId, width }: TemperatureRatingProps) {
+export default function TemperatureRating({ itemId, width, onRatingChange }: TemperatureRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -38,8 +38,12 @@ export default function TemperatureRating({ itemId, width }: TemperatureRatingPr
     const unsub = onSnapshot(userRef, (snap) => {
       const data = snap.data() as { rating?: number } | undefined;
       const r = data?.rating ?? 0;
-      if (r === 1 || r === 2 || r === 3) setMyValue(r as TemperatureValue);
-      else setMyValue(0);
+      if (r === 1 || r === 2 || r === 3) {
+        setMyValue(r as TemperatureValue);
+        if (onRatingChange) onRatingChange(r as TemperatureValue);
+      } else {
+        setMyValue(0);
+      }
     });
     return unsub;
   }, [itemId]);
@@ -93,6 +97,7 @@ export default function TemperatureRating({ itemId, width }: TemperatureRatingPr
 
         tx.set(userRef, { rating: value, updatedAt: serverTimestamp() }, { merge: true });
         tx.set(itemRef, { avg: txAvg, count: txCount, updatedAt: serverTimestamp() }, { merge: true });
+        if (onRatingChange) onRatingChange(value);
       });
       triggerHaptic();
     } catch (e) {

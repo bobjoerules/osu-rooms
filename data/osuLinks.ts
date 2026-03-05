@@ -37,6 +37,23 @@ export const OSU_LINKS: OsuLink[] = [
         category: 'Apps',
     },
     {
+        title: 'Zoom',
+        url: 'https://apps.apple.com/us/app/zoom-one-platform-to-connect/id546505307',
+        androidUrl: 'https://play.google.com/store/apps/details?id=us.zoom.videomeetings',
+        websiteUrl: 'https://oregonstate.zoom.us',
+        icon: 'videocam',
+        appScheme: 'zoomus://',
+        category: 'Apps',
+    },
+    {
+        title: 'Duo Mobile',
+        url: 'https://apps.apple.com/us/app/duo-mobile/id422663827',
+        androidUrl: 'https://play.google.com/store/apps/details?id=com.duosecurity.duomobile',
+        websiteUrl: 'https://duo.oregonstate.edu',
+        icon: 'shield-checkmark',
+        category: 'Apps',
+    },
+    {
         title: 'BeaverHub',
         url: 'https://beaverhub.oregonstate.edu',
         icon: 'grid',
@@ -64,6 +81,12 @@ export const OSU_LINKS: OsuLink[] = [
         title: 'OSU VPN',
         url: 'https://technology.oregonstate.edu/services/vpn',
         icon: 'lock-closed',
+        category: 'Websites',
+    },
+    {
+        title: 'OSU Link Shortener',
+        url: 'https://beav.es/',
+        icon: 'link',
         category: 'Websites',
     },
 ];

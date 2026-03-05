@@ -17,9 +17,10 @@ export type StarRatingProps = {
   initialMax?: number;
   size?: number;
   showMetaText?: boolean;
+  onRatingChange?: (rating: number) => void;
 };
 
-export default function StarRating({ itemId, buildingId, initialMax = 5, size = 40, showMetaText = false }: StarRatingProps) {
+export default function StarRating({ itemId, buildingId, initialMax = 5, size = 40, showMetaText = false, onRatingChange }: StarRatingProps) {
   const theme = useTheme();
   const triggerHaptic = useHapticFeedback();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -68,7 +69,9 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
     const userRef = doc(db, 'ratings', itemId, 'userRatings', user.uid);
     const unsub = onSnapshot(userRef, (snap) => {
       const data = snap.data() as { rating?: number } | undefined;
-      setMyRating(data?.rating ?? 0);
+      const rating = data?.rating ?? 0;
+      setMyRating(rating);
+      if (onRatingChange) onRatingChange(rating);
     });
     return unsub;
   }, [itemId]);
@@ -141,6 +144,8 @@ export default function StarRating({ itemId, buildingId, initialMax = 5, size = 
           { avg: newAvg, count: newCount, updatedAt: serverTimestamp() },
           { merge: true }
         );
+
+        if (onRatingChange) onRatingChange(value);
 
         if (buildingRef && buildingSnap?.exists()) {
           const bData = buildingSnap.data();
