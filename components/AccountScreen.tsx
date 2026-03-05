@@ -729,52 +729,18 @@ export default function Account() {
               <View style={styles.settingsContainer}>
                 <View style={styles.separator} />
                 <Text style={styles.settingsTitle}>Settings</Text>
+
+                {/* Navigation & Tab Prefs */}
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images (these rooms have a higher chance of being inaccurate)</Text>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Default to OSU Tab</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>The app will open to the OSU Resources tab instead of the rooms list by default</Text>
                   </View>
                   <Switch
-                    value={showPlaceholders}
+                    value={defaultLandingTab === 'osu'}
                     onValueChange={(val) => {
                       triggerHaptic();
-                      setShowPlaceholders(val);
-                    }}
-                    trackColor={{ false: theme.border, true: theme.primary }}
-                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
-                    activeThumbColor={colours.white}
-                  />
-                </View>
-
-                {Platform.OS !== 'web' && (
-                  <View style={styles.settingRow}>
-                    <View style={{ flex: 1, gap: 2 }}>
-                      <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
-                      <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
-                    </View>
-                    <Switch
-                      value={useHaptics}
-                      onValueChange={(val) => {
-                        triggerHaptic();
-                        setUseHaptics(val);
-                      }}
-                      trackColor={{ false: theme.border, true: theme.primary }}
-                      thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
-                      activeThumbColor="white"
-                    />
-                  </View>
-                )}
-
-                <View style={styles.settingRow}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers</Text>
-                  </View>
-                  <Switch
-                    value={showBuildingImages}
-                    onValueChange={(val) => {
-                      triggerHaptic();
-                      setShowBuildingImages(val);
+                      setDefaultLandingTab(val ? 'osu' : 'rooms');
                     }}
                     trackColor={{ false: theme.border, true: theme.primary }}
                     thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
@@ -836,6 +802,46 @@ export default function Account() {
                   />
                 </View>
 
+                {/* Display Settings */}
+                <View style={[styles.separator, { marginVertical: 12, height: 0.5, opacity: 0.3 }]} />
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show Building Images</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display building images under dropdown headers</Text>
+                  </View>
+                  <Switch
+                    value={showBuildingImages}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowBuildingImages(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                  />
+                </View>
+
+                <View style={styles.settingRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={[styles.settingLabel, { color: theme.text }]}>Show rooms without photos</Text>
+                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>Display rooms that currently have placeholder images (these rooms have a higher chance of being inaccurate)</Text>
+                  </View>
+                  <Switch
+                    value={showPlaceholders}
+                    onValueChange={(val) => {
+                      triggerHaptic();
+                      setShowPlaceholders(val);
+                    }}
+                    trackColor={{ false: theme.border, true: theme.primary }}
+                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
+                    activeThumbColor={colours.white}
+                  />
+                </View>
+
+                {/* System & Performance */}
+                <View style={[styles.separator, { marginVertical: 12, height: 0.5, opacity: 0.3 }]} />
+
                 <View style={styles.settingRow}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.settingLabel, { color: theme.text }]}>Low Power Mode</Text>
@@ -853,22 +859,24 @@ export default function Account() {
                   />
                 </View>
 
-                <View style={styles.settingRow}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[styles.settingLabel, { color: theme.text }]}>Default to OSU Tab</Text>
-                    <Text style={[styles.settingDescription, { color: theme.subtext }]}>The app will open to the OSU Resources tab instead of the rooms list by default</Text>
+                {Platform.OS !== 'web' && (
+                  <View style={styles.settingRow}>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={[styles.settingLabel, { color: theme.text }]}>Haptic Feedback</Text>
+                      <Text style={[styles.settingDescription, { color: theme.subtext }]}>Vibrate on every click and interaction</Text>
+                    </View>
+                    <Switch
+                      value={useHaptics}
+                      onValueChange={(val) => {
+                        triggerHaptic();
+                        setUseHaptics(val);
+                      }}
+                      trackColor={{ false: theme.border, true: theme.primary }}
+                      thumbColor={Platform.OS === 'ios' ? undefined : '#fff'}
+                      activeThumbColor="white"
+                    />
                   </View>
-                  <Switch
-                    value={defaultLandingTab === 'osu'}
-                    onValueChange={(val) => {
-                      triggerHaptic();
-                      setDefaultLandingTab(val ? 'osu' : 'rooms');
-                    }}
-                    trackColor={{ false: theme.border, true: theme.primary }}
-                    thumbColor={Platform.OS === 'ios' ? undefined : colours.white}
-                    activeThumbColor={colours.white}
-                  />
-                </View>
+                )}
 
               </View>
             </View>
