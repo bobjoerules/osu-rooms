@@ -89,4 +89,10 @@ export const OSU_LINKS: OsuLink[] = [
         icon: 'link',
         category: 'Websites',
     },
+    {
+        title: 'OSU Media Hub',
+        url: 'https://mediahub.oregonstate.edu',
+        icon: 'play-circle',
+        category: 'Websites',
+    },
 ];

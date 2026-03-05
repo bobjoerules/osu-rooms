@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Alert,
     FlatList,
@@ -8,14 +8,15 @@ import {
     Pressable,
     StyleSheet,
     Text,
+    TextInput,
     View,
     useWindowDimensions
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { OSU_LINKS } from '../../data/osuLinks';
+import { OSU_LINKS, OsuLink } from '../../data/osuLinks';
 import { useApp } from '../../lib/AppContext';
 import { useHapticFeedback } from '../../lib/SettingsContext';
-import { useTheme } from '../../theme';
+import { Theme, useTheme } from '../../theme';
 
 export default function OsuScreen() {
     const theme = useTheme();
@@ -23,9 +24,13 @@ export default function OsuScreen() {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { bannerHeight } = useApp();
-    const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState<'All' | 'Apps' | 'Websites'>('All');
 
-    const handleOpenLink = async (item: typeof OSU_LINKS[0]) => {
+    const isDesktopWeb = Platform.OS === 'web' && width >= 768;
+    const styles = useMemo(() => createStyles(theme, isDesktopWeb, bannerHeight, insets), [theme, isDesktopWeb, bannerHeight, insets]);
+
+    const handleOpenLink = async (item: OsuLink) => {
         triggerHaptic();
 
         if (item.appScheme && Platform.OS !== 'web') {
@@ -51,137 +56,309 @@ export default function OsuScreen() {
         }
     };
 
-    let categorizedLinks: Record<string, typeof OSU_LINKS> = {};
-    if (isDesktopWeb) {
-        categorizedLinks['Websites'] = OSU_LINKS.map(link => ({ ...link, category: 'Websites' }));
-    } else {
-        categorizedLinks = OSU_LINKS.reduce((acc, link) => {
-            const cat = link.category;
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push(link);
-            return acc;
-        }, {} as Record<string, typeof OSU_LINKS>);
-    }
+    const filteredLinks = useMemo(() => {
+        let links = OSU_LINKS;
 
-    const renderSection = (title: string, data: typeof OSU_LINKS, hideTitle?: boolean, hideLinks?: boolean) => (
-        <View style={styles.sectionContainer}>
-            {!(hideTitle) && (
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>{title}</Text>
-            )}
-            <View style={[styles.sectionBox, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                {data.map((item, index) => (
-                    <Pressable
-                        key={item.url}
-                        style={({ pressed }) => [
-                            styles.linkItem,
-                            index !== data.length - 1 && { borderBottomWidth: 1, borderBottomColor: theme.border },
-                            pressed && { backgroundColor: theme.border + '33' }
-                        ]}
-                        onPress={() => handleOpenLink(item)}
-                    >
-                        <View style={[styles.iconBox, { backgroundColor: theme.primary + '15' }]}>
-                            <Ionicons name={item.icon as any || 'link'} size={20} color={theme.primary} />
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={[styles.linkLabel, { color: theme.text }]}>{item.title}</Text>
-                            {!hideLinks && (
-                                <Text style={[styles.linkUrl, { color: theme.subtext }]} numberOfLines={1}>
-                                    {isDesktopWeb && item.websiteUrl
-                                        ? item.websiteUrl
-                                        : (Platform.OS === 'android' && item.androidUrl)
-                                            ? item.androidUrl
-                                            : item.url}
-                                </Text>
-                            )}
-                        </View>
-                        <Ionicons name="chevron-forward" size={18} color={theme.border} />
-                    </Pressable>
-                ))}
+        if (activeCategory !== 'All') {
+            links = links.filter(link => link.category === activeCategory);
+        }
+
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            links = links.filter(link =>
+                link.title.toLowerCase().includes(query) ||
+                link.category.toLowerCase().includes(query)
+            );
+        }
+
+        return links;
+    }, [searchQuery, activeCategory]);
+
+    const categories: ('All' | 'Apps' | 'Websites')[] = ['All', 'Apps', 'Websites'];
+
+    const numColumns = isDesktopWeb ? (width >= 1200 ? 3 : 2) : 1;
+
+    const renderLinkItem = ({ item }: { item: OsuLink }) => (
+        <Pressable
+            style={({ pressed }) => [
+                styles.linkCard,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed && { transform: [{ scale: 0.98 }], backgroundColor: theme.border + '22' }
+            ]}
+            onPress={() => handleOpenLink(item)}
+        >
+            <View style={[styles.iconContainer, { backgroundColor: theme.primary + '15' }]}>
+                <Ionicons name={item.icon as any || 'link'} size={24} color={theme.primary} />
             </View>
-        </View>
+            <View style={styles.linkInfo}>
+                <View style={styles.linkHeader}>
+                    <Text style={[styles.linkTitle, { color: theme.text }]} numberOfLines={1}>
+                        {item.title}
+                    </Text>
+                    <View style={[styles.categoryBadge, { backgroundColor: theme.border + '33' }]}>
+                        <Text style={[styles.categoryText, { color: theme.subtext }]}>
+                            {item.category === 'Apps' ? 'App' : 'Web'}
+                        </Text>
+                    </View>
+                </View>
+                <Text style={[styles.linkSubtext, { color: theme.subtext }]} numberOfLines={1}>
+                    {isDesktopWeb && item.websiteUrl
+                        ? item.websiteUrl.replace(/^https?:\/\//, '')
+                        : (Platform.OS === 'android' && item.androidUrl)
+                            ? 'Open in Play Store'
+                            : item.url.replace(/^https?:\/\//, '')}
+                </Text>
+            </View>
+            <Ionicons name="arrow-forward" size={18} color={theme.subtext} style={styles.chevron} />
+        </Pressable>
     );
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: theme.background, marginTop: Platform.OS === 'web' ? 0 : bannerHeight, paddingTop: Platform.OS === 'web' ? 75 + bannerHeight : 0 }]} edges={(Platform.OS === 'web' || bannerHeight > 0) ? [] : ['top']}>
-            <View style={[
-                styles.header,
-                isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }
-            ]}>
-                <Text style={[styles.title, { color: theme.text }]}>OSU Resources</Text>
-                <Text style={[styles.subtitle, { color: theme.subtext }]}>Useful links/resources for students</Text>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            {Platform.OS === 'web' && (
+                <style>
+                    {`
+                        @media (min-width: 768px) {
+                            [data-glass-header] {
+                                backdrop-filter: blur(12px) !important;
+                                -webkit-backdrop-filter: blur(12px) !important;
+                                background-color: ${theme.background}cc !important;
+                                border-bottom: 1px solid ${theme.border}44 !important;
+                            }
+                            .link-card-hover:hover {
+                                border-color: ${theme.primary}66 !important;
+                                transform: translateY(-2px);
+                                box-shadow: ${theme.boxShadow} !important;
+                            }
+                        }
+                    `}
+                </style>
+            )}
+
+            <View
+                style={styles.headerContainer}
+                {...(Platform.OS === 'web' ? { dataSet: { 'glass-header': 'true' } } : {})}
+            >
+                <SafeAreaView edges={['top']} style={{ paddingBottom: 0 }}>
+                    <View style={styles.headerContent}>
+                        <View>
+                            <Text style={[styles.title, { color: theme.text }]}>OSU Resources</Text>
+                            <Text style={[styles.subtitle, { color: theme.subtext }]}>Essential links for students</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.searchAndFilter}>
+                        <View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                            <Ionicons name="search" size={20} color={theme.subtext} />
+                            <TextInput
+                                style={[styles.searchInput, { color: theme.text }]}
+                                placeholder="Search resources..."
+                                placeholderTextColor={theme.placeholder}
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                autoCapitalize="none"
+                            />
+                            {searchQuery.length > 0 && (
+                                <Pressable onPress={() => setSearchQuery('')}>
+                                    <Ionicons name="close-circle" size={20} color={theme.subtext} />
+                                </Pressable>
+                            )}
+                        </View>
+
+                        <View style={styles.categoryContainer}>
+                            {categories.map((cat) => (
+                                <Pressable
+                                    key={cat}
+                                    onPress={() => {
+                                        triggerHaptic();
+                                        setActiveCategory(cat);
+                                    }}
+                                    style={[
+                                        styles.categoryChip,
+                                        { backgroundColor: theme.card, borderColor: theme.border },
+                                        activeCategory === cat && { backgroundColor: theme.primary, borderColor: theme.primary }
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.categoryChipText,
+                                            { color: theme.text },
+                                            activeCategory === cat && { color: theme.buttonText, fontWeight: '700' }
+                                        ]}
+                                    >
+                                        {cat}
+                                    </Text>
+                                </Pressable>
+                            ))}
+                        </View>
+                    </View>
+                </SafeAreaView>
             </View>
 
             <FlatList
-                data={[]}
-                renderItem={() => null}
-                style={[{ flex: 1 }, isDesktopWeb && { width: '100%', maxWidth: 1200, alignSelf: 'center' }]}
+                data={filteredLinks}
+                keyExtractor={(item) => item.url}
+                renderItem={renderLinkItem}
+                numColumns={numColumns}
+                key={`${numColumns}`}
                 contentContainerStyle={[
                     styles.listContent,
-                    { paddingBottom: insets.bottom + (Platform.OS === 'android' ? 80 : 24) }
+                    { paddingBottom: insets.bottom + 100 }
                 ]}
-                ListHeaderComponent={
-                    <View>
-                        {categorizedLinks['Websites'] && categorizedLinks['Websites'].length > 0 && renderSection('Websites', categorizedLinks['Websites'], isDesktopWeb)}
-                        {!isDesktopWeb && categorizedLinks['Apps'] && renderSection('Apps', categorizedLinks['Apps'], false, true)}
+                columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
+                ListEmptyComponent={
+                    <View style={styles.emptyState}>
+                        <Ionicons name="search-outline" size={64} color={theme.border} />
+                        <Text style={[styles.emptyText, { color: theme.subtext }]}>No resources found matching "{searchQuery}"</Text>
                     </View>
                 }
             />
-        </SafeAreaView>
+        </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    header: {
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-    },
-    subtitle: {
-        fontSize: 14,
-        marginTop: 4,
-    },
-    listContent: {
-        padding: 20,
-        paddingTop: 0,
-    },
-    sectionContainer: {
-        marginBottom: 24,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 12,
-        marginLeft: 4,
-    },
-    sectionBox: {
-        borderRadius: 20,
-        overflow: 'hidden',
-    },
-    linkItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        gap: 12,
-    },
-    iconBox: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    linkLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    linkUrl: {
-        fontSize: 12,
-        marginTop: 2,
-    },
-});
+function createStyles(theme: Theme, isDesktopWeb: boolean, bannerHeight: number, insets: any) {
+    const baseHeaderHeight = Platform.OS === 'web' ? 160 : 180;
+    const topOffset = Platform.OS === 'web' ? 75 + bannerHeight : bannerHeight;
+
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        headerContainer: {
+            paddingTop: topOffset,
+            zIndex: 10,
+            width: '100%',
+        },
+        headerContent: {
+            paddingHorizontal: 20,
+            paddingVertical: 12,
+            maxWidth: 1200,
+            alignSelf: 'center',
+            width: '100%',
+        },
+        title: {
+            fontSize: 32,
+            fontWeight: '800',
+            letterSpacing: -0.5,
+        },
+        subtitle: {
+            fontSize: 16,
+            marginTop: 2,
+        },
+        searchAndFilter: {
+            paddingHorizontal: 20,
+            paddingBottom: 16,
+            gap: 12,
+            maxWidth: 1200,
+            alignSelf: 'center',
+            width: '100%',
+        },
+        searchBar: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderRadius: 14,
+            borderWidth: 1,
+            gap: 10,
+        },
+        searchInput: {
+            flex: 1,
+            fontSize: 16,
+            padding: 0,
+        },
+        categoryContainer: {
+            flexDirection: 'row',
+            gap: 8,
+        },
+        categoryChip: {
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 20,
+            borderWidth: 1,
+        },
+        categoryChipText: {
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        listContent: {
+            padding: 20,
+            maxWidth: 1200,
+            alignSelf: 'center',
+            width: '100%',
+        },
+        columnWrapper: {
+            gap: 16,
+            justifyContent: 'flex-start',
+        },
+        linkCard: {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 16,
+            borderRadius: 18,
+            borderWidth: 1,
+            marginBottom: 12,
+            gap: 16,
+            ...Platform.select({
+                ios: {
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 8,
+                },
+                android: {
+                    elevation: 2,
+                }
+            }),
+        },
+        iconContainer: {
+            width: 52,
+            height: 52,
+            borderRadius: 14,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        linkInfo: {
+            flex: 1,
+        },
+        linkHeader: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 2,
+        },
+        linkTitle: {
+            fontSize: 18,
+            fontWeight: '700',
+        },
+        categoryBadge: {
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            borderRadius: 6,
+        },
+        categoryText: {
+            fontSize: 10,
+            fontWeight: '800',
+            textTransform: 'uppercase',
+        },
+        linkSubtext: {
+            fontSize: 13,
+        },
+        chevron: {
+            opacity: 0.5,
+        },
+        emptyState: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: 60,
+            gap: 16,
+        },
+        emptyText: {
+            fontSize: 16,
+            textAlign: 'center',
+            maxWidth: 250,
+        },
+    });
+}
