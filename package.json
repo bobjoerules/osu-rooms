@@ -2,7 +2,7 @@
   "name": "osu-rooms",
   "license": "0BSD",
   "main": "expo-router/entry",
-  "version": "54.0.35",
+  "version": "0.1.0",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
