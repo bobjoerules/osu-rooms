@@ -8,7 +8,6 @@
     "scheme": "osu-rooms",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#000000",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bobjoerules.osurooms",
@@ -31,7 +30,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.bobjoerules.osurooms",
       "versionCode": 178
@@ -45,6 +43,8 @@
     "plugins": [
       "expo-router",
       "expo-font",
+      "expo-image",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
