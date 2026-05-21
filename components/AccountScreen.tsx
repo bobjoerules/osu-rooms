@@ -122,6 +122,10 @@ export default function Account() {
 
   useEffect(() => {
     const fetchUserCount = async () => {
+      if (!currentUser) {
+        setUserCount(null);
+        return;
+      }
       try {
         const coll = collection(db, "users");
         const snapshot = await getCountFromServer(coll);
@@ -131,7 +135,7 @@ export default function Account() {
       }
     };
     fetchUserCount();
-  }, []);
+  }, [currentUser]);
 
 
   async function handleSubmit() {

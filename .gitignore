@@ -48,3 +48,6 @@ firebaseConfig.js
 # local env files
 .env
 .env*.local
+
+# app icon backup
+assets/images/icon_original_backup.png
