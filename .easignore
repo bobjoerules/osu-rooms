@@ -23,6 +23,7 @@ web-build/
 
 # iOS/Android build folders if they exist
 ios/build/
+ios/Pods/
 android/build/
 android/.gradle/
 
@@ -30,3 +31,5 @@ android/.gradle/
 .cache/
 tmp/
 temp/
+.wrangler/
+.idea/
