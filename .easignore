@@ -21,11 +21,9 @@ node_modules/
 # Web build artifacts
 web-build/
 
-# iOS/Android build folders if they exist
-ios/build/
-ios/Pods/
-android/build/
-android/.gradle/
+# iOS/Android native directories (EAS will generate these during prebuild)
+ios/
+android/
 
 # Cache folders
 .cache/
