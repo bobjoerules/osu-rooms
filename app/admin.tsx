@@ -327,6 +327,12 @@ export default function AdminScreen() {
                     });
                 }
 
+                updatedRooms.sort((a: any, b: any) => {
+                    const numA = a.id?.split('-').pop() || '';
+                    const numB = b.id?.split('-').pop() || '';
+                    return numA.localeCompare(numB, undefined, { numeric: true });
+                });
+
                 await setDoc(doc(db, 'buildings', buildingId), {
                     ...buildingDoc,
                     rooms: updatedRooms

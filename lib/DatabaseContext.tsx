@@ -16,15 +16,23 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-
     useEffect(() => {
         const q = query(collection(db, 'buildings'), orderBy('name', 'asc'));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const buildingsData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as Building[];
+            const buildingsData = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const rooms = Array.isArray(data.rooms) ? [...data.rooms].sort((a, b) => {
+                    const numA = a.id?.split('-').pop() || '';
+                    const numB = b.id?.split('-').pop() || '';
+                    return numA.localeCompare(numB, undefined, { numeric: true });
+                }) : [];
+                return {
+                    id: doc.id,
+                    ...data,
+                    rooms
+                };
+            }) as Building[];
 
             setBuildings(buildingsData);
             setLoading(false);

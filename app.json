@@ -14,13 +14,18 @@
       "buildNumber": "178",
       "infoPlist": {
         "UIBackgroundModes": [
+          "remote-notification",
           "remote-notification"
         ],
         "LSApplicationQueriesSchemes": [
           "canvas-courses",
           "osuhonorsapp",
+          "ms-outlook",
+          "canvas-courses",
+          "osuhonorsapp",
           "ms-outlook"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
